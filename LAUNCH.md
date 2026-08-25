@@ -44,11 +44,11 @@ git checkout merch-drop
 
 Work here. Every push auto-deploys to the staging URL. `main` never moves.
 
-**Photos** → `images/merch/` (square, ~1200×1200, 200–400KB, dark backgrounds).
+**Photos** → `images/merch/` as `tee-front.jpg` and `tee-back.jpg` (square, ~1200×1200, 200–400KB, dark backgrounds). Worth shooting the signed card next to the shirt — right now it is described but never shown.
 
-**Stripe** → follow `MERCH-SETUP.md`. Create each product **twice**: once in test mode, once in live mode. Stripe has a Test/Live toggle in the dashboard; the two are entirely separate worlds with separate links.
+**Stripe** → follow `MERCH-SETUP.md`. Create the shirt **twice**: once in test mode, once in live mode. Stripe has a Test/Live toggle in the dashboard; the two are entirely separate worlds with separate links.
 
-**Config** → in `merch.js`, fill both link fields per product:
+**Config** → in `merch.js`, fill both link fields:
 
 ```js
 stripeLink:     'https://buy.stripe.com/aEU7sK...',        // live
@@ -71,9 +71,10 @@ Use the phase buttons in the orange staging bar to preview every state without e
 - [ ] Teaser: buttons dead, say "Dropping Soon"
 - [ ] Presale: counter shows, bar fills, buttons say "Reserve Yours"
 - [ ] Live: buttons say "Buy Now"
-- [ ] Sold out: everything greyed, badges read "Sold Out", shipping note gone
+- [ ] Sold out: everything greyed, badge reads "Sold Out", shipping note gone
+- [ ] Signed-card callout appears in `presale` only — not in teaser, live, or soldout
 
-**A full test purchase, per product**
+**A full test purchase**
 - [ ] Buy button opens Stripe checkout
 - [ ] Size dropdown appears and is required
 - [ ] Shipping address form appears
@@ -87,7 +88,7 @@ Use the phase buttons in the orange staging bar to preview every state without e
 - [ ] Temporarily set a test link's payment limit to 1
 - [ ] Buy it once, then reload — link should be dead
 - [ ] Reset the limit
-- [ ] Confirm the **live** links have their real caps set
+- [ ] Confirm the **live** link is capped at 50
 
 **Presentation**
 - [ ] Check on a real phone, not a narrow browser window
@@ -120,9 +121,38 @@ The moment it's on the real domain, the site flips itself: live Stripe links, no
 ### Immediately after merging
 
 - [ ] Load ajvitanza.com — **no orange bar** (if you see one, `productionHosts` is wrong)
-- [ ] Buy buttons point at `buy.stripe.com/...` with **no** `test_` in the URL
+- [ ] Buy button points at `buy.stripe.com/...` with **no** `test_` in the URL
 - [ ] One real purchase with a real card, then refund it in Stripe
 - [ ] `ajvitanza.com/merch` redirects correctly — this is the link you'll share
+
+---
+
+## The countdown
+
+Off by default, because it needs a real date. Turn it on in `merch.js`:
+
+```js
+countdown: {
+    enabled: true,
+    showDate: '2026-09-12T20:00:00-04:00',
+    labelBefore: 'Presale closes when doors open',
+    labelAfter: 'Doors are open — merch table only',
+    venue: 'Brooklyn Made · Brooklyn, NY'
+}
+```
+
+**The timezone offset is not optional.** `-04:00` is US Eastern in summer, `-05:00` in winter; Central is `-05:00`/`-06:00`, Pacific `-07:00`/`-08:00`. Without it, browsers interpret the time in the *viewer's* timezone, so someone in California sees a clock three hours off. A bad date silently misleads people about when they can still order — which is worse than having no clock at all.
+
+Behaviour:
+
+- Shows only in the `teaser` and `presale` phases
+- Under 48 hours it turns amber
+- Past the date it freezes at zero and swaps to `labelAfter`
+- An unparseable date hides the clock and logs a console warning rather than rendering `NaN`
+
+The stock counter escalates the same way — at or below `presale.urgentBelow` (set to 12 for this drop) the number turns amber and the label changes to "Almost gone."
+
+One caution: the countdown says the presale closes at doors, so make sure it actually does. If the clock hits zero and people can still order online, or if it's still counting after you've closed the presale, the urgency reads as theatre. Deactivating the payment links in Stripe at showtime keeps the two honest.
 
 ---
 
@@ -133,10 +163,9 @@ Edit `merch.js` on `main`, commit, push. `merch.js` is set to never cache, so ch
 | Situation | Change |
 |---|---|
 | Sales coming in | Update `presale.unitsRemaining` |
-| One item gone | That product's `status: 'soldout'` |
-| Nearly gone | `status: 'lowstock'` |
-| Presale over | `phase: 'soldout'` |
-| Public launch | `phase: 'live'`, swap in uncapped links, `status: null` |
+| Under 12 left | Nothing — the counter goes amber on its own |
+| All 50 presale gone | `phase: 'soldout'` |
+| Selling the remaining 150 online later | `phase: 'live'`, new uncapped Stripe link, drop the bonus |
 | Something's wrong | `enabled: false` — section and nav link vanish |
 
 ---
@@ -151,10 +180,14 @@ Edit `merch.js` on `main`, commit, push. `merch.js` is set to never cache, so ch
 
 ---
 
-## Two things to decide before you open
+## Things to decide before you open
 
-**Unit split.** Caps are per payment link, not global. 100 units across three items means deciding the split (50 tees / 30 hoodies / 20 posters) and capping each link separately.
+**The 50/150 split is enforced in two different places, and only one is real.** Stripe's payment limit on the link is what actually stops sales at 50. The number on the website is a manually-updated marketing display. Don't let them drift so far apart that the site says "31 left" when Stripe has already closed.
 
-**Pickup at the show.** It's free and anyone can select it, including someone three states away. Fine if your presale crowd is local. If not, either drop the option or rename it `Pickup at the show — [City] [Date] ONLY`.
+**Payments vs. shirts.** Stripe's cap counts payments. Leave adjustable quantity off and the two are the same thing — 50 payments, 50 shirts. Turn it on and one order can take three shirts while using one payment slot, and you'll oversell into the 150 you meant to keep for the show.
 
-**On overselling:** Stripe caps each link independently, so it can't oversell a single product. But if you're printing to order or sharing stock between the presale and the merch table, decide now what happens if the numbers don't line up — refund, or fulfil late and eat the shipping.
+**Pickup at the show.** Free and unrestricted, so anyone can pick it — including someone three states away. Fine if your presale crowd is local; if not, rename it `Pickup at the show — [City] [Date] ONLY` or drop it.
+
+**Don't forget the cards.** The signed graphic card isn't tracked anywhere in Stripe — it's a promise made on the website. Sign 50 and put them somewhere you won't forget when you're packing. It's the entire reason someone buys now instead of at the show, so a missing card is a broken promise, not a minor omission.
+
+**If you oversell anyway:** decide now whether you refund or fulfil late from the show stock. Easier to choose while nothing's on fire.

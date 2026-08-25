@@ -224,7 +224,12 @@
 
     document.body.style.overflow = 'hidden';
 
-    if (prefersReducedMotion) {
+    // Add ?skipintro to the URL to jump straight to the site.
+    // Invaluable when you're reloading 50 times to tweak the merch section.
+    var skipIntro = prefersReducedMotion ||
+        /[?&]skipintro/i.test(window.location.search);
+
+    if (skipIntro) {
         // skip everything
         if (gate) gate.classList.add('hidden');
         document.body.style.overflow = '';

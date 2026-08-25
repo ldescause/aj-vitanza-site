@@ -299,23 +299,40 @@
         </div>
         <div class="section-inner">
             <span class="label merch-label" data-reveal>04. — Wear It</span>
-            <h2 class="section-title merch-title" data-split>Merch</h2>
 
-            <div class="merch-intro" data-reveal>
-                <span class="merch-eyebrow">
-                    <span class="merch-eyebrow-dot"></span>
-                    <span class="merch-eyebrow-text">Coming Soon</span>
-                </span>
-                <p class="merch-blurb"></p>
+            <div class="merch-head">
+                <h2 class="merch-title" data-split>Merch</h2>
+                <div class="merch-head-side" data-reveal>
+                    <span class="merch-eyebrow">
+                        <span class="merch-eyebrow-dot"></span>
+                        <span class="merch-eyebrow-text">Coming Soon</span>
+                    </span>
+                    <p class="merch-blurb"></p>
+                </div>
             </div>
 
-            <div class="merch-counter" hidden data-reveal>
-                <div class="merch-counter-head">
-                    <span class="merch-counter-num">—</span>
-                    <span class="merch-counter-total"></span>
+            <!-- drop meta: countdown + units remaining -->
+            <div class="merch-meta" hidden>
+                <div class="merch-countdown" hidden data-reveal>
+                    <span class="merch-meta-label merch-countdown-label"></span>
+                    <div class="merch-countdown-clock">
+                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="days">—</span><span class="merch-cd-cap">days</span></div>
+                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="hours">—</span><span class="merch-cd-cap">hrs</span></div>
+                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="mins">—</span><span class="merch-cd-cap">min</span></div>
+                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="secs">—</span><span class="merch-cd-cap">sec</span></div>
+                    </div>
+                    <span class="merch-countdown-venue"></span>
                 </div>
-                <div class="merch-counter-bar">
-                    <div class="merch-counter-fill"></div>
+
+                <div class="merch-counter" hidden data-reveal>
+                    <span class="merch-meta-label">Stock remaining</span>
+                    <div class="merch-counter-head">
+                        <span class="merch-counter-num">—</span>
+                        <span class="merch-counter-total"></span>
+                    </div>
+                    <div class="merch-counter-bar">
+                        <div class="merch-counter-fill"></div>
+                    </div>
                 </div>
             </div>
 

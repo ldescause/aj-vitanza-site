@@ -1,5 +1,9 @@
 # Merch Drop — Setup Runbook
 
+**This drop:** one T-shirt, 200 printed. 50 released as an online presale; the remaining 150 go to the merch table at the show. Presale orders also get a graphic card signed by AJ — presale only.
+
+That means **one Stripe product, one payment link, capped at 50.**
+
 Everything is built. The site currently shows the Merch section in **teaser** mode: real layout, real prices, placeholder artwork, dead buttons that say "Dropping Soon." Nothing can be bought yet.
 
 You only ever edit one file: **`merch.js`**.
@@ -77,11 +81,13 @@ If you outgrow that, the upgrade is a small Netlify serverless function that cre
 
 Same editor → **Advanced options** → **Limit the number of payments**
 
-Set it to your presale allocation. When it's hit, Stripe deactivates the link automatically and nobody can buy. This is your real inventory guard — the counter on the website is cosmetic.
+**Set it to 50.** When it's hit, Stripe deactivates the link automatically and nobody can buy. This is your real inventory guard — the counter on the website is cosmetic.
 
-**Do the math per product, not overall.** If 100 units total across 3 items, decide the split (say 50 tees / 30 hoodies / 20 posters) and cap each link accordingly.
+One wrinkle worth thinking through: the limit counts *payments*, not shirts. If you also enable **Adjustable quantity**, someone buying 3 shirts uses 1 of your 50 payments but 3 of your 50 shirts — and you'd oversell. Either leave adjustable quantity off (one shirt per order, cleanest), or turn it on and set the payment limit lower to compensate.
 
-Also enable **Adjustable quantity** with a max of 2–3 if you want to allow multiples but stop resellers clearing you out.
+Given you're holding back 150 for the show, leaving it off is the safer call.
+
+**On the signed card:** it isn't a separate Stripe product — it's included with every presale order. You don't need to model it in Stripe at all, just remember to pack one with each shirt. It's described on the site in the presale phase and disappears automatically when the phase changes.
 
 ### 6. Set the confirmation page
 
@@ -94,6 +100,23 @@ Paste: `https://ajvitanza.com/thanks.html`
 You'll get something like `https://buy.stripe.com/aEU7sK1234abcd`. Save it — that goes into `merch.js`.
 
 **Repeat 1–7 for each product.**
+
+### 8. Now do it all again in test mode
+
+Flip the **Test mode** toggle in the Stripe dashboard and repeat steps 1–7. Test mode is a completely separate world: separate products, separate links, fake cards, no money.
+
+You'll end up with two links per product:
+
+```
+live:  https://buy.stripe.com/aEU7sK1234abcd
+test:  https://buy.stripe.com/test_aEU7sK1234abcd
+```
+
+Both go into `merch.js`. The site picks the right one by hostname — test links on the staging URL, live links on ajvitanza.com. You never swap them by hand, which is the step that tends to go wrong under pressure.
+
+There's also a hard guard: if a test link ever ends up in the live slot, the button refuses to render on the real domain rather than sending customers to a fake checkout.
+
+> Tedious? Yes. But it's the only way to test the full flow — size dropdown, shipping, payment, receipt, redirect — as many times as you want without paying fees or refunding yourself.
 
 ---
 
@@ -135,7 +158,8 @@ products: [
         image: 'images/merch/tee-front.jpg',
         imageAlt: 'images/merch/tee-back.jpg',
         sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-        stripeLink: 'https://buy.stripe.com/aEU7sK1234abcd',   // ← paste here
+        stripeLink:     'https://buy.stripe.com/aEU7sK1234abcd',        // ← live
+        stripeLinkTest: 'https://buy.stripe.com/test_aEU7sK1234abcd',   // ← test
         status: null,
         badge: 'Presale Exclusive'
     },
@@ -145,15 +169,18 @@ products: [
 
 Adjust prices, names, and copy to match the actual goods.
 
-### 3. Deploy
+### 3. Deploy to staging
+
+All of this work happens on the `merch-drop` branch, which deploys to its own URL. `main` — the real site — stays untouched until launch.
 
 ```bash
+git checkout merch-drop
 git add .
-git commit -m "Add merch presale"
+git commit -m "Add merch photos and Stripe links"
 git push
 ```
 
-Netlify picks it up. `merch.js` and `index.html` are set to never cache, so mid-drop edits go live on the next page load.
+See **LAUNCH.md** for the staging setup, the full test checklist, and the merge that takes it live.
 
 ---
 

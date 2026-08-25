@@ -40,16 +40,16 @@ var MERCH_CONFIG = {
             blurb: 'First run of official AJ Vitanza merch. Limited quantities. Sign up below so you know the second presale opens.'
         },
         presale: {
-            eyebrow: 'Presale — Limited Run',
-            blurb: 'A limited number of units are available online before the show. Once these are gone, the rest go with AJ on the road.'
+            eyebrow: 'Presale — 50 Units',
+            blurb: '50 of the 200-shirt run are being released early. Presale orders get a graphic card signed by AJ — presale only, not available at the show.'
         },
         live: {
             eyebrow: 'Available Now',
             blurb: 'Official AJ Vitanza merch. Ships worldwide.'
         },
         soldout: {
-            eyebrow: 'Sold Out',
-            blurb: 'The online run is gone. Remaining stock is available in person at the show — first come, first served.'
+            eyebrow: 'Presale Sold Out',
+            blurb: 'All 50 presale shirts are gone. The remaining 150 are available in person at the show — first come, first served. (The signed card was presale only.)'
         }
     },
 
@@ -59,8 +59,44 @@ var MERCH_CONFIG = {
        by hand, or set showCounter: false and forget about it. */
     presale: {
         showCounter: true,
-        totalUnits: 100,
-        unitsRemaining: 100
+
+        /* These describe the PRESALE ALLOCATION, not the whole print run.
+           50 shirts online now; the other 150 go to the merch table. */
+        totalUnits: 50,
+        unitsRemaining: 50,
+
+        /* At or below this many units, the counter turns warm amber and the
+           label sharpens. Set to 0 to never escalate. */
+        urgentBelow: 12,
+
+        /* The presale-only sweetener. Rendered as a callout on the product.
+           Set to null to remove it. */
+        bonus: {
+            title: 'Signed graphic card included',
+            text: 'Every presale order ships with a graphic card hand-signed by AJ. Presale only — not available at the merch table.'
+        }
+    },
+
+    /* ---------- COUNTDOWN ----------
+       Ticks down to the show. Shows in the teaser and presale phases only.
+
+       showDate MUST include a timezone offset, or the clock will be wrong
+       for anyone outside your timezone. Format:
+
+           2026-09-12T20:00:00-04:00
+           └── date ──┘ └time┘ └─ offset (-04:00 = US Eastern, summer)
+
+       Common US offsets:  Eastern -04:00 (summer) / -05:00 (winter)
+                           Central -05:00 / -06:00
+                           Pacific -07:00 / -08:00
+
+       Set enabled: false if you'd rather not run a clock. */
+    countdown: {
+        enabled: false,
+        showDate: '2026-09-12T20:00:00-04:00',   // ← REPLACE with the real show
+        labelBefore: 'Presale closes when doors open',
+        labelAfter: 'Doors are open — merch table only',
+        venue: ''    // optional, e.g. 'Brooklyn Made · Brooklyn, NY'
     },
 
     /* ---------- SHIPPING NOTE ---------- */
@@ -96,32 +132,6 @@ var MERCH_CONFIG = {
             stripeLinkTest: null,
             status: null,
             badge: 'Presale Exclusive'
-        },
-        {
-            id: 'hoodie',
-            name: 'Keep Me High Hoodie',
-            subtitle: 'Embroidered swoosh — Midnight',
-            price: 70,
-            image: 'images/merch/hoodie-front.jpg',
-            imageAlt: 'images/merch/hoodie-back.jpg',
-            sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-            stripeLink: null,
-            stripeLinkTest: null,
-            status: null,
-            badge: null
-        },
-        {
-            id: 'poster',
-            name: 'Cover Art Print',
-            subtitle: '18×24 — Signed',
-            price: 25,
-            image: 'images/merch/poster.jpg',
-            imageAlt: null,
-            sizes: null,
-            stripeLink: null,
-            stripeLinkTest: null,
-            status: null,
-            badge: 'Signed'
         }
     ],
 
@@ -253,28 +263,48 @@ var MERCH_CONFIG = {
 
     /* Presale counter */
     var counter = section.querySelector('.merch-counter');
+    var counterShown = false;
     if (counter) {
         if (phase === 'presale' && cfg.presale.showCounter) {
             var total = Math.max(1, cfg.presale.totalUnits);
             var left = Math.max(0, Math.min(cfg.presale.unitsRemaining, total));
             var pct = Math.round(((total - left) / total) * 100);
+            var urgent = cfg.presale.urgentBelow > 0 && left <= cfg.presale.urgentBelow;
 
             counter.querySelector('.merch-counter-num').textContent = left;
             counter.querySelector('.merch-counter-total').textContent =
-                'of ' + total + ' presale units remaining';
+                '/ ' + total + ' left';
             counter.querySelector('.merch-counter-fill').style.width = pct + '%';
+            counter.querySelector('.merch-meta-label').textContent =
+                urgent ? 'Almost gone' : 'Stock remaining';
+            if (urgent) counter.classList.add('is-urgent');
+
             counter.hidden = false;
+            counterShown = true;
         } else {
             counter.hidden = true;
         }
     }
 
+    /* Countdown to the show */
+    var countdownShown = startCountdown();
+
+    /* The meta row only exists if something is in it */
+    var meta = section.querySelector('.merch-meta');
+    if (meta) meta.hidden = !(counterShown || countdownShown);
+
     /* Product grid */
     var grid = section.querySelector('.merch-grid');
     if (!grid) return;
     grid.innerHTML = '';
+
+    /* A single product gets a wide side-by-side feature layout instead of a
+       lonely card stretched across the grid. */
+    var isFeature = cfg.products.length === 1;
+    if (isFeature) grid.classList.add('merch-grid--feature');
+
     cfg.products.forEach(function (p) {
-        grid.appendChild(buildCard(p));
+        grid.appendChild(buildCard(p, isFeature));
     });
 
     if (typeof window.AJ_refreshInteractions === 'function') {
@@ -282,15 +312,87 @@ var MERCH_CONFIG = {
     }
 
 
+    /* ---------------- countdown ---------------- */
+
+    function startCountdown() {
+        var cd = cfg.countdown || {};
+        var box = section.querySelector('.merch-countdown');
+        if (!box) return false;
+
+        var showsInThisPhase = (phase === 'presale' || phase === 'teaser');
+        if (!cd.enabled || !showsInThisPhase) {
+            box.hidden = true;
+            return false;
+        }
+
+        var target = new Date(cd.showDate).getTime();
+        if (isNaN(target)) {
+            if (window.console) {
+                console.warn('[merch] countdown.showDate is not a valid date: "' +
+                    cd.showDate + '". Expected e.g. 2026-09-12T20:00:00-04:00');
+            }
+            box.hidden = true;
+            return false;
+        }
+
+        var labelEl = box.querySelector('.merch-countdown-label');
+        var venueEl = box.querySelector('.merch-countdown-venue');
+        var nums = {
+            days: box.querySelector('[data-cd="days"]'),
+            hours: box.querySelector('[data-cd="hours"]'),
+            mins: box.querySelector('[data-cd="mins"]'),
+            secs: box.querySelector('[data-cd="secs"]')
+        };
+
+        if (venueEl) venueEl.textContent = cd.venue || '';
+
+        function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+        function tick() {
+            var diff = target - Date.now();
+
+            if (diff <= 0) {
+                box.classList.add('is-past');
+                if (labelEl) labelEl.textContent = cd.labelAfter || '';
+                nums.days.textContent = '00';
+                nums.hours.textContent = '00';
+                nums.mins.textContent = '00';
+                nums.secs.textContent = '00';
+                clearInterval(timer);
+                return;
+            }
+
+            var s = Math.floor(diff / 1000);
+            var d = Math.floor(s / 86400);
+            var h = Math.floor((s % 86400) / 3600);
+            var m = Math.floor((s % 3600) / 60);
+
+            if (labelEl) labelEl.textContent = cd.labelBefore || '';
+            nums.days.textContent = pad(d);
+            nums.hours.textContent = pad(h);
+            nums.mins.textContent = pad(m);
+            nums.secs.textContent = pad(s % 60);
+
+            /* under 48 hours, the clock goes warm */
+            if (diff < 48 * 3600 * 1000) box.classList.add('is-urgent');
+        }
+
+        tick();
+        var timer = setInterval(tick, 1000);
+        box.hidden = false;
+        return true;
+    }
+
+
     /* ---------------- builders ---------------- */
 
-    function buildCard(p) {
+    function buildCard(p, isFeature) {
         var soldOut = p.status === 'soldout' || phase === 'soldout';
         var link = linkFor(p);
         var buyable = phase !== 'teaser' && !soldOut && !!link;
 
-        var card = el('article', 'merch-card');
-        card.setAttribute('data-reveal', 'scale');
+        var card = el('article', 'merch-card' + (isFeature ? ' merch-card--feature' : ''));
+        card.setAttribute('data-reveal', isFeature ? '' : 'scale');
         if (soldOut) card.classList.add('is-soldout');
 
         /* media */
@@ -340,13 +442,31 @@ var MERCH_CONFIG = {
         }
 
         if (p.sizes && p.sizes.length) {
+            var sizeWrap = el('div', 'merch-card-sizewrap');
+            var sizeLabel = el('span', 'merch-size-label');
+            sizeLabel.textContent = 'Sizes — chosen at checkout';
             var sizes = el('div', 'merch-card-sizes');
             p.sizes.forEach(function (s) {
                 var chip = el('span', 'merch-size');
                 chip.textContent = s;
                 sizes.appendChild(chip);
             });
-            body.appendChild(sizes);
+            sizeWrap.appendChild(sizeLabel);
+            sizeWrap.appendChild(sizes);
+            body.appendChild(sizeWrap);
+        }
+
+        /* Presale-only bonus callout */
+        var bonus = cfg.presale.bonus;
+        if (bonus && phase === 'presale' && !soldOut) {
+            var bx = el('div', 'merch-bonus');
+            var bh = el('span', 'merch-bonus-title');
+            bh.textContent = bonus.title;
+            var bt = el('p', 'merch-bonus-text');
+            bt.textContent = bonus.text;
+            bx.appendChild(bh);
+            bx.appendChild(bt);
+            body.appendChild(bx);
         }
 
         body.appendChild(buildAction(p, link, buyable, soldOut));
