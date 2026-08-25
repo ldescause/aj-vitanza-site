@@ -240,6 +240,7 @@
         playBootUp();
         startDrone();
         gate.classList.add('hidden');
+        prepareMusic();
         startTerminalBoot();
     });
 
@@ -247,13 +248,11 @@
     var terminalBoot = document.getElementById('terminalBoot');
     var terminalContent = document.getElementById('terminalContent');
     var BOOT_LINES = [
-        { text: 'BIOS v4.2.1 — AJ VITANZA SYSTEMS', speed: 12, pause: 300, status: null },
-        { text: 'Running hardware diagnostics', speed: 10, pause: 180, status: 'OK' },
-        { text: 'Loading audio subsystem', speed: 10, pause: 200, status: 'OK', progress: true },
-        { text: 'Mounting media: KEEP_ME_HIGH.wav', speed: 9, pause: 160, status: 'READY', progress: true },
-        { text: 'Initializing render pipeline', speed: 10, pause: 140, status: 'OK' },
-        { text: 'Signal acquired — 48kHz / 24bit', speed: 9, pause: 120, status: null },
-        { text: 'All systems nominal', speed: 14, pause: 400, status: null },
+        { text: 'BIOS v4.2.1 — AJ VITANZA SYSTEMS', speed: 5, pause: 120, status: null },
+        { text: 'Loading audio subsystem', speed: 4, pause: 60, status: 'OK', progress: true },
+        { text: 'Mounting media: KEEP_ME_HIGH.wav', speed: 4, pause: 60, status: 'READY', progress: true },
+        { text: 'Signal acquired — 48kHz / 24bit', speed: 4, pause: 80, status: null },
+        { text: 'All systems nominal', speed: 6, pause: 180, status: null },
     ];
 
     function startTerminalBoot() {
@@ -263,7 +262,7 @@
         header.className = 'terminal-line terminal-header';
         header.textContent = '> SYSTEM BOOT';
         terminalContent.appendChild(header);
-        setTimeout(function () { processBootLine(0); }, 300);
+        setTimeout(function () { processBootLine(0); }, 120);
     }
 
     function processBootLine(index) {
@@ -283,18 +282,18 @@
         function typeNext() {
             if (charIndex < text.length) {
                 lineEl.textContent = text.substring(0, charIndex + 1);
-                playTypeBlip();
+                if (charIndex % 3 === 0) playTypeBlip();
                 charIndex++;
                 setTimeout(typeNext, line.speed);
             } else if (line.progress) {
                 animateProgress(lineEl, text, function () {
                     appendStatus(lineEl, line.status);
-                    setTimeout(function () { processBootLine(index + 1); }, 80);
+                    setTimeout(function () { processBootLine(index + 1); }, 40);
                 });
             } else {
                 setTimeout(function () {
                     appendStatus(lineEl, line.status);
-                    setTimeout(function () { processBootLine(index + 1); }, 80);
+                    setTimeout(function () { processBootLine(index + 1); }, 40);
                 }, line.pause);
             }
         }
@@ -316,16 +315,16 @@
         var barWidth = 16;
 
         function tick() {
-            progress += Math.random() * 22 + 8;
+            progress += Math.random() * 30 + 22;
             if (progress > 100) progress = 100;
             var filled = Math.round((progress / 100) * barWidth);
             var bar = ' [' + '█'.repeat(filled) + '·'.repeat(barWidth - filled) + '] ' + Math.round(progress) + '%';
             lineEl.textContent = prefix + bar;
             playProgressTick();
             if (progress < 100) {
-                setTimeout(tick, 25 + Math.random() * 20);
+                setTimeout(tick, 14 + Math.random() * 10);
             } else {
-                setTimeout(callback, 120);
+                setTimeout(callback, 60);
             }
         }
         tick();
@@ -346,9 +345,9 @@
         terminalBoot.classList.add('fade-out');
         setTimeout(function () {
             terminalBoot.classList.remove('active', 'fade-out');
-        }, 600);
+        }, 400);
 
-        // Phase 1: Glitchy, blurry, fast spin (1.5s)
+        // Phase 1: Glitchy, blurry, fast spin
         setTimeout(function () {
             logoReveal.classList.remove('phase-glitch');
             logoReveal.classList.add('phase-resolving');
@@ -357,7 +356,7 @@
             // Start music during resolve — song plays from the top
             startMusic();
 
-            // Phase 2: Resolving, slower spin, clearing (2s)
+            // Phase 2: Resolving, slower spin, clearing
             setTimeout(function () {
                 logoReveal.classList.remove('phase-resolving');
                 logoReveal.classList.add('phase-clear');
@@ -366,10 +365,10 @@
                 logoRevealSub.classList.add('visible');
                 stopDrone();
 
-                // Auto-enter after 5s of music playing on the logo screen
-                setTimeout(finishIntro, 5000);
-            }, 2000);
-        }, 1500);
+                // Auto-enter after a short beat of music on the logo screen
+                setTimeout(finishIntro, 1800);
+            }, 900);
+        }, 700);
     }
 
     function spawnParticles() {
@@ -407,29 +406,38 @@
         logoReveal.classList.add('fade-out');
         setTimeout(function () {
             logoReveal.className = 'logo-reveal';
-        }, 1000);
+        }, 700);
     }
 
     // ========== MUSIC ==========
     var musicAudio = null;
 
-    function startMusic() {
+    // Created on the gate tap (a user gesture) so the file is buffering
+    // through the whole boot sequence and play() resolves instantly.
+    function prepareMusic() {
+        if (musicAudio) return;
         musicAudio = new Audio('audio/keep-me-high.m4a');
         musicAudio.loop = true;
         musicAudio.volume = 0;
-        musicAudio.currentTime = 0;
         musicAudio.preload = 'auto';
+        musicAudio.load();
+    }
+
+    function startMusic() {
+        prepareMusic();
+        musicAudio.volume = 0;
+        musicAudio.currentTime = 0;
 
         musicAudio.play().then(function () {
             var vol = 0;
             var fadeIn = setInterval(function () {
-                vol += 0.015;
+                vol += 0.03;
                 if (vol >= 0.6) {
                     vol = 0.6;
                     clearInterval(fadeIn);
                 }
                 musicAudio.volume = vol;
-            }, 50);
+            }, 40);
         }).catch(function () {});
     }
 
@@ -437,15 +445,27 @@
     function initSplitText() {
         var splitEls = document.querySelectorAll('[data-split]');
         splitEls.forEach(function (el) {
-            var text = el.textContent;
+            var text = el.textContent.trim();
             el.innerHTML = '';
-            var chars = text.split('');
-            chars.forEach(function (char, i) {
-                var span = document.createElement('span');
-                span.className = 'char';
-                span.textContent = char === ' ' ? ' ' : char;
-                span.style.animationDelay = (i * 0.04) + 's';
-                el.appendChild(span);
+            // Split into words first, then chars. Each word is a non-breaking
+            // group so a line can only break at a space — never mid-word.
+            var words = text.split(/\s+/);
+            var charIndex = 0;
+            words.forEach(function (word, wi) {
+                var wordEl = document.createElement('span');
+                wordEl.className = 'word';
+                word.split('').forEach(function (char) {
+                    var span = document.createElement('span');
+                    span.className = 'char';
+                    span.textContent = char;
+                    span.style.animationDelay = (charIndex * 0.04) + 's';
+                    wordEl.appendChild(span);
+                    charIndex++;
+                });
+                el.appendChild(wordEl);
+                if (wi < words.length - 1) {
+                    el.appendChild(document.createTextNode(' '));
+                }
             });
 
             if ('IntersectionObserver' in window) {
