@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed — AJ Vitanza</title>
+    <meta name="description" content="Thanks for supporting AJ Vitanza.">
+    <meta name="robots" content="noindex">
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="images/swoosh-mark.png">
+    <link rel="apple-touch-icon" href="images/swoosh-mark.png">
+
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-R5WDWDH7RJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-R5WDWDH7RJ');
+        gtag('event', 'purchase_confirmed');
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Grotesk:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        .thanks {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 24px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, var(--bg-deep), var(--bg) 60%, var(--bg-deep));
+        }
+        .thanks-orb {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90vw; height: 90vw;
+            max-width: 900px; max-height: 900px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(94,143,194,0.12) 0%, transparent 65%);
+            filter: blur(50px);
+            pointer-events: none;
+        }
+        .thanks-inner { position: relative; z-index: 1; max-width: 560px; }
+        .thanks-mark {
+            width: 72px; height: 72px;
+            margin: 0 auto 32px;
+            opacity: 0.9;
+        }
+        .thanks-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 6vw, 3.4rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            color: var(--text-bright);
+            margin-bottom: 20px;
+        }
+        .thanks-body {
+            font-size: 1rem;
+            line-height: 1.75;
+            color: var(--text-dim);
+            margin-bottom: 14px;
+        }
+        .thanks-meta {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            line-height: 1.9;
+            color: var(--text-dim);
+            opacity: 0.75;
+            margin-bottom: 40px;
+        }
+        .thanks-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="grain"></div>
+
+    <main class="thanks">
+        <div class="thanks-orb"></div>
+        <div class="thanks-inner">
+            <img src="images/swoosh-mark.png" alt="AJ Vitanza" class="thanks-mark" width="400" height="400">
+
+            <h1 class="thanks-title">You're In.</h1>
+
+            <p class="thanks-body">
+                Order confirmed. Thanks for backing the record — it means everything.
+            </p>
+
+            <p class="thanks-meta">
+                A receipt is on its way to your inbox.<br>
+                Shipping confirmation follows once your order goes out.<br>
+                Questions? Reply straight to your receipt email.
+            </p>
+
+            <div class="thanks-actions">
+                <a href="/" class="btn btn--primary" data-magnetic data-ripple>
+                    <span>Back to Site</span>
+                </a>
+                <a href="https://www.instagram.com/ajvitanza/" target="_blank" rel="noopener" class="btn btn--ghost" data-magnetic data-ripple>
+                    <span>Follow AJ</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

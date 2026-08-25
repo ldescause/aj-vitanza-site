@@ -1300,7 +1300,8 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
 }
 
 @media (max-width: 480px) {
-    .nav-links a:nth-child(n+4) { display: none; }
+    /* Keep Merch visible on small screens; drop Connect only. */
+    .nav-links a:nth-child(n+5) { display: none; }
 
     .hero-title { letter-spacing: -0.03em; }
 
@@ -1312,6 +1313,392 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
 
 }
 
+
+/* ============================================
+   MERCH
+   ============================================ */
+.merch {
+    padding: 120px 0 110px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg) 55%, var(--bg-deep) 100%);
+}
+.merch-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+.merch-orb {
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 60vw;
+    height: 60vw;
+    max-width: 780px;
+    max-height: 780px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(94,143,194,0.10) 0%, transparent 68%);
+    filter: blur(40px);
+}
+.merch .section-inner { position: relative; z-index: 1; }
+.merch .section-title { margin-bottom: 28px; }
+
+/* ---------- Intro ---------- */
+.merch-intro {
+    max-width: 620px;
+    margin-bottom: 44px;
+}
+.merch-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 16px 7px 13px;
+    border: 1px solid rgba(120, 160, 210, 0.2);
+    border-radius: 100px;
+    background: rgba(94, 143, 194, 0.05);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-ice);
+    margin-bottom: 20px;
+}
+.merch-eyebrow-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 var(--accent-glow);
+    animation: merchPulse 2.4s var(--ease-out-quart) infinite;
+}
+@keyframes merchPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(94,143,194,0.5); }
+    70%  { box-shadow: 0 0 0 9px rgba(94,143,194,0); }
+    100% { box-shadow: 0 0 0 0 rgba(94,143,194,0); }
+}
+.merch-blurb {
+    font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+    line-height: 1.7;
+    color: var(--text-dim);
+}
+
+/* ---------- Presale counter ---------- */
+.merch-counter {
+    max-width: 460px;
+    margin-bottom: 48px;
+}
+.merch-counter[hidden] { display: none; }
+.merch-counter-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.merch-counter-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-bright);
+    letter-spacing: -0.02em;
+}
+.merch-counter-total {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+.merch-counter-bar {
+    height: 3px;
+    width: 100%;
+    border-radius: 100px;
+    background: rgba(120, 160, 210, 0.12);
+    overflow: hidden;
+}
+.merch-counter-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--accent-soft), var(--accent), var(--accent-ice));
+    transition: width 1.2s var(--ease-out-expo);
+}
+
+/* ---------- Grid ---------- */
+.merch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+    gap: clamp(20px, 3vw, 34px);
+}
+
+/* ---------- Card ---------- */
+.merch-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.4s var(--ease-out-expo),
+                transform 0.4s var(--ease-out-expo),
+                box-shadow 0.4s var(--ease-out-expo);
+}
+.merch-card:hover {
+    border-color: rgba(120, 160, 210, 0.22);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+.merch-card.is-soldout { opacity: 0.55; }
+
+.merch-card-media {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(150deg, var(--surface-light), var(--bg-deep));
+    overflow: hidden;
+    transform-style: preserve-3d;
+}
+.merch-card-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.5s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+}
+.merch-card:hover .merch-card-img { transform: scale(1.04); }
+.merch-card-img--alt { opacity: 0; }
+.merch-card:hover .merch-card-img--alt { opacity: 1; }
+.merch-card.is-soldout .merch-card-img { filter: grayscale(1); }
+
+/* placeholder while artwork is missing */
+.merch-card-placeholder {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    opacity: 0.6;
+}
+.merch-card-media.is-empty .merch-card-placeholder { display: flex; }
+.merch-card-media.is-empty::after {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    border: 1px dashed rgba(120, 160, 210, 0.16);
+    border-radius: 10px;
+    pointer-events: none;
+}
+
+/* ---------- Badges ---------- */
+.merch-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent-soft), var(--accent));
+    box-shadow: 0 4px 16px var(--accent-glow);
+    backdrop-filter: blur(6px);
+}
+.merch-badge--soldout {
+    background: rgba(10, 14, 22, 0.85);
+    color: var(--text-dim);
+    border: 1px solid rgba(120, 160, 210, 0.2);
+    box-shadow: none;
+}
+.merch-badge--low {
+    background: rgba(10, 14, 22, 0.85);
+    color: var(--accent-ice);
+    border: 1px solid rgba(160, 200, 232, 0.3);
+    box-shadow: none;
+}
+
+/* ---------- Card body ---------- */
+.merch-card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 22px 22px 24px;
+}
+.merch-card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 6px;
+}
+.merch-card-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.02rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--text-bright);
+}
+.merch-card-price {
+    flex-shrink: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.92rem;
+    color: var(--accent-ice);
+}
+.merch-card-sub {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+}
+.merch-card-sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+.merch-size {
+    padding: 4px 10px;
+    border: 1px solid rgba(120, 160, 210, 0.15);
+    border-radius: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+}
+.merch-btn {
+    margin-top: auto;
+    width: 100%;
+    justify-content: center;
+    padding: 13px 24px;
+}
+.merch-btn.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+.merch-btn.is-disabled:hover {
+    transform: none;
+    border-color: rgba(120, 160, 210, 0.2);
+    background: transparent;
+    color: var(--text);
+}
+
+/* ---------- Shipping note ---------- */
+.merch-shipping-note {
+    margin-top: 34px;
+    max-width: 620px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.8;
+    letter-spacing: 0.03em;
+    color: var(--text-dim);
+}
+.merch-shipping-note:empty { display: none; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    .merch { padding: 90px 0 80px; }
+    .merch-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+}
+@media (max-width: 480px) {
+    .merch-grid { grid-template-columns: 1fr; }
+    .merch-btn { max-width: none; }
+}
+
+/* ============================================
+   STAGING BAR
+   Only rendered on non-production hosts (see merch.js).
+   Never appears on ajvitanza.com.
+   ============================================ */
+.staging-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10002;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    padding: 10px clamp(14px, 3vw, 26px);
+    background: rgba(8, 12, 20, 0.94);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(255, 176, 90, 0.35);
+    box-shadow: 0 -8px 34px rgba(0, 0, 0, 0.45);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+}
+.staging-bar-tag {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: 100px;
+    background: linear-gradient(135deg, #c8873a, #e8a94f);
+    color: #140d04;
+    font-weight: 500;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+.staging-bar-text { flex: 1 1 240px; }
+.staging-bar-text strong {
+    color: var(--text-bright);
+    font-weight: 500;
+}
+.staging-bar-links {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.staging-bar-links a {
+    padding: 4px 10px;
+    border: 1px solid rgba(120, 160, 210, 0.18);
+    border-radius: 6px;
+    font-size: 0.63rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    transition: all 0.3s var(--ease-out-expo);
+}
+.staging-bar-links a:hover {
+    border-color: var(--accent);
+    color: var(--text-bright);
+    background: rgba(94, 143, 194, 0.08);
+}
+.staging-bar-links a.is-current {
+    border-color: rgba(232, 169, 79, 0.5);
+    color: #e8a94f;
+    background: rgba(232, 169, 79, 0.08);
+}
+
+/* keep the footer clear of the bar */
+body.has-staging-bar .footer { padding-bottom: 78px; }
+
+/* "test" pill on staging buy buttons */
+.merch-btn-test {
+    margin-left: 8px;
+    padding: 2px 7px;
+    border-radius: 100px;
+    background: rgba(0, 0, 0, 0.28);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+    .staging-bar { font-size: 0.62rem; padding: 9px 14px; }
+    .staging-bar-links a { padding: 3px 8px; font-size: 0.58rem; }
+    body.has-staging-bar .footer { padding-bottom: 108px; }
+}
 /* ---------- Reduce Motion ---------- */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {

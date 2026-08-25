@@ -97,6 +97,7 @@
             <a href="#release" data-magnetic><span data-text="New">New</span></a>
             <a href="#music" data-magnetic><span data-text="Music">Music</span></a>
             <a href="#videos" data-magnetic><span data-text="Videos">Videos</span></a>
+            <a href="#merch" data-magnetic><span data-text="Merch">Merch</span></a>
             <a href="#connect" data-magnetic><span data-text="Connect">Connect</span></a>
         </div>
     </nav>
@@ -289,6 +290,41 @@
         </div>
     </section>
 
+    <!-- ==================== MERCH ====================
+         All content is driven by MERCH_CONFIG in merch.js.
+         Don't hand-edit product cards here — edit merch.js. -->
+    <section class="merch" id="merch">
+        <div class="merch-bg">
+            <div class="merch-orb"></div>
+        </div>
+        <div class="section-inner">
+            <span class="label merch-label" data-reveal>04. — Wear It</span>
+            <h2 class="section-title merch-title" data-split>Merch</h2>
+
+            <div class="merch-intro" data-reveal>
+                <span class="merch-eyebrow">
+                    <span class="merch-eyebrow-dot"></span>
+                    <span class="merch-eyebrow-text">Coming Soon</span>
+                </span>
+                <p class="merch-blurb"></p>
+            </div>
+
+            <div class="merch-counter" hidden data-reveal>
+                <div class="merch-counter-head">
+                    <span class="merch-counter-num">—</span>
+                    <span class="merch-counter-total"></span>
+                </div>
+                <div class="merch-counter-bar">
+                    <div class="merch-counter-fill"></div>
+                </div>
+            </div>
+
+            <div class="merch-grid"></div>
+
+            <p class="merch-shipping-note" data-reveal></p>
+        </div>
+    </section>
+
     <!-- ==================== CONNECT ==================== -->
     <section class="connect" id="connect">
         <div class="connect-bg">
@@ -296,7 +332,7 @@
             <div class="connect-orb connect-orb--2"></div>
         </div>
         <div class="section-inner connect-inner">
-            <span class="label" data-reveal>04. — Stay In Touch</span>
+            <span class="label" data-reveal>05. — Stay In Touch</span>
             <h2 class="connect-heading" data-split>Never Miss a Drop</h2>
             <p class="connect-sub" data-reveal>New music, shows & exclusives — straight to you.</p>
             <div class="connect-cta" data-reveal>
@@ -367,6 +403,9 @@
     }
     </script>
 
+    <!-- merch.js must load BEFORE script.js so the cards exist
+         when the interaction handlers get wired up. -->
+    <script src="merch.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

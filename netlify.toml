@@ -1,0 +1,78 @@
+[build]
+  publish = "."
+
+# ============================================
+# DEPLOY CONTEXTS
+# ============================================
+# Production = the `main` branch → ajvitanza.com
+# Branch deploys (e.g. `merch-drop`) get their own URL:
+#   https://merch-drop--<your-site-name>.netlify.app
+#
+# Branch deploys must be switched on once, in the Netlify dashboard:
+#   Site configuration → Build & deploy → Branch deploys
+#   → "Let me add individual branches" → add `merch-drop`
+
+[context.production]
+  # nothing special — the site behaves normally on the real domain
+
+[context.branch-deploy]
+  # Belt and braces: Netlify already noindexes branch deploys, and
+  # merch.js injects a noindex meta tag on any non-production host.
+  [context.branch-deploy.environment]
+    STAGING = "true"
+
+[context.deploy-preview]
+  [context.deploy-preview.environment]
+    STAGING = "true"
+
+# ============================================
+# REDIRECTS
+# ============================================
+# Clean shareable URL for the drop — put this in stories/texts:
+#   ajvitanza.com/merch
+[[redirects]]
+  from = "/merch"
+  to = "/#merch"
+  status = 302
+  force = true
+
+# Pretty URL for the confirmation page.
+[[redirects]]
+  from = "/thanks"
+  to = "/thanks.html"
+  status = 200
+
+# ============================================
+# HEADERS
+# ============================================
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Never cache the merch config or the page that loads it — you'll be
+# editing unit counts and sold-out flags mid-drop and need them live
+# on the next page load, not whenever a CDN feels like it.
+[[headers]]
+  for = "/merch.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/thanks.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
