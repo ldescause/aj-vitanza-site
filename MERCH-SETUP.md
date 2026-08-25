@@ -27,18 +27,18 @@ merch.js  ──►  renders the Merch section on the site
 
 Stripe is the source of truth for money, inventory, and addresses. The site is just the storefront. That means no backend, no database, nothing to break at 2am — and if Stripe hits the cap, the link dies on its own even if you're asleep.
 
-**Cost:** Stripe takes 2.9% + $0.30 per transaction. No monthly fee. On a $35 tee that's about $1.32.
+**Cost:** Stripe takes 2.9% + $0.30 per transaction. No monthly fee. On a $50 tee that's $1.75, leaving you $48.25.
 
 ---
 
-## Part 1 — Stripe (do this once per product)
+## Part 1 — Stripe
 
 ### 1. Create the product
 
 Stripe Dashboard → **Product catalogue** → **Add product**
 
 - Name: `Keep Me High Tee`
-- Price: `35.00 USD`, **One-off**
+- Price: `50.00 USD`, **One-off**
 - Upload the product image (Stripe shows it during checkout)
 
 ### 2. Create the payment link
@@ -55,8 +55,6 @@ In the payment link editor → **Custom fields** → **Add custom field**
 - Mark it **Required**
 
 This is how one link handles all sizes. The chosen size shows on the order in your Stripe dashboard and on the buyer's receipt.
-
-> Skip this step for one-size items like the poster.
 
 ### 4. Turn on shipping + set your rates
 
@@ -99,13 +97,11 @@ Paste: `https://ajvitanza.com/thanks.html`
 
 You'll get something like `https://buy.stripe.com/aEU7sK1234abcd`. Save it — that goes into `merch.js`.
 
-**Repeat 1–7 for each product.**
-
 ### 8. Now do it all again in test mode
 
-Flip the **Test mode** toggle in the Stripe dashboard and repeat steps 1–7. Test mode is a completely separate world: separate products, separate links, fake cards, no money.
+Flip the **Test mode** toggle in the Stripe dashboard and repeat steps 1–7 for the same shirt. Test mode is a completely separate world: separate products, separate links, fake cards, no money.
 
-You'll end up with two links per product:
+You'll end up with two links:
 
 ```
 live:  https://buy.stripe.com/aEU7sK1234abcd
@@ -127,14 +123,15 @@ There's also a hard guard: if a test link ever ends up in the live slot, the but
 Drop them in `images/merch/` with these names:
 
 ```
-tee-front.jpg      tee-back.jpg
-hoodie-front.jpg   hoodie-back.jpg
-poster.jpg
+tee-front.jpg      shown by default
+tee-back.jpg       optional — cross-fades in on hover
 ```
 
-Square (1:1), around 1200×1200, compressed to 200–400KB. Dark backgrounds blend best with the site. Back images are optional — they cross-fade on hover.
+Square (1:1), around 1200×1200, compressed to 200–400KB. Dark backgrounds blend best with the site.
 
-Missing files degrade gracefully to a dashed "Artwork coming" placeholder, so you can deploy in any order.
+The two files sitting there now are generated placeholders — delete them when the real shots arrive. Missing files degrade to a dashed "Artwork coming" placeholder, so you can deploy in any order.
+
+Worth shooting the signed graphic card alongside the shirt. It's the reason to buy in the presale rather than at the show, and at the moment it's described in text but never shown.
 
 ### 2. Fill in `merch.js`
 
@@ -145,8 +142,9 @@ phase: 'presale',          // was 'teaser'
 
 presale: {
     showCounter: true,
-    totalUnits: 100,
-    unitsRemaining: 100
+    totalUnits: 50,        // the presale allocation, not the 200-shirt run
+    unitsRemaining: 50,
+    urgentBelow: 12
 },
 
 products: [
@@ -154,7 +152,7 @@ products: [
         id: 'tee',
         name: 'Keep Me High Tee',
         subtitle: 'Heavyweight cotton — Black',
-        price: 35,
+        price: 50,
         image: 'images/merch/tee-front.jpg',
         imageAlt: 'images/merch/tee-back.jpg',
         sizes: ['S', 'M', 'L', 'XL', 'XXL'],
@@ -162,12 +160,11 @@ products: [
         stripeLinkTest: 'https://buy.stripe.com/test_aEU7sK1234abcd',   // ← test
         status: null,
         badge: 'Presale Exclusive'
-    },
-    // ...
+    }
 ]
 ```
 
-Adjust prices, names, and copy to match the actual goods.
+One product in the array means the section renders as a wide feature layout rather than a grid. Add a second and it becomes a grid automatically.
 
 ### 3. Deploy to staging
 

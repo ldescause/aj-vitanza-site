@@ -124,7 +124,7 @@ var MERCH_CONFIG = {
             id: 'tee',
             name: 'Keep Me High Tee',
             subtitle: 'Heavyweight cotton — Black',
-            price: 35,
+            price: 50,
             image: 'images/merch/tee-front.jpg',
             imageAlt: 'images/merch/tee-back.jpg',
             sizes: ['S', 'M', 'L', 'XL', 'XXL'],
