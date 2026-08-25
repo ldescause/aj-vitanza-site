@@ -1388,32 +1388,21 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
 
 /* ---------- Head ---------- */
 .merch-head {
-    display: grid;
-    /* minmax(0,…) is load-bearing: without it the oversized title's
-       min-content width pushes the second column into a narrow strip. */
-    grid-template-columns: minmax(0, 1.05fr) minmax(300px, 1fr);
-    gap: clamp(28px, 4vw, 60px);
-    align-items: end;
-    margin-bottom: clamp(48px, 6vw, 76px);
+    /* Deliberately NOT a side-by-side grid. "MERCH" is a single unbreakable
+       word at display scale — in a narrow column it cannot wrap, so it
+       overflows and collides with whatever sits beside it. Stacking makes
+       that collision structurally impossible. */
+    margin-bottom: clamp(40px, 5vw, 64px);
 }
 .merch-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(3rem, 7.5vw, 6.5rem);
-    font-weight: 800;
-    letter-spacing: -0.045em;
-    line-height: 0.88;
-    color: var(--text-bright);
-    text-transform: uppercase;
+    /* Sized off the container, not the viewport, so the word always fits:
+       "MERCH" is ~3.6em wide, hence the /3.8 divisor with headroom. */
+    font-size: min(11vw, 7.5rem, calc((min(100vw, 1100px) - 100px) / 3.8));
+    line-height: 0.9;
+    margin-bottom: clamp(22px, 3vw, 34px);
+    white-space: nowrap;
 }
-.merch-title .char {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
-}
-.merch-title .char.revealed { opacity: 1; transform: translateY(0); }
-
-.merch-head-side { padding-bottom: 10px; }
+.merch-head-side { max-width: 620px; }
 .merch-eyebrow {
     display: inline-flex;
     align-items: center;
@@ -1837,12 +1826,7 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
 
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
-    .merch-head {
-        grid-template-columns: 1fr;
-        align-items: start;
-        gap: 26px;
-    }
-    .merch-head-side { padding-bottom: 0; }
+    .merch-head-side { max-width: none; }
 }
 @media (max-width: 768px) {
     .nav-links a:nth-child(n+5) { display: none; }
@@ -2003,6 +1987,62 @@ body.has-staging-bar .footer { padding-bottom: 78px; }
     .staging-bar-links a { padding: 3px 8px; font-size: 0.58rem; }
     body.has-staging-bar .footer { padding-bottom: 108px; }
 }
+/* ============================================
+   HEADINGS — one treatment sitewide
+   Every display heading is Syne 800, uppercase, with the same
+   blue-to-white gradient the hero uses. Previously only the hero
+   set a font-family, so every other heading silently fell back to
+   Space Grotesk and the site read as two different designs.
+   ============================================ */
+.hero-title,
+.merch-title,
+.section-title,
+.release-title,
+.connect-heading {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    color: var(--text-bright);
+}
+
+/* merch-title lost its own char rule when the head was restructured */
+.merch-title .char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+}
+.merch-title .char.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hero-title .char,
+.merch-title .char,
+.section-title .char,
+.release-title .char,
+.connect-heading .char {
+    background: linear-gradient(
+        160deg,
+        var(--text-bright) 20%,
+        var(--accent-ice) 50%,
+        var(--accent) 80%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Headings that never got split into chars (JS off, reduced motion)
+   still need the gradient, so paint the parent as a fallback. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+    .merch-title,
+    .section-title,
+    .release-title,
+    .connect-heading { color: var(--text-bright); }
+}
+
 /* ---------- Reduce Motion ---------- */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
