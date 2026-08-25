@@ -94,12 +94,16 @@
             <img src="images/swoosh-mark.png" alt="AJ Vitanza" class="nav-logo-img" width="400" height="400" decoding="async">
         </a>
         <div class="nav-links">
+            <a href="#merch" data-magnetic><span data-text="Merch">Merch</span></a>
             <a href="#release" data-magnetic><span data-text="New">New</span></a>
             <a href="#music" data-magnetic><span data-text="Music">Music</span></a>
             <a href="#videos" data-magnetic><span data-text="Videos">Videos</span></a>
-            <a href="#merch" data-magnetic><span data-text="Merch">Merch</span></a>
             <a href="#connect" data-magnetic><span data-text="Connect">Connect</span></a>
         </div>
+        <a href="/merch" class="nav-shop" data-magnetic data-ripple>
+            <span class="nav-shop-dot"></span>
+            <span>Shop</span>
+        </a>
     </nav>
 
     <!-- ==================== HERO ==================== -->
@@ -124,12 +128,11 @@
             <h1 class="hero-title" data-split>AJ VITANZA</h1>
             <p class="hero-sub" data-reveal>KEEP ME HIGH</p>
             <div class="hero-actions" data-reveal>
-                <a href="#release" class="btn btn--primary" data-magnetic data-ripple>
-                    <span>Listen Now</span>
+                <a href="#merch" class="btn btn--primary" data-magnetic data-ripple>
+                    <span>Shop The Tee</span>
                 </a>
-                <a href="https://open.spotify.com/artist/4cYjXmjtYTr8km9NLjC7xe" target="_blank" rel="noopener" class="btn btn--ghost" data-magnetic data-ripple>
-                    <span>Spotify</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                <a href="#release" class="btn btn--ghost" data-magnetic data-ripple>
+                    <span>Listen Now</span>
                 </a>
             </div>
         </div>
@@ -140,6 +143,58 @@
 
         <div class="hero-swoosh">
             <img src="images/swoosh-mark.png" alt="" width="400" height="400" decoding="async" loading="lazy">
+        </div>
+    </section>
+
+    <!-- ==================== MERCH ====================
+         All content is driven by MERCH_CONFIG in merch.js.
+         Don't hand-edit product cards here — edit merch.js. -->
+    <section class="merch" id="merch">
+        <div class="merch-bg">
+            <div class="merch-orb"></div>
+        </div>
+        <div class="section-inner">
+            <span class="label merch-label" data-reveal>01. — Wear It</span>
+
+            <div class="merch-head">
+                <h2 class="merch-title" data-split>Merch</h2>
+                <div class="merch-head-side" data-reveal>
+                    <span class="merch-eyebrow">
+                        <span class="merch-eyebrow-dot"></span>
+                        <span class="merch-eyebrow-text">Coming Soon</span>
+                    </span>
+                    <p class="merch-blurb"></p>
+                </div>
+            </div>
+
+            <!-- drop meta: countdown + units remaining -->
+            <div class="merch-meta" hidden>
+                <div class="merch-countdown" hidden data-reveal>
+                    <span class="merch-meta-label merch-countdown-label"></span>
+                    <div class="merch-countdown-clock">
+                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="days">—</span><span class="merch-cd-cap">days</span></div>
+                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="hours">—</span><span class="merch-cd-cap">hrs</span></div>
+                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="mins">—</span><span class="merch-cd-cap">min</span></div>
+                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="secs">—</span><span class="merch-cd-cap">sec</span></div>
+                    </div>
+                    <span class="merch-countdown-venue"></span>
+                </div>
+
+                <div class="merch-counter" hidden data-reveal>
+                    <span class="merch-meta-label">Stock remaining</span>
+                    <div class="merch-counter-head">
+                        <span class="merch-counter-num">—</span>
+                        <span class="merch-counter-total"></span>
+                    </div>
+                    <div class="merch-counter-bar">
+                        <div class="merch-counter-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="merch-grid"></div>
+
+            <p class="merch-shipping-note" data-reveal></p>
         </div>
     </section>
 
@@ -156,7 +211,7 @@
                 </div>
 
                 <div class="release-info">
-                    <span class="label" data-reveal>01. — Latest Release</span>
+                    <span class="label" data-reveal>02. — Latest Release</span>
                     <h2 class="release-title" data-split>KEEP ME HIGH</h2>
                     <p class="release-meta" data-reveal>Single — 2025</p>
 
@@ -214,7 +269,7 @@
     <!-- ==================== MUSIC ==================== -->
     <section class="music" id="music">
         <div class="section-inner">
-            <span class="label" data-reveal>02. — Listen</span>
+            <span class="label" data-reveal>03. — Listen</span>
             <h2 class="section-title" data-split>Music</h2>
             <div class="music-embed" data-reveal="scale">
                 <iframe
@@ -245,7 +300,7 @@
     <!-- ==================== VIDEOS ==================== -->
     <section class="videos" id="videos">
         <div class="section-inner">
-            <span class="label" data-reveal>03. — Watch</span>
+            <span class="label" data-reveal>04. — Watch</span>
             <h2 class="section-title" data-split>Videos</h2>
         </div>
         <div class="videos-carousel" id="videosCarousel">
@@ -287,58 +342,6 @@
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
                 </a>
             </div>
-        </div>
-    </section>
-
-    <!-- ==================== MERCH ====================
-         All content is driven by MERCH_CONFIG in merch.js.
-         Don't hand-edit product cards here — edit merch.js. -->
-    <section class="merch" id="merch">
-        <div class="merch-bg">
-            <div class="merch-orb"></div>
-        </div>
-        <div class="section-inner">
-            <span class="label merch-label" data-reveal>04. — Wear It</span>
-
-            <div class="merch-head">
-                <h2 class="merch-title" data-split>Merch</h2>
-                <div class="merch-head-side" data-reveal>
-                    <span class="merch-eyebrow">
-                        <span class="merch-eyebrow-dot"></span>
-                        <span class="merch-eyebrow-text">Coming Soon</span>
-                    </span>
-                    <p class="merch-blurb"></p>
-                </div>
-            </div>
-
-            <!-- drop meta: countdown + units remaining -->
-            <div class="merch-meta" hidden>
-                <div class="merch-countdown" hidden data-reveal>
-                    <span class="merch-meta-label merch-countdown-label"></span>
-                    <div class="merch-countdown-clock">
-                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="days">—</span><span class="merch-cd-cap">days</span></div>
-                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="hours">—</span><span class="merch-cd-cap">hrs</span></div>
-                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="mins">—</span><span class="merch-cd-cap">min</span></div>
-                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="secs">—</span><span class="merch-cd-cap">sec</span></div>
-                    </div>
-                    <span class="merch-countdown-venue"></span>
-                </div>
-
-                <div class="merch-counter" hidden data-reveal>
-                    <span class="merch-meta-label">Stock remaining</span>
-                    <div class="merch-counter-head">
-                        <span class="merch-counter-num">—</span>
-                        <span class="merch-counter-total"></span>
-                    </div>
-                    <div class="merch-counter-bar">
-                        <div class="merch-counter-fill"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="merch-grid"></div>
-
-            <p class="merch-shipping-note" data-reveal></p>
         </div>
     </section>
 

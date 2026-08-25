@@ -33,7 +33,8 @@ var MERCH_CONFIG = {
 
     /* ---------- SECTION COPY ---------- */
     copy: {
-        label: '04. — Wear It',
+        label: '01. — Wear It',      // homepage section (numbered like its siblings)
+        labelPage: 'Official Store', // standalone /merch page
         title: 'Merch',
         teaser: {
             eyebrow: 'Coming Soon',
@@ -169,13 +170,32 @@ var MERCH_CONFIG = {
         document.head.appendChild(robots);
     }
 
+    /* Is this the standalone /merch page, or the homepage section? */
+    var isStandalone = document.body.classList.contains('page-merch');
+
     /* ---------------------------------------------------------
        KILL SWITCH
        --------------------------------------------------------- */
     if (!cfg.enabled) {
-        section.remove();
+        if (isStandalone) {
+            /* Removing everything would leave a blank page, so say something
+               instead. The page still exists — people have the link. */
+            var grid0 = section.querySelector('.merch-grid');
+            var meta0 = section.querySelector('.merch-meta');
+            if (meta0) meta0.hidden = true;
+            if (grid0) grid0.innerHTML = '';
+            setText('.merch-label', 'Official Store');
+            setText('.merch-eyebrow-text', 'Nothing available');
+            setText('.merch-blurb',
+                'There’s no merch on sale right now. Sign up below and you’ll hear first when the next drop goes live.');
+            setText('.merch-shipping-note', '');
+        } else {
+            section.remove();
+        }
         var navLink = document.querySelector('.nav-links a[href="#merch"]');
         if (navLink) navLink.remove();
+        var navShop = document.querySelector('.nav-shop:not(.nav-shop--alt)');
+        if (navShop) navShop.remove();
         return;
     }
 
@@ -253,7 +273,9 @@ var MERCH_CONFIG = {
     /* ---------------------------------------------------------
        RENDER
        --------------------------------------------------------- */
-    setText('.merch-label', cfg.copy.label);
+    setText('.merch-label', isStandalone
+        ? (cfg.copy.labelPage || cfg.copy.label)
+        : cfg.copy.label);
     setText('.merch-eyebrow-text', copy.eyebrow);
     setText('.merch-blurb', copy.blurb);
     setText('.merch-shipping-note', phase === 'soldout' ? '' : cfg.shippingNote);

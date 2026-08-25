@@ -28,13 +28,24 @@
 # ============================================
 # REDIRECTS
 # ============================================
-# Clean shareable URL for the drop — put this in stories/texts:
+# Clean shareable URL for the drop — put this in stories/texts/bio:
 #   ajvitanza.com/merch
+# 200 = rewrite, so the URL stays /merch rather than showing /merch.html
 [[redirects]]
   from = "/merch"
-  to = "/#merch"
-  status = 302
-  force = true
+  to = "/merch.html"
+  status = 200
+
+# Common variations people will type or you'll paste by mistake
+[[redirects]]
+  from = "/shop"
+  to = "/merch.html"
+  status = 200
+
+[[redirects]]
+  from = "/store"
+  to = "/merch.html"
+  status = 200
 
 # Pretty URL for the confirmation page.
 [[redirects]]
@@ -58,6 +69,11 @@
 # on the next page load, not whenever a CDN feels like it.
 [[headers]]
   for = "/merch.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/merch.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 

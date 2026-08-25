@@ -226,7 +226,12 @@
 
     // Add ?skipintro to the URL to jump straight to the site.
     // Invaluable when you're reloading 50 times to tweak the merch section.
+    //
+    // Pages without the intro markup (merch.html) also take this path — the
+    // gate only exists on the homepage, and without this guard the listener
+    // below would throw on a null element and kill every other script.
     var skipIntro = prefersReducedMotion ||
+        !gate || !gateBtn ||
         /[?&]skipintro/i.test(window.location.search);
 
     if (skipIntro) {

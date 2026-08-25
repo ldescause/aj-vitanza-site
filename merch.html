@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merch — AJ Vitanza</title>
+    <meta name="description" content="Official AJ Vitanza merch. The Keep Me High tee — limited presale, includes a graphic card signed by AJ.">
+
+    <link rel="canonical" href="https://ajvitanza.com/merch">
+
+    <meta property="og:title" content="AJ Vitanza — Keep Me High Tee">
+    <meta property="og:description" content="Limited presale. Every order includes a graphic card signed by AJ.">
+    <meta property="og:type" content="product">
+    <meta property="og:url" content="https://ajvitanza.com/merch">
+    <meta property="og:image" content="https://ajvitanza.com/images/merch/tee-front.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AJ Vitanza — Keep Me High Tee">
+    <meta name="twitter:description" content="Limited presale. Every order includes a graphic card signed by AJ.">
+    <meta name="twitter:image" content="https://ajvitanza.com/images/merch/tee-front.jpg">
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="images/swoosh-mark.png">
+    <link rel="apple-touch-icon" href="images/swoosh-mark.png">
+
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-R5WDWDH7RJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-R5WDWDH7RJ');
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="page-merch">
+
+    <div class="grain" aria-hidden="true"></div>
+
+    <div class="cursor" id="cursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-glow"></div>
+    </div>
+
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Navigation -->
+    <nav class="nav nav--solid" id="nav">
+        <a href="/" class="nav-logo" data-magnetic>
+            <img src="images/swoosh-mark.png" alt="AJ Vitanza" class="nav-logo-img" width="400" height="400" decoding="async">
+        </a>
+        <div class="nav-links">
+            <a href="/" data-magnetic><span data-text="Home">Home</span></a>
+            <a href="/#release" data-magnetic><span data-text="New">New</span></a>
+            <a href="/#music" data-magnetic><span data-text="Music">Music</span></a>
+            <a href="/#videos" data-magnetic><span data-text="Videos">Videos</span></a>
+            <a href="/#connect" data-magnetic><span data-text="Connect">Connect</span></a>
+        </div>
+        <a href="https://open.spotify.com/artist/4cYjXmjtYTr8km9NLjC7xe" target="_blank" rel="noopener" class="nav-shop nav-shop--alt" data-magnetic data-ripple>
+            <span>Listen</span>
+        </a>
+    </nav>
+
+    <!-- ==================== MERCH ====================
+         Same markup and same merch.js config as the homepage section.
+         Edit merch.js, not this file. -->
+    <section class="merch merch--page" id="merch">
+        <div class="merch-bg">
+            <div class="merch-orb"></div>
+        </div>
+        <div class="section-inner">
+            <span class="label merch-label" data-reveal>Official Store</span>
+
+            <div class="merch-head">
+                <h2 class="merch-title" data-split>Merch</h2>
+                <div class="merch-head-side" data-reveal>
+                    <span class="merch-eyebrow">
+                        <span class="merch-eyebrow-dot"></span>
+                        <span class="merch-eyebrow-text">Coming Soon</span>
+                    </span>
+                    <p class="merch-blurb"></p>
+                </div>
+            </div>
+
+            <div class="merch-meta" hidden>
+                <div class="merch-countdown" hidden data-reveal>
+                    <span class="merch-meta-label merch-countdown-label"></span>
+                    <div class="merch-countdown-clock">
+                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="days">—</span><span class="merch-cd-cap">days</span></div>
+                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="hours">—</span><span class="merch-cd-cap">hrs</span></div>
+                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="mins">—</span><span class="merch-cd-cap">min</span></div>
+                        <div class="merch-cd-unit"><span class="merch-cd-num" data-cd="secs">—</span><span class="merch-cd-cap">sec</span></div>
+                    </div>
+                    <span class="merch-countdown-venue"></span>
+                </div>
+
+                <div class="merch-counter" hidden data-reveal>
+                    <span class="merch-meta-label">Stock remaining</span>
+                    <div class="merch-counter-head">
+                        <span class="merch-counter-num">—</span>
+                        <span class="merch-counter-total"></span>
+                    </div>
+                    <div class="merch-counter-bar">
+                        <div class="merch-counter-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="merch-grid"></div>
+
+            <p class="merch-shipping-note" data-reveal></p>
+        </div>
+    </section>
+
+    <!-- ==================== BACK TO SITE ==================== -->
+    <section class="merch-outro">
+        <div class="section-inner merch-outro-inner">
+            <p class="merch-outro-text" data-reveal>New music, shows &amp; exclusives — straight to you.</p>
+            <div class="merch-outro-actions" data-reveal>
+                <a href="https://drop.cobrand.com/d/AJVitanza/updates" target="_blank" rel="noopener" class="btn btn--primary" data-magnetic data-ripple>
+                    <span>Sign Up</span>
+                </a>
+                <a href="/" class="btn btn--ghost" data-magnetic data-ripple>
+                    <span>Back to Site</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div class="section-inner footer-inner">
+            <div class="footer-socials">
+                <a href="https://www.instagram.com/ajvitanza/" target="_blank" rel="noopener" aria-label="Instagram" data-magnetic>
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                </a>
+                <a href="https://www.tiktok.com/@ajvitanza" target="_blank" rel="noopener" aria-label="TikTok" data-magnetic>
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                </a>
+                <a href="https://open.spotify.com/artist/4cYjXmjtYTr8km9NLjC7xe" target="_blank" rel="noopener" aria-label="Spotify" data-magnetic>
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02z"/></svg>
+                </a>
+                <a href="https://www.youtube.com/channel/UCZKk2Y6Uu-bgNiOxLEwxOQw" target="_blank" rel="noopener" aria-label="YouTube" data-magnetic>
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <a href="https://www.bandsintown.com/a/15612255-aj-vitanza" target="_blank" rel="noopener" aria-label="Bandsintown" data-magnetic>
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M2.727 6h2.182v12H2.727V6zm4.364 4.363h2.182V18H7.09v-7.637zm4.363 0h2.182V18h-2.182v-7.637zm4.364-4.363h2.182v12h-2.182V6zM0 0v24h24V0H0zm22.91 22.91H1.09V1.09h21.82v21.82z"/></svg>
+                </a>
+            </div>
+            <p class="footer-copy">&copy; 2026 AJ Vitanza</p>
+        </div>
+    </footer>
+
+    <script src="merch.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
