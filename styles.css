@@ -1615,6 +1615,7 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
     color: var(--text-dim);
     border: 1px solid rgba(120, 160, 210, 0.22);
     box-shadow: none;
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
 }
 .merch-badge--low {
@@ -1852,6 +1853,7 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
 .merch--page {
     padding-top: calc(var(--nav-h) + clamp(34px, 4vw, 54px));
     min-height: 100vh;
+    min-height: 100dvh;   /* iOS: 100vh ignores the browser chrome */
 }
 .merch--page .merch-label {
     font-size: 0.72rem;
@@ -1900,6 +1902,7 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
     gap: 8px 16px;
     padding: 10px clamp(14px, 3vw, 26px);
     background: rgba(8, 12, 20, 0.94);
+    -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
     border-top: 1px solid rgba(255, 176, 90, 0.35);
     box-shadow: 0 -8px 34px rgba(0, 0, 0, 0.45);
@@ -2024,6 +2027,90 @@ body.has-staging-bar .footer { padding-bottom: 78px; }
     .section-title,
     .release-title,
     .connect-heading { color: var(--text-bright); }
+}
+
+/* ============================================
+   iOS / TOUCH
+   ============================================ */
+
+/* Grey flash box on every tap. */
+* { -webkit-tap-highlight-color: transparent; }
+
+/* Anchor jumps land under the fixed nav without this. */
+html { scroll-padding-top: calc(var(--nav-h) + 16px); }
+
+/* Safari won't clip a transformed/scaled child to a rounded corner unless
+   the parent is masked. Without this the product image bleeds square
+   corners over the card radius on scroll. */
+.merch-card-media {
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+    mask-image: radial-gradient(white, black);
+}
+
+/* Notch and home-indicator clearance. */
+.nav {
+    padding-left: max(clamp(20px, 4vw, 48px), env(safe-area-inset-left));
+    padding-right: max(clamp(20px, 4vw, 48px), env(safe-area-inset-right));
+}
+.staging-bar {
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+}
+.footer-inner {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ---- Touch devices: hover states latch on tap and stay stuck ----
+   A tapped card keeps its lifted, back-image-showing state until you
+   tap elsewhere, which reads as a rendering bug. Neutralise them. */
+@media (hover: none) {
+    .merch-card:hover { transform: none; }
+    .merch-card:hover .merch-card-media {
+        border-color: var(--border);
+        box-shadow: none;
+    }
+    .merch-card:hover .merch-card-img { transform: none; }
+    .merch-card:hover .merch-card-img--alt { opacity: 0; }
+    .merch-card:hover .merch-size {
+        border-color: rgba(120, 160, 210, 0.16);
+        color: var(--text-dim);
+    }
+    .btn--primary:hover,
+    .nav-shop:hover { transform: none; }
+    .btn--ghost:hover {
+        border-color: rgba(120, 160, 210, 0.2);
+        background: transparent;
+        color: var(--text);
+    }
+    .vid-card:hover .vid-card-img { transform: none; }
+    .vid-card:hover .vid-card-img img { transform: none; }
+
+    /* the play chevron only appears on hover — always show it on touch */
+    .vid-card .vid-card-play { opacity: 1; }
+
+    /* tap feedback, since hover can't provide any */
+    .btn:active,
+    .nav-shop:active,
+    .merch-card:active { transform: scale(0.985); }
+}
+
+/* ---- Phone layout ---- */
+@media (max-width: 560px) {
+    /* Comfortable thumb targets everywhere that matters. */
+    .merch-size {
+        min-width: 44px;
+        min-height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .merch-btn { padding: 17px 24px; }
+
+    /* The meta band stacks; keep countdown and stock from colliding. */
+    .merch-meta { gap: 18px; }
+    .merch-counter { min-width: 100%; }
+
+    /* Long single words (MERCH) must never force a horizontal scroll. */
+    .merch-title { white-space: normal; }
 }
 
 /* ---------- Reduce Motion ---------- */
