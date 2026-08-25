@@ -54,6 +54,21 @@ var MERCH_CONFIG = {
         }
     },
 
+    /* ---------- HERO ----------
+       The homepage hero is merch-led, so its copy is driven from here too.
+       Otherwise the hero could still say "Presale Now Open" days after the
+       section below it went sold out — the exact kind of drift that makes a
+       site look abandoned.
+
+       Set enabled: false to leave the hero markup alone. */
+    hero: {
+        enabled: true,
+        teaser:  { eyebrow: 'Merch — Dropping Soon',     sub: 'KEEP ME HIGH TEE', cta: 'See The Tee' },
+        presale: { eyebrow: 'Presale Open — 50 Units',   sub: 'KEEP ME HIGH TEE', cta: 'Shop The Tee' },
+        live:    { eyebrow: 'Merch — Available Now',     sub: 'KEEP ME HIGH TEE', cta: 'Shop The Tee' },
+        soldout: { eyebrow: 'Presale Sold Out',          sub: 'KEEP ME HIGH TEE', cta: 'See The Merch' }
+    },
+
     /* ---------- PRESALE COUNTER ----------
        Stripe enforces the real cap (each payment link auto-deactivates when
        it hits its limit). This counter is cosmetic — update `unitsRemaining`
@@ -268,6 +283,18 @@ var MERCH_CONFIG = {
             '</span>';
         document.body.appendChild(bar);
         document.body.classList.add('has-staging-bar');
+    }
+
+    /* ---------------------------------------------------------
+       HERO COPY (homepage only)
+       --------------------------------------------------------- */
+    if (cfg.hero && cfg.hero.enabled && !isStandalone) {
+        var h = cfg.hero[phase];
+        if (h) {
+            setDocText('.hero-eyebrow-text', h.eyebrow);
+            setDocText('.hero-sub', h.sub);
+            setDocText('.hero-cta-text', h.cta);
+        }
     }
 
     /* ---------------------------------------------------------
@@ -562,6 +589,13 @@ var MERCH_CONFIG = {
     function setText(sel, txt) {
         var n = section.querySelector(sel);
         if (n) n.textContent = txt || '';
+    }
+
+    /* Same, but scoped to the whole document — the hero lives outside
+       the merch section. */
+    function setDocText(sel, txt) {
+        var n = document.querySelector(sel);
+        if (n && txt) n.textContent = txt;
     }
 
     function formatPrice(v) {

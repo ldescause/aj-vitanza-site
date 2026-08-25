@@ -260,7 +260,7 @@
     var BOOT_LINES = [
         { text: 'BIOS v4.2.1 — AJ VITANZA SYSTEMS', speed: 5, pause: 120, status: null },
         { text: 'Loading audio subsystem', speed: 4, pause: 60, status: 'OK', progress: true },
-        { text: 'Mounting media: KEEP_ME_HIGH.wav', speed: 4, pause: 60, status: 'READY', progress: true },
+        { text: 'Mounting inventory: KMH_TEE — 50 UNITS', speed: 4, pause: 60, status: 'READY', progress: true },
         { text: 'Signal acquired — 48kHz / 24bit', speed: 4, pause: 80, status: null },
         { text: 'All systems nominal', speed: 6, pause: 180, status: null },
     ];
