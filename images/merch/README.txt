@@ -21,7 +21,7 @@ WORTH SHOOTING
   and right now it's described in text but never shown. One extra frame.
 
 CACHING
-  netlify.toml caches this folder for one hour, not the year that the
+  vercel.json caches this folder for one hour, not the year that the
   rest of /images gets. That's deliberate: you'll be swapping these files
   while keeping the filenames, and a year-long immutable cache would keep
   serving the placeholder to anyone who'd already loaded the page.

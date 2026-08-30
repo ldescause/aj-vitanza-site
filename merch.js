@@ -217,8 +217,8 @@ var MERCH_CONFIG = {
     var isProd = cfg.productionHosts.indexOf(host) !== -1;
 
     /* Staging gets noindex so the drop never leaks into search results.
-       (Netlify already sends X-Robots-Tag on branch deploys — this is
-       belt and braces, and covers local file:// previews too.) */
+       (Vercel already sends X-Robots-Tag: noindex on preview deployments
+       — this is belt and braces, and covers local file:// previews too.) */
     if (!isProd) {
         var robots = document.createElement('meta');
         robots.name = 'robots';

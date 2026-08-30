@@ -8,9 +8,12 @@ Launch is one merge.
 
 ## How this is wired
 
+**Hosting is Vercel** (project `aj-vitanza-site`, team Desca), deploying from `ldescause/aj-vitanza-site`.
+
 ```
-main branch  ──────────────►  ajvitanza.com          (unchanged, no merch)
-merch-drop branch  ────────►  merch-drop--<site>.netlify.app   (full merch, test mode)
+main branch  ──────────────►  ajvitanza.com                    (unchanged, no merch)
+merch-drop branch  ────────►  aj-vitanza-site-git-merch-drop-desca.vercel.app
+                                                               (full merch, test mode)
 ```
 
 The site detects which one it's running on by hostname and behaves differently:
@@ -27,12 +30,21 @@ That switch is automatic. There is no step where you swap test links for live on
 
 ---
 
-## Step 1 — Turn on branch deploys (once)
+## Step 1 — Staging — ✅ AUTOMATIC
 
-Netlify dashboard → **Site configuration → Build & deploy → Branch deploys**
-→ *Let me add individual branches* → add `merch-drop`
+Nothing to configure. Vercel builds a preview for **every branch on every push**, so any push to `merch-drop` produces a staging URL:
 
-You'll get a URL like `https://merch-drop--ajvitanza.netlify.app`. That's your staging site. Bookmark it.
+```
+https://aj-vitanza-site-git-merch-drop-desca.vercel.app
+```
+
+Every individual commit also gets its own permanent URL, so you can always go back and look at an earlier state.
+
+> ⚠️ **Do not delete the Netlify account or the `ajvitanza.com` DNS zone.**
+> Hosting moved to Vercel, but **Netlify is still the authoritative nameserver** for the domain — the registrar points at `dns1–4.p03.nsone.net`. The two DNS records inside that zone now point at Vercel. Delete the zone and the domain stops resolving entirely.
+>
+> The Netlify *site* (`lucent-fudge-f77356`) is now unused and safe to delete. The **DNS zone is not.**
+> To fully cut ties with Netlify later, move the nameservers to another DNS provider first, then delete the zone.
 
 ---
 
@@ -121,7 +133,7 @@ git merge merch-drop
 git push
 ```
 
-Netlify builds `main` → live on ajvitanza.com in about a minute.
+Vercel builds `main` → live on ajvitanza.com in well under a minute.
 
 The moment it's on the real domain, the site flips itself: live Stripe links, no staging bar, analytics on, indexable. Nothing to remember.
 
@@ -185,7 +197,7 @@ Edit `merch.js` on `main`, commit, push. `merch.js` is set to never cache, so ch
 
 **Stop sales but keep the page:** deactivate the payment links in the Stripe dashboard — instant, no deploy needed. Buttons stay but checkout refuses. This is the fastest lever you have.
 
-**Roll back the whole site:** Netlify → Deploys → find the last good one → *Publish deploy*. Instant, no git.
+**Roll back the whole site:** Vercel → Deployments → find the last good one → *Promote to Production*. Instant, no git.
 
 ---
 
