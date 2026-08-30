@@ -1,221 +1,128 @@
-# Merch Drop — Setup Runbook
+# Merch Drop — Status & Runbook
 
-**This drop:** one T-shirt, 200 printed. 50 released as an online presale; the remaining 150 go to the merch table at the show. Presale orders also get a graphic card signed by AJ — presale only.
+**Everything below is already built.** This document is now a reference for what exists and how to run the drop, not a to-do list. The remaining blockers are at the bottom.
 
-That means **one Stripe product, one payment link, capped at 50.**
+**The drop:** AJ Vitanza Debut T-Shirt, 194 printed, $50. 50 released as an online presale; the rest go to the merch table at the show. Presale orders include a graphic card signed by AJ.
 
-Everything is built. The site currently shows the Merch section in **teaser** mode: real layout, real prices, placeholder artwork, dead buttons that say "Dropping Soon." Nothing can be bought yet.
-
-You only ever edit one file: **`merch.js`**.
-
----
-
-## How the pieces fit
-
-```
-merch.js  ──►  renders the Merch section on the site
-   │
-   └── stripeLink  ──►  buy.stripe.com/...  (Stripe hosts checkout)
-                             │
-                             ├── collects size (dropdown)
-                             ├── collects shipping address
-                             ├── calculates shipping by destination
-                             ├── enforces the unit cap, then auto-deactivates
-                             │
-                             └──►  ajvitanza.com/thanks.html
-```
-
-Stripe is the source of truth for money, inventory, and addresses. The site is just the storefront. That means no backend, no database, nothing to break at 2am — and if Stripe hits the cap, the link dies on its own even if you're asleep.
-
-**Cost:** Stripe takes 2.9% + $0.30 per transaction. No monthly fee. On a $50 tee that's $1.75, leaving you $48.25.
+| Size | In the garage | Presale cap | Held for show |
+|---|---|---|---|
+| XS | 10 | 3 | 7 |
+| S | 65 | 17 | 48 |
+| M | 62 | 16 | 46 |
+| L | 43 | 11 | 32 |
+| XL | 14 | 3 | 11 |
+| **Total** | **194** | **50** | **144** |
 
 ---
 
-## Part 1 — Stripe
+## What exists in Stripe
 
-### 1. Create the product
+Account: **Ajvitanza** (AJ's, operating from California). Built in both test and live mode.
 
-Stripe Dashboard → **Product catalogue** → **Add product**
+**Five products**, one per size, named `AJ Vitanza Debut T-Shirt - XS` through `- XL`, all $50 one-off.
 
-- Name: `Keep Me High Tee`
-- Price: `50.00 USD`, **One-off**
-- Upload the product image (Stripe shows it during checkout)
+**Five payment links**, one per size. Each has:
 
-### 2. Create the payment link
+- Payment cap: **XS 3 · S 17 · M 16 · L 11 · XL 3** (sums to 50)
+- Quantity locked at 1, adjustable quantity **off**
+- Billing + shipping address, full name, phone number collected
+- Three shipping rates (below), 16 ship-to countries
+- Redirect to `https://ajvitanza.com/thanks.html`
 
-Product page → **Create payment link**
+**Three shipping rates**, account-level so every link shares them:
 
-### 3. Add the size dropdown
-
-In the payment link editor → **Custom fields** → **Add custom field**
-
-- Type: **Dropdown**
-- Label: `Size`
-- Options: `S`, `M`, `L`, `XL`, `XXL`
-- Mark it **Required**
-
-This is how one link handles all sizes. The chosen size shows on the order in your Stripe dashboard and on the buyer's receipt.
-
-### 4. Turn on shipping + set your rates
-
-Same editor → **Shipping address** → toggle on → pick the countries you'll ship to.
-
-Then **Shipping rates** → add one rate per zone:
-
-| Rate name | Price | Delivery estimate |
+| Rate | Price | Estimate |
 |---|---|---|
-| Pickup at the show | $0.00 | At the venue |
-| US Standard | $6.00 | 5–8 business days |
-| Canada | $15.00 | 7–14 business days |
-| International | $25.00 | 10–21 business days |
+| US Standard — United States only | $6.00 | 5–8 business days |
+| Canada only | $22.00 | 7–14 business days |
+| International — outside US & Canada | $35.00 | 10–21 business days |
 
-**One honest caveat:** Stripe Payment Links show the buyer *all* the rates you've defined and let them choose — they don't auto-detect location and filter the list. So label them unmistakably ("US Standard — United States only") or someone in Toronto will pick the $6 US rate. If a buyer picks wrong, you'll see the mismatch between their address and their chosen rate in the Stripe dashboard and can refund the difference or bill it.
+Priced against real USPS costs — First-Class Package International starts around $19.40 and a 2 lb parcel runs about $27.65, so the old $15/$25 numbers lost money on every order. Those two rates are archived, not deleted.
 
-If you outgrow that, the upgrade is a small Netlify serverless function that creates the Checkout Session and filters shipping options by the address in real time. Same design, same page — worth doing for drop #2 if this one moves volume. Not worth the setup for this one.
+**Ship-to countries:** US, Canada, UK, Ireland, Germany, France, Netherlands, Belgium, Spain, Italy, Sweden, Denmark, Norway, Australia, New Zealand, Japan.
 
-**On "Pickup at the show":** it's free and unrestricted, so anyone can select it. Fine if presale buyers are mostly local. If not, either drop the option or rename it `Pickup at the show — [City] [Date] ONLY`.
-
-### 5. Set the presale unit cap
-
-Same editor → **Advanced options** → **Limit the number of payments**
-
-**Set it to 50.** When it's hit, Stripe deactivates the link automatically and nobody can buy. This is your real inventory guard — the counter on the website is cosmetic.
-
-One wrinkle worth thinking through: the limit counts *payments*, not shirts. If you also enable **Adjustable quantity**, someone buying 3 shirts uses 1 of your 50 payments but 3 of your 50 shirts — and you'd oversell. Either leave adjustable quantity off (one shirt per order, cleanest), or turn it on and set the payment limit lower to compensate.
-
-Given you're holding back 150 for the show, leaving it off is the safer call.
-
-**On the signed card:** it isn't a separate Stripe product — it's included with every presale order. You don't need to model it in Stripe at all, just remember to pack one with each shirt. It's described on the site in the presale phase and disappears automatically when the phase changes.
-
-### 6. Set the confirmation page
-
-Same editor → **After payment** → **Redirect to your website**
-
-Paste: `https://ajvitanza.com/thanks.html`
-
-### 7. Copy the link
-
-You'll get something like `https://buy.stripe.com/aEU7sK1234abcd`. Save it — that goes into `merch.js`.
-
-### 8. Now do it all again in test mode
-
-Flip the **Test mode** toggle in the Stripe dashboard and repeat steps 1–7 for the same shirt. Test mode is a completely separate world: separate products, separate links, fake cards, no money.
-
-You'll end up with two links:
-
-```
-live:  https://buy.stripe.com/aEU7sK1234abcd
-test:  https://buy.stripe.com/test_aEU7sK1234abcd
-```
-
-Both go into `merch.js`. The site picks the right one by hostname — test links on the staging URL, live links on ajvitanza.com. You never swap them by hand, which is the step that tends to go wrong under pressure.
-
-There's also a hard guard: if a test link ever ends up in the live slot, the button refuses to render on the real domain rather than sending customers to a fake checkout.
-
-> Tedious? Yes. But it's the only way to test the full flow — size dropdown, shipping, payment, receipt, redirect — as many times as you want without paying fees or refunding yourself.
+**One honest caveat that hasn't changed:** Stripe Payment Links show every buyer all three rates and let them choose — they don't filter by address. Hence the blunt names. If someone in Toronto picks the $6 US rate, you'll see the mismatch in the dashboard and can bill or refund the difference.
 
 ---
 
-## Part 2 — The website
+## Why five links instead of one
 
-### 1. Add the photos
-
-Drop them in `images/merch/` with these names:
+A single link with a size dropdown caps *payments*, not sizes. One link capped at 50 would happily sell 50 XLs against 14 units of stock. Five links with their own caps mean Stripe kills each size the moment it's exhausted — no monitoring, no code, nothing to remember at 2am.
 
 ```
-tee-front.jpg      shown by default
-tee-back.jpg       optional — cross-fades in on hover
+merch.js  ──►  renders the Merch section
+   │
+   ├── XS → buy.stripe.com/5kQbJ3…  (cap 3)
+   ├── S  → buy.stripe.com/9B6aEZ…  (cap 17)
+   ├── M  → buy.stripe.com/bJe14p…  (cap 16)
+   ├── L  → buy.stripe.com/9B6fZj…  (cap 11)
+   └── XL → buy.stripe.com/bJe28t…  (cap 3)
 ```
 
-Square (1:1), around 1200×1200, compressed to 200–400KB. Dark backgrounds blend best with the site.
-
-The two files sitting there now are generated placeholders — delete them when the real shots arrive. Missing files degrade to a dashed "Artwork coming" placeholder, so you can deploy in any order.
-
-Worth shooting the signed graphic card alongside the shirt. It's the reason to buy in the presale rather than at the show, and at the moment it's described in text but never shown.
-
-### 2. Fill in `merch.js`
-
-Open it. Everything you need is in the `MERCH_CONFIG` block at the top.
-
-```js
-phase: 'presale',          // was 'teaser'
-
-presale: {
-    showCounter: true,
-    totalUnits: 50,        // the presale allocation, not the 200-shirt run
-    unitsRemaining: 50,
-    urgentBelow: 12
-},
-
-products: [
-    {
-        id: 'tee',
-        name: 'Keep Me High Tee',
-        subtitle: 'Heavyweight cotton — Black',
-        price: 50,
-        image: 'images/merch/tee-front.jpg',
-        imageAlt: 'images/merch/tee-back.jpg',
-        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-        stripeLink:     'https://buy.stripe.com/aEU7sK1234abcd',        // ← live
-        stripeLinkTest: 'https://buy.stripe.com/test_aEU7sK1234abcd',   // ← test
-        status: null,
-        badge: 'Presale Exclusive'
-    }
-]
-```
-
-One product in the array means the section renders as a wide feature layout rather than a grid. Add a second and it becomes a grid automatically.
-
-### 3. Deploy to staging
-
-All of this work happens on the `merch-drop` branch, which deploys to its own URL. `main` — the real site — stays untouched until launch.
-
-```bash
-git checkout merch-drop
-git add .
-git commit -m "Add merch photos and Stripe links"
-git push
-```
-
-See **LAUNCH.md** for the staging setup, the full test checklist, and the merge that takes it live.
+**The five URLs differ by a few characters.** Pasting one under two sizes means one size eats the other's cap and both buyers get the wrong shirt. The browser console warns if it spots a duplicate — look at it before you merge.
 
 ---
 
 ## Running the drop
 
-| Moment | What to change in `merch.js` |
-|---|---|
-| Building it out | `phase: 'teaser'` — layout visible, nothing buyable |
-| Presale opens | `phase: 'presale'` + paste the Stripe links |
-| During the presale | Update `unitsRemaining` as sales come in (Stripe dashboard shows the count) |
-| One item runs out | Set that product's `status: 'soldout'` |
-| Getting close | Set `status: 'lowstock'` for urgency |
-| Presale over | `phase: 'soldout'` — points people to the show |
-| Public launch | `phase: 'live'`, fresh Stripe links with no cap, `status: null` |
-| Emergency kill | `enabled: false` — section and nav link vanish entirely |
+`merch.js` is the only file you edit. Everything lives in the `MERCH_CONFIG` block at the top.
 
-The counter is manual on purpose. Stripe is what actually stops sales; the number on the site is a marketing device. If updating it by hand sounds annoying, set `showCounter: false` and the bar disappears — everything else still works.
+| Moment | What to change |
+|---|---|
+| Presale opens | `phase: 'presale'` (already set) |
+| During the presale | Update `presale.unitsRemaining` as sales come in |
+| **A size runs out** | Set that size's `soldout: true` |
+| Getting close | Set the product's `status: 'lowstock'` |
+| Presale over | `phase: 'soldout'` |
+| **Public launch** | Raise the five caps in Stripe (below). No code change. |
+| Emergency kill | `enabled: false` — section and nav link vanish |
+
+### Presale → public sale is one number per link
+
+Payment links stay editable after creation. When the presale ends, open each link in Stripe → Edit → change the payment cap:
+
+| Size | Presale cap | Public cap (full stock) |
+|---|---|---|
+| XS | 3 | **10** |
+| S | 17 | **65** |
+| M | 16 | **62** |
+| L | 11 | **43** |
+| XL | 3 | **14** |
+
+Same links, same URLs, same products, same shipping rates. **Nothing in `merch.js` changes** except `phase: 'live'` and dropping the presale bonus. That's the whole migration.
+
+### On sold-out sizes
+
+Stripe kills a capped-out link on its own, so a size stops selling whether or not you touch the site. Setting `soldout: true` is cosmetic — it turns a size that would otherwise look broken into one that visibly reads "gone". Worth doing within a few hours; not an emergency. If all five are marked sold out, the card flips to "Sold Out" by itself.
+
+---
+
+## Still blocking launch
+
+- [ ] **Real photos** into `images/merch/` (see the README in that folder). Placeholders degrade gracefully, so this doesn't block a deploy — only a good-looking one.
+- [ ] **California seller's permit.** Register free at CDTFA, add the registration in Stripe → Tax. Until then Stripe Tax is dormant: it collects nothing and costs nothing. Get it before the first California order lands, or AJ owes that tax out of pocket.
+- [ ] **One live test purchase.** Buy a shirt yourself with a real card, confirm the receipt names the size, confirm the redirect lands on `/thanks.html`, then refund it in Stripe.
 
 ---
 
 ## Before you open the presale
 
-- [ ] Run one **live-mode** test purchase with a real card. Buy it yourself.
-- [ ] Confirm the receipt email arrives and shows the selected size
-- [ ] Confirm the redirect lands on `/thanks.html`
-- [ ] Refund your test purchase in Stripe
-- [ ] Check the section on an actual phone, not just a narrow browser window
-- [ ] Confirm each link's payment cap is set — this is the one that costs real money if missed
-- [ ] Decide what happens if you oversell: refund, or fulfil late and eat the cost
+- [ ] Real photos in place, or accept the placeholder
+- [ ] Live-mode test purchase done and refunded
+- [ ] Receipt email arrives and **names the size** in the product line
+- [ ] Check the section on an actual phone, not a narrow browser window
+- [ ] Browser console clean on ajvitanza.com — it names any size whose link is missing, duplicated, or still in test mode
+- [ ] Confirm the five live caps still read 3 / 17 / 16 / 11 / 3
+- [ ] Sign 50 graphic cards and put them where you'll pack
 
 ---
 
 ## Things worth knowing
 
-**Taxes.** Stripe Tax is a paid add-on that auto-calculates sales tax. For a one-off merch run under a few thousand dollars you're likely fine without it, but that's a question for whoever does AJ's taxes, not for me — I'm not a tax advisor.
+**Taxes.** Sales tax follows the inventory, so it's California — not AJ's New York bank account. Register with CDTFA (free, online, usually instant), add it in Stripe, and tax gets collected on California-bound orders only. Roughly $130 of tax across the run and about $8 in Stripe Tax fees. The separate question of which state gets *income* tax on the profit, given a NY resident operating in CA, is worth asking a professional — it's the one item here that isn't obvious.
 
-**Fulfilment.** Stripe gives you an order list with addresses; you're packing and shipping yourself. Export the CSV from the Payments tab. If this becomes a recurring thing, Shopify Lite ($5/mo) or Printful is worth revisiting — Stripe Payment Links are perfect for one drop, less so for an ongoing store.
+**Fulfilment.** Stripe gives you an order list with addresses and phone numbers. Export the CSV from the Payments tab — the size is in the product name, so one sort gets you five stacks.
 
-**Refunds and lost packages.** Handle in the Stripe dashboard directly. Decide your policy now and put it in the shipping note so it's stated up front.
+**Refunds and lost packages.** Handle in the Stripe dashboard. Decide the policy now and state it up front.
 
-**Address collection.** Stripe collects and stores it — you never handle payment data or store addresses on your own site. That's the main reason this setup is the right call over anything custom.
+**Address collection.** Stripe collects and stores it — you never handle payment data or store addresses on your own site. That's the main reason this setup beats anything custom.

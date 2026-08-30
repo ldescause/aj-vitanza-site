@@ -92,3 +92,15 @@
   for = "/images/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# EXCEPTION: the merch shots get replaced (placeholder → real photos, and
+# possibly reshot mid-drop) while keeping the same filenames. Under the
+# immutable rule above, a browser that saw the placeholder would keep
+# serving it for a YEAR. One hour is plenty of caching for two images.
+#
+# Netlify applies the most specific matching rule, so this wins over
+# /images/* for anything in this folder.
+[[headers]]
+  for = "/images/merch/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"

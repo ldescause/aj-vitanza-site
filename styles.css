@@ -1677,6 +1677,50 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
     border-color: rgba(120, 160, 210, 0.28);
     color: var(--text);
 }
+
+/* ---- Selectable sizes ----
+   Each size is its own Stripe link, so these chips are real controls, not
+   decoration. They need to look pressable and read clearly when chosen. */
+.merch-size--pick {
+    cursor: pointer;
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 44px;
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.merch-size--pick:hover,
+.merch-size--pick:focus-visible {
+    border-color: rgba(120, 160, 210, 0.55);
+    color: var(--text);
+}
+.merch-size--pick:focus-visible {
+    outline: 2px solid rgba(120, 160, 210, 0.75);
+    outline-offset: 2px;
+}
+.merch-size.is-selected,
+.merch-card:hover .merch-size.is-selected {
+    border-color: var(--text);
+    background: var(--text);
+    color: var(--bg, #0a0d12);
+    font-weight: 500;
+}
+
+/* A size whose Stripe link is capped out or missing. Struck through so it
+   reads as "gone" rather than "we forgot to build this". */
+.merch-size.is-unavailable,
+.merch-card:hover .merch-size.is-unavailable {
+    opacity: 0.32;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    border-color: rgba(120, 160, 210, 0.1);
+    color: var(--text-dim);
+    cursor: not-allowed;
+}
+
 .merch-btn {
     margin-top: auto;
     width: 100%;

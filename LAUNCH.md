@@ -17,7 +17,7 @@ The site detects which one it's running on by hostname and behaves differently:
 
 | | Staging URL | ajvitanza.com |
 |---|---|---|
-| Stripe links used | `stripeLinkTest` — fake cards | `stripeLink` — real money |
+| Stripe links used | each size's `linkTest` — fake cards | each size's `link` — real money |
 | Orange staging bar | Yes | Never |
 | `?phase=` URL override | Works | Ignored |
 | Search engine indexing | Blocked | Normal |
@@ -36,7 +36,7 @@ You'll get a URL like `https://merch-drop--ajvitanza.netlify.app`. That's your s
 
 ---
 
-## Step 2 — Build everything on the branch
+## Step 2 — Build everything on the branch — ✅ DONE
 
 ```bash
 git checkout merch-drop
@@ -44,16 +44,15 @@ git checkout merch-drop
 
 Work here. Every push auto-deploys to the staging URL. `main` never moves.
 
-**Photos** → `images/merch/` as `tee-front.jpg` and `tee-back.jpg` (square, ~1200×1200, 200–400KB, dark backgrounds). Worth shooting the signed card next to the shirt — right now it is described but never shown.
+**Stripe** → ✅ Built. Five products and five payment links in **both** test and live mode, caps XS 3 / S 17 / M 16 / L 11 / XL 3, three shipping rates, 16 countries, phone + address collected, redirect to `/thanks.html`. Full inventory in `MERCH-SETUP.md`.
 
-**Stripe** → follow `MERCH-SETUP.md`. Create the shirt **twice**: once in test mode, once in live mode. Stripe has a Test/Live toggle in the dashboard; the two are entirely separate worlds with separate links.
+**Config** → ✅ Done. All ten links are pasted into `merch.js`, live and test, verified distinct.
 
-**Config** → in `merch.js`, fill both link fields:
+**Photos** → ⬜ Still needed. `images/merch/` as `tee-front.jpg` and `tee-back.jpg` (square, ~1200×1200, 200–400KB, dark backgrounds). The files there now are placeholders. Worth shooting the signed card next to the shirt — right now it's described but never shown.
 
-```js
-stripeLink:     'https://buy.stripe.com/aEU7sK...',        // live
-stripeLinkTest: 'https://buy.stripe.com/test_aEU7sK...',   // test
-```
+**Seller's permit** → ⬜ AJ to register with CDTFA (free, online). Until then Stripe Tax is dormant — collects nothing, costs nothing.
+
+> **If you ever rebuild a link:** Stripe's `...` menu on a test-mode payment link has **"Copy to livemode"**, which brings the product, cap, shipping rates, countries and redirect across in one click. That's how the live set was built. Don't run it twice on the same link — you'll get two live links for one size, which is the exact failure the console warns about.
 
 ---
 
@@ -68,27 +67,35 @@ Use the phase buttons in the orange staging bar to preview every state without e
 ### Test checklist
 
 **Every phase renders** — click through `teaser`, `presale`, `live`, `soldout` in the staging bar
-- [ ] Teaser: buttons dead, say "Dropping Soon"
-- [ ] Presale: counter shows, bar fills, buttons say "Reserve Yours"
-- [ ] Live: buttons say "Buy Now"
+- [ ] Teaser: sizes are plain text, button dead, says "Dropping Soon"
+- [ ] Presale: counter shows, bar fills, sizes are clickable, button says "Select a size" until you pick one
+- [ ] Live: button says "Buy Now — [size]" once a size is picked
 - [ ] Sold out: everything greyed, badge reads "Sold Out", shipping note gone
 - [ ] Signed-card callout appears in `presale` only — not in teaser, live, or soldout
 
+**The size picker**
+- [ ] Clicking a size highlights it and only it
+- [ ] Button text updates to name the chosen size
+- [ ] Clicking the button before choosing a size does nothing
+- [ ] **Each size opens a different Stripe checkout** — click all five, confirm five distinct URLs. Two sizes sharing a link is the failure that silently oversells one and starves the other
+- [ ] Setting a size's `soldout: true` strikes it through and makes it unclickable
+- [ ] Setting all five `soldout: true` flips the card to "Sold Out", not "Dropping Soon"
+
 **A full test purchase**
-- [ ] Buy button opens Stripe checkout
-- [ ] Size dropdown appears and is required
+- [ ] Buy button opens Stripe checkout **for the size you picked**
 - [ ] Shipping address form appears
-- [ ] All shipping rates listed with clear names
+- [ ] All shipping rates listed with clear names; no pickup option
 - [ ] Test card completes payment
 - [ ] Redirects to `/thanks.html`
-- [ ] Receipt email arrives, **shows the selected size**
+- [ ] Receipt email arrives and **names the size in the product line**
 - [ ] Order appears in the Stripe dashboard with size + address
 
-**The cap actually works** — this is the one that costs real money if it's wrong
+**The caps actually work** — this is the one that costs real money if it's wrong
 - [ ] Temporarily set a test link's payment limit to 1
-- [ ] Buy it once, then reload — link should be dead
+- [ ] Buy it once, then reload — that size should be dead, the others still fine
 - [ ] Reset the limit
-- [ ] Confirm the **live** link is capped at 50
+- [ ] Confirm the **live** caps read 3 / 17 / 16 / 11 / 3
+- [ ] Confirm adjustable quantity is OFF on all five live links
 
 **Presentation**
 - [ ] Check on a real phone, not a narrow browser window
@@ -121,7 +128,8 @@ The moment it's on the real domain, the site flips itself: live Stripe links, no
 ### Immediately after merging
 
 - [ ] Load ajvitanza.com — **no orange bar** (if you see one, `productionHosts` is wrong)
-- [ ] Buy button points at `buy.stripe.com/...` with **no** `test_` in the URL
+- [ ] Pick a size — the button points at `buy.stripe.com/...` with **no** `test_` in the URL
+- [ ] Browser console clean — it names any size whose link is missing, duplicated, or still in test mode
 - [ ] One real purchase with a real card, then refund it in Stripe
 - [ ] `ajvitanza.com/merch` redirects correctly — this is the link you'll share
 
@@ -164,8 +172,9 @@ Edit `merch.js` on `main`, commit, push. `merch.js` is set to never cache, so ch
 |---|---|
 | Sales coming in | Update `presale.unitsRemaining` |
 | Under 12 left | Nothing — the counter goes amber on its own |
+| A size hits its cap | Set that size's `soldout: true` — Stripe already stopped it, this just makes the site say so |
 | All 50 presale gone | `phase: 'soldout'` |
-| Selling the remaining 150 online later | `phase: 'live'`, new uncapped Stripe link, drop the bonus |
+| Selling the remaining 144 online later | `phase: 'live'`, new links with new caps, `soldout: false`, drop the bonus |
 | Something's wrong | `enabled: false` — section and nav link vanish |
 
 ---
@@ -182,11 +191,13 @@ Edit `merch.js` on `main`, commit, push. `merch.js` is set to never cache, so ch
 
 ## Things to decide before you open
 
-**The 50/150 split is enforced in two different places, and only one is real.** Stripe's payment limit on the link is what actually stops sales at 50. The number on the website is a manually-updated marketing display. Don't let them drift so far apart that the site says "31 left" when Stripe has already closed.
+**The 50/144 split is enforced in two different places, and only one is real.** The five payment caps in Stripe are what actually stop sales. The number on the website is a manually-updated marketing display. Don't let them drift so far apart that the site says "31 left" when Stripe has already closed every size.
 
-**Payments vs. shirts.** Stripe's cap counts payments. Leave adjustable quantity off and the two are the same thing — 50 payments, 50 shirts. Turn it on and one order can take three shirts while using one payment slot, and you'll oversell into the 150 you meant to keep for the show.
+**Payments vs. shirts.** Stripe's cap counts payments. Leave adjustable quantity off and the two are the same thing. Turn it on and one order can take three shirts while using one payment slot, and you'll oversell into the stock you meant to keep for the show.
 
-**Pickup at the show.** Free and unrestricted, so anyone can pick it — including someone three states away. Fine if your presale crowd is local; if not, rename it `Pickup at the show — [City] [Date] ONLY` or drop it.
+**The thin sizes are the fragile ones.** XS is 10 units total and XL is 14 — a presale cap of 3 each leaves a real reserve for the merch table, but there's no slack if you decide to bump them. Whatever you change, change it in Stripe *and* in `merch.js`; the console warns when the five caps stop adding up to 50.
+
+**Five links look identical.** `buy.stripe.com/aEU7sK...` differs from `buy.stripe.com/aEU8tL...` by a few characters. Pasting the same one under two sizes means one size eats the other's cap and the second never sells — and both send buyers the wrong shirt. The console catches it; look at it before you merge.
 
 **Don't forget the cards.** The signed graphic card isn't tracked anywhere in Stripe — it's a promise made on the website. Sign 50 and put them somewhere you won't forget when you're packing. It's the entire reason someone buys now instead of at the show, so a missing card is a broken promise, not a minor omission.
 
