@@ -4,14 +4,16 @@
 
 **The drop:** AJ Vitanza Debut T-Shirt, 194 printed, $50. 50 released as an online presale; the rest go to the merch table at the show. Presale orders include a graphic card signed by AJ.
 
-| Size | In the garage | Presale cap | Held for show |
-|---|---|---|---|
-| XS | 10 | 3 | 7 |
-| S | 65 | 17 | 48 |
-| M | 62 | 16 | 46 |
-| L | 43 | 11 | 32 |
-| XL | 14 | 3 | 11 |
-| **Total** | **194** | **50** | **144** |
+| Size | In the garage |
+|---|---|
+| XS | 10 |
+| S | 65 |
+| M | 62 |
+| L | 43 |
+| XL | 14 |
+| **Total** | **194** |
+
+**The presale is capped at 50 orders total**, across all sizes. Size is chosen at checkout.
 
 ---
 
@@ -19,15 +21,18 @@
 
 Account: **Ajvitanza** (AJ's, operating from California). Built in both test and live mode.
 
-**Five products**, one per size, named `AJ Vitanza Debut T-Shirt - XS` through `- XL`, all $50 one-off.
+**One product**, `AJ Vitanza Debut T-Shirt`, $50 one-off. (Five size-specific products from an earlier approach still exist in the catalog; their links are deactivated and they're harmless — archive them if you want a tidy catalog.)
 
-**Five payment links**, one per size. Each has:
+**One payment link**, capped at **50 payments**. When the 50th order lands, Stripe deactivates the link itself and anyone arriving after sees "The link is no longer active." It has:
 
-- Payment cap: **XS 3 · S 17 · M 16 · L 11 · XL 3** (sums to 50)
+- Payment cap: **50** (`0 of 50 used` in the dashboard)
+- A required **Size** dropdown: XS, S, M, L, XL — the choice appears on the order and the receipt
 - Quantity locked at 1, adjustable quantity **off**
 - Billing + shipping address, full name, phone number collected
 - Three shipping rates (below), 16 ship-to countries
 - Redirect to `https://ajvitanza.com/thanks.html`
+
+The ten old per-size links are **deactivated** in both modes, so nothing can take an order outside the cap.
 
 **Three shipping rates**, account-level so every link shares them:
 
@@ -45,21 +50,21 @@ Priced against real USPS costs — First-Class Package International starts arou
 
 ---
 
-## Why five links instead of one
+## The one thing to watch
 
-A single link with a size dropdown caps *payments*, not sizes. One link capped at 50 would happily sell 50 XLs against 14 units of stock. Five links with their own caps mean Stripe kills each size the moment it's exhausted — no monitoring, no code, nothing to remember at 2am.
+A payment link caps **payments, not sizes**. One link capped at 50 gives you exactly the 50-order ceiling you asked for — but it cannot also protect an individual size.
+
+**XS (10 in stock) and XL (14) are the only sizes where stock is below 50.** If more than 10 people pick XS, or more than 14 pick XL, you've sold shirts you don't have. S (65), M (62) and L (43) have enough depth that the presale can't realistically exhaust them.
+
+So watch the **Size** column in the Stripe dashboard as orders come in. If XS or XL creeps toward its stock you can remove that option from the Stripe dropdown, deactivate the link early, or refund the overflow. Typical size distribution makes this unlikely — most orders are M and L — but it's a risk you're carrying rather than one the setup eliminates.
 
 ```
 merch.js  ──►  renders the Merch section
    │
-   ├── XS → buy.stripe.com/5kQbJ3…  (cap 3)
-   ├── S  → buy.stripe.com/9B6aEZ…  (cap 17)
-   ├── M  → buy.stripe.com/bJe14p…  (cap 16)
-   ├── L  → buy.stripe.com/9B6fZj…  (cap 11)
-   └── XL → buy.stripe.com/bJe28t…  (cap 3)
+   └── one button ──►  buy.stripe.com/00wfZj…  (cap 50)
+                            │
+                            └── Size dropdown: XS / S / M / L / XL
 ```
-
-**The five URLs differ by a few characters.** Pasting one under two sizes means one size eats the other's cap and both buyers get the wrong shirt. The browser console warns if it spots a duplicate — look at it before you merge.
 
 ---
 
@@ -77,19 +82,11 @@ merch.js  ──►  renders the Merch section
 | **Public launch** | Raise the five caps in Stripe (below). No code change. |
 | Emergency kill | `enabled: false` — section and nav link vanish |
 
-### Presale → public sale is one number per link
+### Presale → public sale is one number
 
-Payment links stay editable after creation. When the presale ends, open each link in Stripe → Edit → change the payment cap:
+Payment links stay editable after creation. When the presale ends, open the link in Stripe → Edit → raise the payment cap from **50** to **194** (or whatever is left after the merch table takes its share).
 
-| Size | Presale cap | Public cap (full stock) |
-|---|---|---|
-| XS | 3 | **10** |
-| S | 17 | **65** |
-| M | 16 | **62** |
-| L | 11 | **43** |
-| XL | 3 | **14** |
-
-Same links, same URLs, same products, same shipping rates. **Nothing in `merch.js` changes** except `phase: 'live'` and dropping the presale bonus. That's the whole migration.
+Same link, same URL, same product, same shipping rates. **Nothing in `merch.js` changes** except `phase: 'live'` and dropping the presale bonus.
 
 ### On sold-out sizes
 
@@ -112,7 +109,8 @@ Stripe kills a capped-out link on its own, so a size stops selling whether or no
 - [ ] Receipt email arrives and **names the size** in the product line
 - [ ] Check the section on an actual phone, not a narrow browser window
 - [ ] Browser console clean on ajvitanza.com — it names any size whose link is missing, duplicated, or still in test mode
-- [ ] Confirm the five live caps still read 3 / 17 / 16 / 11 / 3
+- [ ] Confirm the live cap still reads **0 of 50 used**
+- [ ] Confirm the ten old per-size links are still Deactivated
 - [ ] Sign 50 graphic cards and put them where you'll pack
 
 ---

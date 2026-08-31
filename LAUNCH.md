@@ -20,7 +20,7 @@ The site detects which one it's running on by hostname and behaves differently:
 
 | | Staging URL | ajvitanza.com |
 |---|---|---|
-| Stripe links used | each size's `linkTest` — fake cards | each size's `link` — real money |
+| Stripe link used | `linkTest` — fake cards | `link` — real money |
 | Orange staging bar | Yes | Never |
 | `?phase=` URL override | Works | Ignored |
 | Search engine indexing | Blocked | Normal |
@@ -56,15 +56,15 @@ git checkout merch-drop
 
 Work here. Every push auto-deploys to the staging URL. `main` never moves.
 
-**Stripe** → ✅ Built. Five products and five payment links in **both** test and live mode, caps XS 3 / S 17 / M 16 / L 11 / XL 3, three shipping rates, 16 countries, phone + address collected, redirect to `/thanks.html`. Full inventory in `MERCH-SETUP.md`.
+**Stripe** → ✅ Built. One product and **one payment link capped at 50**, in both test and live mode, with a required Size dropdown (XS/S/M/L/XL), three shipping rates, 16 countries, phone + address collected, redirect to `/thanks.html`. The ten earlier per-size links are deactivated. Details in `MERCH-SETUP.md`.
 
-**Config** → ✅ Done. All ten links are pasted into `merch.js`, live and test, verified distinct.
+**Config** → ✅ Done. Both links pasted into `merch.js`, live and test.
 
-**Photos** → ⬜ Still needed. `images/merch/` as `tee-front.jpg` and `tee-back.jpg` (square, ~1200×1200, 200–400KB, dark backgrounds). The files there now are placeholders. Worth shooting the signed card next to the shirt — right now it's described but never shown.
+**Photos** → ✅ Done. The real 3D renders are in as `tee-front.jpg` (swoosh, front) and `tee-back.jpg` (AJVITANZA wordmark, cross-fades in on hover), squared and compressed to ~100KB each. The signed graphic card stays a text callout — not photographed, by choice.
 
 **Seller's permit** → ⬜ AJ to register with CDTFA (free, online). Until then Stripe Tax is dormant — collects nothing, costs nothing.
 
-> **If you ever rebuild a link:** Stripe's `...` menu on a test-mode payment link has **"Copy to livemode"**, which brings the product, cap, shipping rates, countries and redirect across in one click. That's how the live set was built. Don't run it twice on the same link — you'll get two live links for one size, which is the exact failure the console warns about.
+> **If you ever rebuild the link:** Stripe's `...` menu on a test-mode payment link has **"Copy to livemode"**, which brings the product, cap, Size dropdown, shipping rates, countries and redirect across in one click. That's how the live one was built. Don't run it twice — you'd get two live links, and only one of them counts toward the 50.
 
 ---
 
@@ -80,21 +80,20 @@ Use the phase buttons in the orange staging bar to preview every state without e
 
 **Every phase renders** — click through `teaser`, `presale`, `live`, `soldout` in the staging bar
 - [ ] Teaser: sizes are plain text, button dead, says "Dropping Soon"
-- [ ] Presale: counter shows, bar fills, sizes are clickable, button says "Select a size" until you pick one
-- [ ] Live: button says "Buy Now — [size]" once a size is picked
+- [ ] Presale: counter shows, bar fills, button says "Reserve Yours"
+- [ ] Live: button says "Buy Now"
 - [ ] Sold out: everything greyed, badge reads "Sold Out", shipping note gone
 - [ ] Signed-card callout appears in `presale` only — not in teaser, live, or soldout
 
-**The size picker**
-- [ ] Clicking a size highlights it and only it
-- [ ] Button text updates to name the chosen size
-- [ ] Clicking the button before choosing a size does nothing
-- [ ] **Each size opens a different Stripe checkout** — click all five, confirm five distinct URLs. Two sizes sharing a link is the failure that silently oversells one and starves the other
-- [ ] Setting a size's `soldout: true` strikes it through and makes it unclickable
+**The buy button and sizes**
+- [ ] One button; size chips are information only (selection happens in Stripe)
+- [ ] Button opens the capped link
+- [ ] The Stripe page shows a required **Size** dropdown: XS, S, M, L, XL
+- [ ] Setting a size's `soldout: true` strikes it through on the card — and the console warns that Stripe still offers it
 - [ ] Setting all five `soldout: true` flips the card to "Sold Out", not "Dropping Soon"
 
 **A full test purchase**
-- [ ] Buy button opens Stripe checkout **for the size you picked**
+- [ ] Buy button opens the Stripe checkout
 - [ ] Shipping address form appears
 - [ ] All shipping rates listed with clear names; no pickup option
 - [ ] Test card completes payment
@@ -102,12 +101,13 @@ Use the phase buttons in the orange staging bar to preview every state without e
 - [ ] Receipt email arrives and **names the size in the product line**
 - [ ] Order appears in the Stripe dashboard with size + address
 
-**The caps actually work** — this is the one that costs real money if it's wrong
-- [ ] Temporarily set a test link's payment limit to 1
-- [ ] Buy it once, then reload — that size should be dead, the others still fine
-- [ ] Reset the limit
-- [ ] Confirm the **live** caps read 3 / 17 / 16 / 11 / 3
-- [ ] Confirm adjustable quantity is OFF on all five live links
+**The cap actually works** — this is the one that costs real money if it's wrong
+- [ ] Temporarily set the test link's payment limit to 1
+- [ ] Buy it once, then reload — the link should be dead
+- [ ] Reset the limit to 50
+- [ ] Confirm the **live** link reads `0 of 50 used`
+- [ ] Confirm adjustable quantity is OFF
+- [ ] Confirm the ten old per-size links are Deactivated in both modes
 
 **Presentation**
 - [ ] Check on a real phone, not a narrow browser window
@@ -140,8 +140,8 @@ The moment it's on the real domain, the site flips itself: live Stripe links, no
 ### Immediately after merging
 
 - [ ] Load ajvitanza.com — **no orange bar** (if you see one, `productionHosts` is wrong)
-- [ ] Pick a size — the button points at `buy.stripe.com/...` with **no** `test_` in the URL
-- [ ] Browser console clean — it names any size whose link is missing, duplicated, or still in test mode
+- [ ] The button points at `buy.stripe.com/...` with **no** `test_` in the URL
+- [ ] Browser console clean — it warns if the link is missing or still in test mode
 - [ ] One real purchase with a real card, then refund it in Stripe
 - [ ] `ajvitanza.com/merch` redirects correctly — this is the link you'll share
 
