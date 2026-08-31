@@ -112,11 +112,19 @@ var MERCH_CONFIG = {
 
        Set enabled: false if you'd rather not run a clock. */
     countdown: {
+        /* Still off. Turning it on is a promise: it says the presale CLOSES
+           when doors open, so if people can still order online after the
+           clock hits zero, the urgency reads as theatre. Deactivate the
+           Stripe link at showtime and this can go true.
+
+           Now set to the real show — it was a placeholder date two weeks
+           out, which would have been wrong the moment anyone enabled it.
+           -07:00 is LA in September (Pacific Daylight Time). */
         enabled: false,
-        showDate: '2026-09-12T20:00:00-04:00',   // ← REPLACE with the real show
+        showDate: '2026-09-02T18:30:00-07:00',
         labelBefore: 'Presale closes when doors open',
         labelAfter: 'Doors are open — merch table only',
-        venue: ''    // optional, e.g. 'Brooklyn Made · Brooklyn, NY'
+        venue: 'The Moroccan Lounge · Los Angeles, CA'
     },
 
     /* ---------- SHIPPING NOTE ---------- */

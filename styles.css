@@ -1584,6 +1584,109 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
 .merch-card-video { object-fit: contain; background: #000; }
 .merch-card.is-soldout .merch-card-img { filter: grayscale(1); }
 
+/* ============================================
+   LIVE — the show the presale ends at
+   ============================================ */
+.live {
+    padding: clamp(52px, 6vw, 80px) 0;
+    position: relative;
+    background: var(--bg-deep);
+}
+.show {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(20px, 3.5vw, 44px);
+    margin-top: clamp(24px, 3vw, 36px);
+    padding: clamp(20px, 2.6vw, 30px) clamp(20px, 2.8vw, 34px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(94, 143, 194, 0.05), transparent 60%);
+}
+/* Date block reads as a torn ticket stub. aria-hidden because the full
+   date is spelled out in the <time> element beside it. */
+.show-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 78px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(120, 160, 210, 0.22);
+    background: rgba(94, 143, 194, 0.06);
+}
+.show-month {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+.show-day {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--text-bright);
+}
+.show-info { min-width: 0; }
+.show-venue {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.15rem, 2vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-bright);
+    margin-bottom: 4px;
+}
+.show-where, .show-when, .show-bill {
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: var(--text-dim);
+}
+.show-when { color: var(--text); }
+.show-bill {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+}
+.show-action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+.show-btn { white-space: nowrap; }
+.show-note {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+.live-footnote {
+    margin-top: 18px;
+    max-width: 62ch;
+    font-size: 0.84rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+}
+
+@media (max-width: 760px) {
+    /* Stack, and let the CTA go full width — it's the point of the section. */
+    .show {
+        grid-template-columns: auto 1fr;
+        row-gap: 18px;
+    }
+    .show-action {
+        grid-column: 1 / -1;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .show-btn { width: 100%; justify-content: center; }
+    .show-note { text-align: center; }
+}
+
 /* The media well + thumbnail rail form a single column. In the feature
    layout this wrapper is the grid item, not the well itself. */
 .merch-card-mediacol {

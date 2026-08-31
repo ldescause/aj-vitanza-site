@@ -96,6 +96,7 @@
         </a>
         <div class="nav-links">
             <a href="#merch" data-magnetic><span data-text="Merch">Merch</span></a>
+            <a href="#live" data-magnetic><span data-text="Live">Live</span></a>
             <a href="#elsewhere" data-magnetic><span data-text="Music">Music</span></a>
             <a href="#connect" data-magnetic><span data-text="Connect">Connect</span></a>
         </div>
@@ -196,13 +197,58 @@
         </div>
     </section>
 
+    <!-- ==================== LIVE ====================
+         Sits directly under the merch on purpose: the presale story ends at
+         this show ("the rest of the run is at the merch table"), so the two
+         belong next to each other.
+
+         The Ticketmaster URL is the clean event link. The one shared from
+         Instagram carried fbclid/utm_* tracking parameters — those are click
+         attribution for THAT post and would follow every visitor from here,
+         polluting the analytics for a campaign this page is not part of. -->
+    <section class="live" id="live">
+        <div class="section-inner">
+            <span class="label" data-reveal>02. — Live</span>
+            <h2 class="section-title" data-split>Live in LA</h2>
+
+            <div class="show" data-reveal>
+                <div class="show-date" aria-hidden="true">
+                    <span class="show-month">Sep</span>
+                    <span class="show-day">02</span>
+                </div>
+                <div class="show-info">
+                    <h3 class="show-venue">The Moroccan Lounge</h3>
+                    <p class="show-where">Los Angeles, CA — 901 1st St</p>
+                    <p class="show-when">
+                        <time datetime="2026-09-02T18:30:00-07:00">Wednesday 2 September 2026 — 6:30 PM</time>
+                    </p>
+                    <p class="show-bill">soundZ Presents: AJ Vitanza &amp; Austin George, with Eva Croz</p>
+                </div>
+                <div class="show-action">
+                    <a href="https://www.ticketmaster.com/event/09006506BA77AE10"
+                       target="_blank" rel="noopener"
+                       class="btn btn--primary show-btn" data-magnetic data-ripple>
+                        <span>Buy Tickets</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                    </a>
+                    <span class="show-note">Tickets via Ticketmaster</span>
+                </div>
+            </div>
+
+            <p class="live-footnote" data-reveal>
+                The rest of the run is on the merch table at this show — first come, first served.
+                The venue is cashless, so bring a card.
+            </p>
+        </div>
+    </section>
+
     <!-- ==================== ELSEWHERE — MUSIC & VIDEOS ====================
          Everything musical lives here now, deliberately compact. The drop is
          the page; this is the footnote that says the artist exists. Links go
          out to the platforms rather than embedding a heavy Spotify iframe. -->
     <section class="elsewhere" id="elsewhere">
         <div class="section-inner">
-            <span class="label" data-reveal>02. — Elsewhere</span>
+            <span class="label" data-reveal>03. — Elsewhere</span>
             <h2 class="section-title" data-split>Music &amp; Videos</h2>
 
             <div class="elsewhere-grid">
@@ -260,7 +306,7 @@
             <div class="connect-orb connect-orb--2"></div>
         </div>
         <div class="section-inner connect-inner">
-            <span class="label" data-reveal>03. — Stay In Touch</span>
+            <span class="label" data-reveal>04. — Stay In Touch</span>
             <h2 class="connect-heading" data-split>Never Miss a Drop</h2>
             <p class="connect-sub" data-reveal>New music, shows & exclusives — straight to you.</p>
             <div class="connect-cta" data-reveal>
@@ -335,6 +381,32 @@
                         "numTracks": 9
                     }
                 ]
+            },
+            {
+                "@type": "MusicEvent",
+                "name": "soundZ Presents: AJ Vitanza & Austin George w/ Eva Croz",
+                "startDate": "2026-09-02T18:30:00-07:00",
+                "eventStatus": "https://schema.org/EventScheduled",
+                "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                "url": "https://www.ticketmaster.com/event/09006506BA77AE10",
+                "performer": { "@id": "https://ajvitanza.com/#artist" },
+                "location": {
+                    "@type": "MusicVenue",
+                    "name": "The Moroccan Lounge",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "901 1st St",
+                        "addressLocality": "Los Angeles",
+                        "addressRegion": "CA",
+                        "postalCode": "90012",
+                        "addressCountry": "US"
+                    }
+                },
+                "offers": {
+                    "@type": "Offer",
+                    "url": "https://www.ticketmaster.com/event/09006506BA77AE10",
+                    "availability": "https://schema.org/InStock"
+                }
             },
             {
                 "@type": "Product",
