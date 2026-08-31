@@ -161,8 +161,47 @@ var MERCH_CONFIG = {
         {
             id: 'tee',
             name: 'AJ Vitanza Debut T-Shirt',
-            subtitle: 'Heavyweight cotton — Black',
+            /* NOTE: every render supplied shows a WHITE / off-white shirt.
+               This previously read "Black", which would have been the first
+               thing a buyer noticed was wrong. Confirm the real colourway. */
+            subtitle: 'Heavyweight cotton — White',
             price: 50,
+
+            /* ---- media ----
+               `media` is the gallery, shown in order. Types:
+                 video — loops silently, pauses when scrolled out of view
+                 image — a still
+               The first entry is what loads first, so keep the video there
+               only while it stays small; it is 170KB today.
+
+               All three assets are the same render on the same black
+               backdrop (the stills are frames 0 and 75 of the video), which
+               is why switching between them doesn't jump. If you replace one,
+               replace all three or the set stops matching. */
+            media: [
+                {
+                    type: 'video',
+                    src: 'video/tee-360.mp4',
+                    poster: 'video/tee-360-poster.jpg',
+                    label: '360°',
+                    alt: 'The AJ Vitanza debut tee rotating a full turn'
+                },
+                {
+                    type: 'image',
+                    src: 'images/merch/tee-front.jpg',
+                    label: 'Front',
+                    alt: 'Front of the tee — swoosh on the chest'
+                },
+                {
+                    type: 'image',
+                    src: 'images/merch/tee-back.jpg',
+                    label: 'Back',
+                    alt: 'Back of the tee — AJ VITANZA wordmark'
+                }
+            ],
+
+            /* Kept so an older cached merch.js still renders something, and
+               so the structured data has a stable image. */
             image: 'images/merch/tee-front.jpg',
             imageAlt: 'images/merch/tee-back.jpg',
             /* The one capped link. Size is a required dropdown inside it. */
@@ -241,6 +280,7 @@ var MERCH_CONFIG = {
         if (navLink) navLink.remove();
         var navShop = document.querySelector('.nav-shop:not(.nav-shop--alt)');
         if (navShop) navShop.remove();
+        syncStructuredData(null);
         return;
     }
 
@@ -412,6 +452,81 @@ var MERCH_CONFIG = {
         window.AJ_refreshInteractions();
     }
 
+    syncStructuredData(cfg.products[0]);
+
+
+    /* ---------------- structured data ----------------
+
+       The JSON-LD in index.html carries a Product node for the tee. Its price
+       and availability are written here rather than by hand, because a static
+       schema drifts the moment you flip a phase — and a page that tells Google
+       "InStock" while showing "Sold Out" is the kind of mismatch that earns a
+       manual action. One source of truth: MERCH_CONFIG.
+
+       Passing null (the kill switch, or nothing to sell) drops the Product
+       node entirely, leaving the MusicGroup behind. */
+
+    function syncStructuredData(product) {
+        var tag = document.getElementById('ld-graph');
+        if (!tag) return;
+
+        var data;
+        try {
+            data = JSON.parse(tag.textContent);
+        } catch (e) {
+            console.warn('[merch] structured data is not valid JSON — leaving it alone.');
+            return;
+        }
+        if (!data || !Array.isArray(data['@graph'])) return;
+
+        var graph = data['@graph'];
+        var idx = -1;
+        for (var i = 0; i < graph.length; i++) {
+            if (graph[i]['@type'] === 'Product') { idx = i; break; }
+        }
+        if (idx === -1) return;
+
+        /* Nothing on sale — remove the offer rather than describe a phantom. */
+        if (!product) {
+            graph.splice(idx, 1);
+            tag.textContent = JSON.stringify(data, null, 4);
+            return;
+        }
+
+        var node = graph[idx];
+        var everySizeGone = (product.sizes || []).length > 0 &&
+            product.sizes.every(function (sz) { return sz.soldout; });
+        var soldOut = product.status === 'soldout' || phase === 'soldout' ||
+            (everySizeGone && phase !== 'teaser');
+
+        /* Staging must never advertise itself to a crawler, and a teaser has
+           nothing to buy yet. Both are honest as PreOrder/OutOfStock rather
+           than a claim we can't back. */
+        var availability =
+            soldOut          ? 'https://schema.org/SoldOut' :
+            phase === 'teaser' ? 'https://schema.org/PreOrder' :
+                                  'https://schema.org/InStock';
+
+        node.name = product.name;
+        node.offers = node.offers || { '@type': 'Offer' };
+        /* Schema wants a plain decimal, no currency symbol, no thousands
+           separator — always two places so "50" doesn't read as an integer
+           count of something. */
+        node.offers.price = Number(product.price).toFixed(2);
+        node.offers.priceCurrency = 'USD';
+        node.offers.availability = availability;
+
+        /* Sizes the site knows are gone shouldn't be implied as orderable. */
+        var live = (product.sizes || []).filter(function (sz) { return !sz.soldout; });
+        if (live.length) {
+            node.size = live.map(function (sz) { return sz.label; });
+        } else {
+            delete node.size;
+        }
+
+        tag.textContent = JSON.stringify(data, null, 4);
+    }
+
 
     /* ---------------- countdown ---------------- */
 
@@ -508,16 +623,7 @@ var MERCH_CONFIG = {
         var media = el('div', 'merch-card-media');
         media.setAttribute('data-tilt', '');
 
-        if (p.image) {
-            media.appendChild(mkImg(p.image, p.name, 'merch-card-img', function () {
-                media.classList.add('is-empty');
-            }));
-            if (p.imageAlt) {
-                media.appendChild(mkImg(p.imageAlt, '', 'merch-card-img merch-card-img--alt'));
-            }
-        } else {
-            media.classList.add('is-empty');
-        }
+        var gallery = buildGallery(p, media);
 
         var ph = el('span', 'merch-card-placeholder');
         ph.textContent = 'Artwork coming';
@@ -531,13 +637,26 @@ var MERCH_CONFIG = {
         }
 
         card.appendChild(media);
+        if (gallery) card.appendChild(gallery);
 
         /* body */
         var body = el('div', 'merch-card-body');
 
         var head = el('div', 'merch-card-head');
         var name = el('h3', 'merch-card-name');
-        name.textContent = p.name;
+        /* Wrap each word so the line can only break at spaces. Without this,
+           "T-Shirt" splits at the hyphen into "T-" / "Shirt", which is the
+           first thing you notice on the card. Built from text nodes rather
+           than innerHTML so a product name can never inject markup. */
+        p.name.split(/(\s+)/).forEach(function (chunk) {
+            if (/^\s+$/.test(chunk)) {
+                name.appendChild(document.createTextNode(chunk));
+            } else if (chunk) {
+                var w = el('span', 'nowrap');
+                w.textContent = chunk;
+                name.appendChild(w);
+            }
+        });
         var price = el('span', 'merch-card-price');
         price.textContent = cfg.currencySymbol + formatPrice(p.price);
         head.appendChild(name);
@@ -644,6 +763,179 @@ var MERCH_CONFIG = {
     /* setAttribute rather than the property, so the hint is present in the
        markup itself — some browsers only honour it as an attribute, and it
        makes the behaviour visible to anything inspecting the DOM. */
+    /* ---------------- media gallery ----------------
+
+       Fills `media` with every slide and returns the thumbnail rail (or null
+       when there's nothing to switch between). Falls back to the old
+       image/imageAlt pair so an older config still renders.
+
+       Three things this has to get right:
+       - A video that autoplays must be muted and playsinline, or iOS refuses
+         and you get a black rectangle.
+       - It must stop when it's not on screen. A looping video decoding
+         forever in a background tab is a battery complaint, not a feature.
+       - prefers-reduced-motion means the poster, not the loop. Spinning
+         merch is exactly the kind of motion that setting exists for. */
+
+    function buildGallery(p, media) {
+        var items = p.media && p.media.length ? p.media : null;
+
+        if (!items) {
+            /* legacy shape */
+            if (!p.image) { media.classList.add('is-empty'); return null; }
+            items = [{ type: 'image', src: p.image, alt: p.name, label: 'Front' }];
+            if (p.imageAlt) items.push({ type: 'image', src: p.imageAlt, alt: '', label: 'Back' });
+        }
+
+        var reduceMotion = window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        var slides = [];
+        var videos = [];
+        var failures = 0;
+
+        items.forEach(function (item, i) {
+            var node;
+            if (item.type === 'video' && !reduceMotion) {
+                node = mkVideo(item, i === 0);
+                videos.push(node);
+                /* A <video> with a <source> child reports failure on the
+                   source, not always on the video, so listen to both — this
+                   is what keeps a dead mp4 counting toward the placeholder
+                   instead of silently leaving a black rectangle. */
+                node.addEventListener('error', onFail);
+                node.querySelector('source').addEventListener('error', onFail);
+            } else if (item.type === 'video') {
+                /* reduced motion: the poster stands in for the loop */
+                node = mkImg(item.poster || item.src, item.alt || '', 'merch-card-img', onFail);
+            } else {
+                node = mkImg(item.src, item.alt || '', 'merch-card-img', onFail);
+            }
+            node.classList.add('merch-slide');
+            if (i === 0) node.classList.add('is-active');
+            media.appendChild(node);
+            slides.push(node);
+        });
+
+        function onFail() {
+            /* Only claim "Artwork coming" once every slide has failed —
+               one missing file shouldn't blank a gallery that still works. */
+            failures++;
+            if (failures >= items.length) media.classList.add('is-empty');
+        }
+
+        pauseOffscreen(videos, media);
+
+        if (slides.length < 2) return null;
+
+        var rail = el('div', 'merch-thumbs');
+        rail.setAttribute('role', 'tablist');
+        rail.setAttribute('aria-label', 'Product views');
+
+        var thumbs = items.map(function (item, i) {
+            var t = el('button', 'merch-thumb' + (i === 0 ? ' is-active' : ''));
+            t.type = 'button';
+            t.setAttribute('role', 'tab');
+            t.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+
+            var timg = document.createElement('img');
+            timg.src = item.type === 'video' ? (item.poster || item.src) : item.src;
+            timg.alt = '';
+            timg.setAttribute('loading', 'lazy');
+            timg.setAttribute('decoding', 'async');
+            t.appendChild(timg);
+
+            var cap = el('span', 'merch-thumb-label');
+            cap.textContent = item.label || String(i + 1);
+            t.appendChild(cap);
+
+            /* The label is decorative; the button needs a real name. */
+            t.setAttribute('aria-label', 'View ' + (item.label || 'image ' + (i + 1)));
+
+            t.addEventListener('click', function () { show(i); });
+            rail.appendChild(t);
+            return t;
+        });
+
+        function show(idx) {
+            slides.forEach(function (s, i) { s.classList.toggle('is-active', i === idx); });
+            thumbs.forEach(function (t, i) {
+                t.classList.toggle('is-active', i === idx);
+                t.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+            });
+            /* Only the visible video should be decoding. */
+            videos.forEach(function (v) {
+                if (v.classList.contains('is-active')) safePlay(v);
+                else v.pause();
+            });
+        }
+
+        /* Arrow keys move between views, as a tablist should. */
+        rail.addEventListener('keydown', function (e) {
+            var i = thumbs.indexOf(document.activeElement);
+            if (i === -1) return;
+            var next = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : -1;
+            if (next === -1) return;
+            e.preventDefault();
+            next = (next + thumbs.length) % thumbs.length;
+            thumbs[next].focus();
+            show(next);
+        });
+
+        return rail;
+    }
+
+    function mkVideo(item, eager) {
+        var v = document.createElement('video');
+        v.muted = true;               /* property, not just the attribute — */
+        v.setAttribute('muted', '');  /* Safari checks the property on play() */
+        v.loop = true;
+        v.autoplay = true;
+        v.setAttribute('playsinline', '');
+        v.setAttribute('webkit-playsinline', '');
+        v.setAttribute('aria-label', item.alt || '');
+        /* Below the fold on the homepage, so don't spend the bandwidth until
+           it's wanted. pauseOffscreen upgrades this when it scrolls in. */
+        v.preload = eager ? 'metadata' : 'none';
+        if (item.poster) v.poster = item.poster;
+        v.className = 'merch-card-img merch-card-video';
+
+        var s = document.createElement('source');
+        s.src = item.src;
+        s.type = 'video/mp4';
+        v.appendChild(s);
+        return v;
+    }
+
+    function safePlay(v) {
+        /* play() rejects on its own if the browser declines autoplay. That's
+           a fine outcome — the poster stays up — but an unhandled rejection
+           is noise in the console, so swallow it deliberately. */
+        var r = v.play();
+        if (r && typeof r.catch === 'function') r.catch(function () {});
+    }
+
+    function pauseOffscreen(videos, media) {
+        if (!videos.length) return;
+        if (!('IntersectionObserver' in window)) {
+            videos.forEach(function (v) { if (v.classList.contains('is-active')) safePlay(v); });
+            return;
+        }
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                videos.forEach(function (v) {
+                    if (en.isIntersecting && v.classList.contains('is-active')) {
+                        if (v.preload === 'none') v.preload = 'auto';
+                        safePlay(v);
+                    } else {
+                        v.pause();
+                    }
+                });
+            });
+        }, { threshold: 0.15 });
+        io.observe(media);
+    }
+
     function mkImg(src, alt, cls, onFail) {
         var img = document.createElement('img');
         img.setAttribute('loading', 'lazy');

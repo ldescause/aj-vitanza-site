@@ -250,7 +250,6 @@
         playBootUp();
         startDrone();
         gate.classList.add('hidden');
-        prepareMusic();
         startTerminalBoot();
     });
 
@@ -259,9 +258,9 @@
     var terminalContent = document.getElementById('terminalContent');
     var BOOT_LINES = [
         { text: 'BIOS v4.2.1 — AJ VITANZA SYSTEMS', speed: 5, pause: 120, status: null },
-        { text: 'Loading audio subsystem', speed: 4, pause: 60, status: 'OK', progress: true },
-        { text: 'Mounting inventory: KMH_TEE — 50 UNITS', speed: 4, pause: 60, status: 'READY', progress: true },
-        { text: 'Signal acquired — 48kHz / 24bit', speed: 4, pause: 80, status: null },
+        { text: 'Mounting inventory: DEBUT_TEE', speed: 4, pause: 60, status: 'OK', progress: true },
+        { text: 'Presale allocation — 50 UNITS', speed: 4, pause: 60, status: 'READY', progress: true },
+        { text: 'Secure checkout — Stripe', speed: 4, pause: 80, status: 'OK', progress: true },
         { text: 'All systems nominal', speed: 6, pause: 180, status: null },
     ];
 
@@ -363,9 +362,6 @@
             logoReveal.classList.add('phase-resolving');
             playResolveChime();
 
-            // Start music during resolve — song plays from the top
-            startMusic();
-
             // Phase 2: Resolving, slower spin, clearing
             setTimeout(function () {
                 logoReveal.classList.remove('phase-resolving');
@@ -412,43 +408,11 @@
         initSplitText();
         initSiteInteractions();
 
-        // Fade logo out — main site is ready underneath, music keeps playing
+        // Fade logo out — main site is ready underneath
         logoReveal.classList.add('fade-out');
         setTimeout(function () {
             logoReveal.className = 'logo-reveal';
         }, 700);
-    }
-
-    // ========== MUSIC ==========
-    var musicAudio = null;
-
-    // Created on the gate tap (a user gesture) so the file is buffering
-    // through the whole boot sequence and play() resolves instantly.
-    function prepareMusic() {
-        if (musicAudio) return;
-        musicAudio = new Audio('audio/keep-me-high.m4a');
-        musicAudio.loop = true;
-        musicAudio.volume = 0;
-        musicAudio.preload = 'auto';
-        musicAudio.load();
-    }
-
-    function startMusic() {
-        prepareMusic();
-        musicAudio.volume = 0;
-        musicAudio.currentTime = 0;
-
-        musicAudio.play().then(function () {
-            var vol = 0;
-            var fadeIn = setInterval(function () {
-                vol += 0.03;
-                if (vol >= 0.6) {
-                    vol = 0.6;
-                    clearInterval(fadeIn);
-                }
-                musicAudio.volume = vol;
-            }, 40);
-        }).catch(function () {});
     }
 
     // ========== TEXT SPLIT ANIMATION ==========

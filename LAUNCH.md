@@ -60,7 +60,9 @@ Work here. Every push auto-deploys to the staging URL. `main` never moves.
 
 **Config** → ✅ Done. Both links pasted into `merch.js`, live and test.
 
-**Photos** → ✅ Done. The real 3D renders are in as `tee-front.jpg` (swoosh, front) and `tee-back.jpg` (AJVITANZA wordmark, cross-fades in on hover), squared and compressed to ~100KB each. The signed graphic card stays a text callout — not photographed, by choice.
+**Photos** → ✅ Done. The card carries a three-view gallery: the 360° rotation loops silently by default, with Front and Back stills behind thumbnails. All three are cut from the same video so the lighting and black backdrop match exactly — read `images/merch/README.txt` before replacing any of them. The signed graphic card stays a text callout — not photographed, by choice.
+
+> ⚠️ **The shirt is WHITE.** The listing read "Heavyweight cotton — Black" for several drafts. Every render supplied is white/off-white, so it now says White. Confirm the real colourway before taking money — this is the kind of error that becomes 50 refund requests.
 
 **Seller's permit** → ⬜ AJ to register with CDTFA (free, online). Until then Stripe Tax is dormant — collects nothing, costs nothing.
 
@@ -98,8 +100,9 @@ Use the phase buttons in the orange staging bar to preview every state without e
 - [ ] All shipping rates listed with clear names; no pickup option
 - [ ] Test card completes payment
 - [ ] Redirects to `/thanks.html`
-- [ ] Receipt email arrives and **names the size in the product line**
+- [ ] Receipt email arrives
 - [ ] Order appears in the Stripe dashboard with size + address
+- [ ] **Find where the size actually lands** in the Payments CSV export — it's a custom field, not part of the product name. Note the column name now; you'll be sorting on it to pack 50 boxes
 
 **The cap actually works** — this is the one that costs real money if it's wrong
 - [ ] Temporarily set the test link's payment limit to 1
@@ -114,7 +117,9 @@ Use the phase buttons in the orange staging bar to preview every state without e
 - [ ] All photos load; no dashed "Artwork coming" placeholders left
 - [ ] Prices match what you're actually charging
 - [ ] Nav "Merch" link scrolls to the section
+- [ ] Nav "Music" scrolls to **Elsewhere** — the EP, the DSP links and the videos are one section now, below the merch
 - [ ] Browser console clean (merch.js warns loudly about config problems)
+- [ ] Paste the page into Google's Rich Results Test. It should find a **Product** with price 50.00 and an availability that matches the phase you're in — `merch.js` writes those from `MERCH_CONFIG`, so a mismatch means something is wrong, not that the schema needs hand-editing
 
 **Prove the environment switch**
 - [ ] Staging bar visible on staging
@@ -184,7 +189,7 @@ Edit `merch.js` on `main`, commit, push. `merch.js` is set to never cache, so ch
 |---|---|
 | Sales coming in | Update `presale.unitsRemaining` |
 | Under 12 left | Nothing — the counter goes amber on its own |
-| A size hits its cap | Set that size's `soldout: true` — Stripe already stopped it, this just makes the site say so |
+| A size runs out | Set that size's `soldout: true` **and remove it from the Size dropdown in Stripe.** The site strikes it through; Stripe keeps offering it until you delete the option. Doing only the first half means you keep taking orders you can't fill — the console warns you about exactly this |
 | All 50 presale gone | `phase: 'soldout'` |
 | Selling the remaining 144 online later | `phase: 'live'`, new links with new caps, `soldout: false`, drop the bonus |
 | Something's wrong | `enabled: false` — section and nav link vanish |
@@ -203,13 +208,15 @@ Edit `merch.js` on `main`, commit, push. `merch.js` is set to never cache, so ch
 
 ## Things to decide before you open
 
-**The 50/144 split is enforced in two different places, and only one is real.** The five payment caps in Stripe are what actually stop sales. The number on the website is a manually-updated marketing display. Don't let them drift so far apart that the site says "31 left" when Stripe has already closed every size.
+**The 50/144 split is enforced in two different places, and only one is real.** The payment cap on the Stripe link is what actually stops sales at 50. The number on the website is a manually-updated marketing display. Don't let them drift so far apart that the site says "31 left" when Stripe has already closed the link.
 
 **Payments vs. shirts.** Stripe's cap counts payments. Leave adjustable quantity off and the two are the same thing. Turn it on and one order can take three shirts while using one payment slot, and you'll oversell into the stock you meant to keep for the show.
 
-**The thin sizes are the fragile ones.** XS is 10 units total and XL is 14 — a presale cap of 3 each leaves a real reserve for the merch table, but there's no slack if you decide to bump them. Whatever you change, change it in Stripe *and* in `merch.js`; the console warns when the five caps stop adding up to 50.
+**Nothing stops a single size from selling out.** This is the sharpest edge in the current setup. There is one link with one cap of 50, and the size is a dropdown *inside* it — so all 50 could be Medium. You have 62 Mediums, so that particular case is survivable, but XS (10) and XL (14) are not: 15 people picking XL is an oversell you find out about after the fact.
 
-**Five links look identical.** `buy.stripe.com/aEU7sK...` differs from `buy.stripe.com/aEU8tL...` by a few characters. Pasting the same one under two sizes means one size eats the other's cap and the second never sells — and both send buyers the wrong shirt. The console catches it; look at it before you merge.
+Watch the size split in the Stripe dashboard as orders come in. When a size gets close to its real stock, **delete that option from the dropdown in Stripe** — that is the only thing that actually stops it. Setting `soldout: true` in `merch.js` updates the website's appearance and nothing else.
+
+**The site can only ever be a mirror, never a lock.** Every stock number and struck-through size on the page is something you typed. The two systems that hold real inventory are Stripe (what people can order) and the garage (what exists). The website agrees with them only as often as you make it.
 
 **Don't forget the cards.** The signed graphic card isn't tracked anywhere in Stripe — it's a promise made on the website. Sign 50 and put them somewhere you won't forget when you're packing. It's the entire reason someone buys now instead of at the show, so a missing card is a broken promise, not a minor omission.
 

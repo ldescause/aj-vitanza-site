@@ -76,10 +76,10 @@ merch.js  ──►  renders the Merch section
 |---|---|
 | Presale opens | `phase: 'presale'` (already set) |
 | During the presale | Update `presale.unitsRemaining` as sales come in |
-| **A size runs out** | Set that size's `soldout: true` |
+| **A size runs out** | Delete it from the Size dropdown **in Stripe**, then set `soldout: true` here. Both halves, in that order |
 | Getting close | Set the product's `status: 'lowstock'` |
 | Presale over | `phase: 'soldout'` |
-| **Public launch** | Raise the five caps in Stripe (below). No code change. |
+| **Public launch** | Raise the one cap in Stripe from 50 (below). No code change. |
 | Emergency kill | `enabled: false` — section and nav link vanish |
 
 ### Presale → public sale is one number
@@ -90,7 +90,18 @@ Same link, same URL, same product, same shipping rates. **Nothing in `merch.js` 
 
 ### On sold-out sizes
 
-Stripe kills a capped-out link on its own, so a size stops selling whether or not you touch the site. Setting `soldout: true` is cosmetic — it turns a size that would otherwise look broken into one that visibly reads "gone". Worth doing within a few hours; not an emergency. If all five are marked sold out, the card flips to "Sold Out" by itself.
+**Read this one carefully — it changed when the ten per-size links became one.**
+
+Back when each size had its own link, Stripe enforced sizes for you: a size capped out and that link died on its own. That is no longer true. There is now **one link, one cap of 50**, and the size is a dropdown inside it. Stripe counts payments; it does not know or care that you only own 10 XS.
+
+So `soldout: true` in `merch.js` is **not** cosmetic catch-up any more — it's half of a two-part action, and it's the half that doesn't do anything:
+
+1. **In Stripe:** delete that size from the dropdown. *This is the part that stops orders.*
+2. **In `merch.js`:** set `soldout: true`. This strikes it through on the site so nobody clicks through and finds it missing.
+
+Do (1) first. `merch.js` warns in the browser console whenever a size is marked sold out here while Stripe is still offering it, so an incomplete job is visible rather than silent — but the warning only helps if someone's looking.
+
+If every size is marked sold out, the card flips to "Sold Out" by itself.
 
 ---
 
@@ -119,7 +130,9 @@ Stripe kills a capped-out link on its own, so a size stops selling whether or no
 
 **Taxes.** Sales tax follows the inventory, so it's California — not AJ's New York bank account. Register with CDTFA (free, online, usually instant), add it in Stripe, and tax gets collected on California-bound orders only. Roughly $130 of tax across the run and about $8 in Stripe Tax fees. The separate question of which state gets *income* tax on the profit, given a NY resident operating in CA, is worth asking a professional — it's the one item here that isn't obvious.
 
-**Fulfilment.** Stripe gives you an order list with addresses and phone numbers. Export the CSV from the Payments tab — the size is in the product name, so one sort gets you five stacks.
+**Fulfilment.** Stripe gives you an order list with addresses and phone numbers. Export the CSV from the Payments tab. Size now arrives as a **custom field** on the payment rather than as part of the product name — every order says "AJ Vitanza Debut T-Shirt", and the size sits in its own column. Confirm which column that is during the test purchase, before it matters: sorting the wrong one gets you fifty shirts in the wrong boxes.
+
+Also watch the running size split here as orders arrive. It's the only early warning you get that XS or XL is about to oversell.
 
 **Refunds and lost packages.** Handle in the Stripe dashboard. Decide the policy now and state it up front.
 
