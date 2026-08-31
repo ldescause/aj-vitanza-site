@@ -872,7 +872,7 @@ var MERCH_CONFIG = {
             /* Only the visible video should be decoding. */
             videos.forEach(function (v) {
                 if (v.classList.contains('is-active')) safePlay(v);
-                else v.pause();
+                else safePause(v);
             });
         }
 
@@ -914,11 +914,36 @@ var MERCH_CONFIG = {
     }
 
     function safePlay(v) {
-        /* play() rejects on its own if the browser declines autoplay. That's
-           a fine outcome — the poster stays up — but an unhandled rejection
-           is noise in the console, so swallow it deliberately. */
+        /* play() rejects if the browser declines autoplay OR if it's simply
+           called before there are enough frames decoded — which is the normal
+           case, since the observer fires the instant the card scrolls in and
+           preload is deliberately light.
+
+           Swallowing that rejection and stopping is what left the 360 frozen
+           on its poster: one early rejection and nothing ever tried again.
+           So mark intent, and retry once the media says it can play. */
+        v.__wantsPlay = true;
         var r = v.play();
-        if (r && typeof r.catch === 'function') r.catch(function () {});
+        if (r && typeof r.catch === 'function') {
+            r.catch(function () {
+                if (!v.__retryBound) {
+                    v.__retryBound = true;
+                    v.addEventListener('canplay', function () {
+                        /* Only if it's still wanted — the viewer may have
+                           switched slides or scrolled away in the meantime. */
+                        if (v.__wantsPlay && v.classList.contains('is-active')) {
+                            var r2 = v.play();
+                            if (r2 && typeof r2.catch === 'function') r2.catch(function () {});
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    function safePause(v) {
+        v.__wantsPlay = false;
+        v.pause();
     }
 
     function pauseOffscreen(videos, media) {
@@ -931,10 +956,12 @@ var MERCH_CONFIG = {
             entries.forEach(function (en) {
                 videos.forEach(function (v) {
                     if (en.isIntersecting && v.classList.contains('is-active')) {
-                        if (v.preload === 'none') v.preload = 'auto';
+                        /* Upgrade preload once it's actually wanted — 'metadata'
+                           is often too little for play() to succeed first try. */
+                        if (v.preload !== 'auto') v.preload = 'auto';
                         safePlay(v);
                     } else {
-                        v.pause();
+                        safePause(v);
                     }
                 });
             });
