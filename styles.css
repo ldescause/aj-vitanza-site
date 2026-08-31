@@ -1575,6 +1575,14 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
 .merch-card-video { object-fit: contain; background: #000; }
 .merch-card.is-soldout .merch-card-img { filter: grayscale(1); }
 
+/* The media well + thumbnail rail form a single column. In the feature
+   layout this wrapper is the grid item, not the well itself. */
+.merch-card-mediacol {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
 /* ---------- Gallery thumbnails ---------- */
 .merch-thumbs {
     display: flex;
@@ -1797,6 +1805,7 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
     align-items: center;
 }
 .merch-card--feature:hover { transform: none; }
+.merch-card--feature .merch-card-mediacol { align-self: center; }
 .merch-card--feature .merch-card-media {
     aspect-ratio: 1 / 1;
     margin-bottom: 0;
@@ -1827,18 +1836,18 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
 }
 .merch-card--feature .merch-card-sub {
     font-size: 1rem;
-    margin-bottom: 26px;
+    margin-bottom: 18px;
 }
 .merch-card--feature .merch-btn {
     width: auto;
     align-self: flex-start;
-    min-width: 240px;
-    padding: 18px 40px;
+    min-width: 220px;
+    padding: 15px 34px;
     font-size: 0.95rem;
 }
 
 /* ---------- Sizes ---------- */
-.merch-card-sizewrap { margin-bottom: 26px; }
+.merch-card-sizewrap { margin-bottom: 18px; }
 .merch-size-label {
     display: block;
     font-family: 'IBM Plex Mono', monospace;
@@ -1852,8 +1861,8 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
 /* ---------- Presale bonus callout ---------- */
 .merch-bonus {
     position: relative;
-    padding: 20px 22px 20px 24px;
-    margin-bottom: 30px;
+    padding: 14px 18px 15px 20px;
+    margin-bottom: 20px;
     border-radius: 12px;
     background: rgba(94, 143, 194, 0.055);
     border: 1px solid rgba(120, 160, 210, 0.16);

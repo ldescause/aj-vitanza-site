@@ -636,8 +636,14 @@ var MERCH_CONFIG = {
             if (p.status === 'lowstock') media.appendChild(mkBadge('Low Stock', 'merch-badge--low'));
         }
 
-        card.appendChild(media);
-        if (gallery) card.appendChild(gallery);
+        /* The media well and its thumbnail rail are ONE column. They must be
+           wrapped: .merch-card--feature is a two-column grid, so appending
+           the rail as a sibling made it a third grid item, which pushed the
+           body onto a second row and turned the card into a tall scroll. */
+        var mediaCol = el('div', 'merch-card-mediacol');
+        mediaCol.appendChild(media);
+        if (gallery) mediaCol.appendChild(gallery);
+        card.appendChild(mediaCol);
 
         /* body */
         var body = el('div', 'merch-card-body');
