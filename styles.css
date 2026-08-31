@@ -581,8 +581,15 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
-    padding-bottom: 12vh;
+    /* Centred, not bottom-anchored. flex-end + 12vh padding left 417px of
+       dead space above the title and 108px below it, so the whole hero read
+       as sitting too low — which looks like the title is off-centre.
+
+       padding-top clears the fixed nav so "centre" means the middle of the
+       visible area, not the middle of the element behind the nav bar. The
+       scroll cue is absolutely positioned and stays pinned to the bottom. */
+    justify-content: center;
+    padding-top: var(--nav-h);
     overflow: hidden;
 }
 .hero-bg {
