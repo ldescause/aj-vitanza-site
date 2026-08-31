@@ -82,6 +82,14 @@ Because staging uses test-mode links, you can run the full checkout — size dro
 
 **Stripe's test card:** `4242 4242 4242 4242`, any future expiry, any CVC, any postcode.
 
+> ⚠️ **Point the TEST link's redirect at staging, not at ajvitanza.com.**
+> `thanks.html` only exists on the `merch-drop` branch. Until that's merged, `ajvitanza.com/thanks.html` is a 404 — so a test purchase takes the payment and then dumps you on an error page, which looks like checkout broke when it didn't.
+>
+> Test link → `https://aj-vitanza-site-git-merch-drop-desca.vercel.app/thanks.html`
+> Live link → `https://ajvitanza.com/thanks.html`
+>
+> And note the consequence for launch day: **the live link's redirect is broken until `main` is merged.** Merge first, then share the link.
+
 Use the phase buttons in the orange staging bar to preview every state without editing files.
 
 ### Test checklist

@@ -131,7 +131,19 @@ var MERCH_CONFIG = {
     shippingNote: 'Shipping is calculated at checkout based on your address. Everything ships from us — no pickup option.',
 
     /* ---------- WHERE STRIPE SENDS PEOPLE AFTER PAYING ----------
-       Paste into each payment link’s "After payment" setting. */
+       This value is documentation — Stripe holds the real setting, per link,
+       under "After payment". The two modes need DIFFERENT urls:
+
+         LIVE link → https://ajvitanza.com/thanks.html
+         TEST link → https://aj-vitanza-site-git-merch-drop-desca.vercel.app/thanks.html
+
+       Why: thanks.html only exists on the merch-drop branch. Until that is
+       merged to main, ajvitanza.com/thanks.html is a 404 — so a test purchase
+       pointed at production takes the payment and then lands the buyer on an
+       error page. That is exactly what happened the first time we tested.
+
+       LAUNCH ORDER MATTERS: the live link's redirect stays broken until main
+       is merged. Merge first, then share the link — never the other way. */
     successUrl: 'https://ajvitanza.com/thanks.html',
 
     /* ---------- PRODUCTS ----------
