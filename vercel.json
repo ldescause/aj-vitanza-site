@@ -22,7 +22,6 @@
       ]
     },
     {
-      "_comment": "Same one-hour policy as /images/merch — you will swap the shirt video while keeping the filename, and a long immutable cache would keep serving the old cut.",
       "source": "/video/:path*",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }

@@ -49,7 +49,9 @@
                 <span class="gate-btn-ring"></span>
             </button>
         </div>
-        <div class="gate-hint">Enable sound for full experience</div>
+        <!-- The site is silent by design, so there is no "enable sound" hint.
+             This says what's actually behind the gate instead. -->
+        <div class="gate-hint">Debut tee — 50-unit presale</div>
     </div>
 
     <!-- Terminal Boot -->
@@ -122,7 +124,11 @@
             <h1 class="hero-title" data-split>AJ VITANZA</h1>
             <p class="hero-sub" data-reveal>AJ VITANZA DEBUT TEE</p>
             <div class="hero-actions" data-reveal>
-                <a href="#merch" class="btn btn--primary btn--lg" data-magnetic data-ripple>
+                <!-- Targets the product itself, not the section heading.
+                     Aimed at #merch, the label/title/blurb/counter ate the
+                     viewport and the shirt opened below the fold — you jumped
+                     to the shop and couldn't see what was for sale. -->
+                <a href="#shop" class="btn btn--primary btn--lg" data-magnetic data-ripple>
                     <span class="hero-cta-text">Shop The Tee</span>
                 </a>
                 <a href="#elsewhere" class="btn btn--ghost" data-magnetic data-ripple>
@@ -184,7 +190,7 @@
                 </div>
             </div>
 
-            <div class="merch-grid"></div>
+            <div class="merch-grid" id="shop"></div>
 
             <p class="merch-shipping-note" data-reveal></p>
         </div>

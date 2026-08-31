@@ -4,219 +4,14 @@
     var isMobile = window.matchMedia('(max-width: 768px)').matches || 'ontouchstart' in window;
     var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // ========== AUDIO ENGINE ==========
-    var audioCtx = null;
-    var masterGain = null;
+    /* The site is deliberately SILENT. A Web Audio engine used to live here
+       — drone, boot tones, a resolve chime and an impact hit — along with a
+       Keep Me High track. All of it is gone: this is a shop, and a page that
+       makes noise at someone who is deciding whether to spend $50 is working
+       against itself. The visual boot sequence below is unchanged.
 
-    function getAudioContext() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        return audioCtx;
-    }
-
-    function getMasterGain() {
-        var ctx = getAudioContext();
-        if (!masterGain) {
-            masterGain = ctx.createGain();
-            masterGain.gain.value = 0.8;
-            masterGain.connect(ctx.destination);
-        }
-        return masterGain;
-    }
-
-    function playTone(freq, duration, gainVal, type, rampDown) {
-        var ctx = getAudioContext();
-        var osc = ctx.createOscillator();
-        var gain = ctx.createGain();
-        osc.type = type || 'sine';
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(gainVal || 0.02, ctx.currentTime);
-        if (rampDown !== false) {
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (duration || 0.1));
-        }
-        osc.connect(gain);
-        gain.connect(getMasterGain());
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + (duration || 0.1));
-    }
-
-    function playNoise(duration, gainVal) {
-        var ctx = getAudioContext();
-        var bufferSize = ctx.sampleRate * (duration || 0.1);
-        var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        var data = buffer.getChannelData(0);
-        for (var i = 0; i < bufferSize; i++) {
-            data[i] = (Math.random() * 2 - 1) * 0.5;
-        }
-        var source = ctx.createBufferSource();
-        source.buffer = buffer;
-        var gain = ctx.createGain();
-        gain.gain.setValueAtTime(gainVal || 0.01, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-        var filter = ctx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.value = 2000;
-        filter.Q.value = 0.5;
-        source.connect(filter);
-        filter.connect(gain);
-        gain.connect(getMasterGain());
-        source.start();
-    }
-
-    // Deep cinematic sub-bass drone
-    var droneOscs = [];
-    function startDrone() {
-        var ctx = getAudioContext();
-        var master = getMasterGain();
-        var droneGain = ctx.createGain();
-        droneGain.gain.setValueAtTime(0, ctx.currentTime);
-        droneGain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 3);
-        droneGain.connect(master);
-
-        [40, 40.2, 60, 80.1].forEach(function (freq) {
-            var osc = ctx.createOscillator();
-            osc.type = 'sine';
-            osc.frequency.value = freq;
-            osc.connect(droneGain);
-            osc.start();
-            droneOscs.push({ osc: osc, gain: droneGain });
-        });
-
-        // dark rumble layer
-        var rumbleGain = ctx.createGain();
-        rumbleGain.gain.setValueAtTime(0, ctx.currentTime);
-        rumbleGain.gain.linearRampToValueAtTime(0.015, ctx.currentTime + 4);
-        rumbleGain.connect(master);
-        var rumble = ctx.createOscillator();
-        rumble.type = 'sawtooth';
-        rumble.frequency.value = 30;
-        var rumbleFilter = ctx.createBiquadFilter();
-        rumbleFilter.type = 'lowpass';
-        rumbleFilter.frequency.value = 80;
-        rumble.connect(rumbleFilter);
-        rumbleFilter.connect(rumbleGain);
-        rumble.start();
-        droneOscs.push({ osc: rumble, gain: rumbleGain });
-    }
-
-    function stopDrone() {
-        var ctx = getAudioContext();
-        droneOscs.forEach(function (d) {
-            d.gain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 1.5);
-            setTimeout(function () {
-                try { d.osc.stop(); } catch (e) {}
-            }, 2000);
-        });
-        droneOscs = [];
-    }
-
-    function playBootUp() {
-        // cinematic power-on: low sweep + impact
-        var ctx = getAudioContext();
-        var master = getMasterGain();
-        // sweep up
-        var sweep = ctx.createOscillator();
-        sweep.type = 'sawtooth';
-        sweep.frequency.setValueAtTime(30, ctx.currentTime);
-        sweep.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 1.2);
-        var sweepGain = ctx.createGain();
-        sweepGain.gain.setValueAtTime(0.04, ctx.currentTime);
-        sweepGain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.8);
-        sweepGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
-        var sweepFilter = ctx.createBiquadFilter();
-        sweepFilter.type = 'lowpass';
-        sweepFilter.frequency.setValueAtTime(100, ctx.currentTime);
-        sweepFilter.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 1.2);
-        sweep.connect(sweepFilter);
-        sweepFilter.connect(sweepGain);
-        sweepGain.connect(master);
-        sweep.start();
-        sweep.stop(ctx.currentTime + 1.5);
-
-        // impact hit at 1.2s
-        setTimeout(function () {
-            playNoise(0.3, 0.06);
-            playTone(55, 0.8, 0.1, 'sine');
-            playTone(110, 0.4, 0.04, 'triangle');
-        }, 1200);
-    }
-
-    function playTypeBlip() {
-        var freq = 1200 + Math.random() * 600;
-        playTone(freq, 0.02, 0.008, 'square');
-    }
-
-    function playProgressTick() {
-        playTone(900 + Math.random() * 200, 0.025, 0.01, 'sine');
-    }
-
-    function playResolveChime() {
-        var ctx = getAudioContext();
-        var master = getMasterGain();
-
-        // Industrial synth hit — detuned saw stack + filtered noise burst
-        var freqs = [55, 55.5, 110, 82.4];
-        freqs.forEach(function (freq) {
-            var osc = ctx.createOscillator();
-            osc.type = 'sawtooth';
-            osc.frequency.value = freq;
-            var gain = ctx.createGain();
-            gain.gain.setValueAtTime(0.06, ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.15);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.8);
-            var filter = ctx.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(800, ctx.currentTime);
-            filter.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 1.5);
-            filter.Q.value = 4;
-            osc.connect(filter);
-            filter.connect(gain);
-            gain.connect(master);
-            osc.start();
-            osc.stop(ctx.currentTime + 2);
-        });
-
-        // metallic noise burst
-        playNoise(0.15, 0.04);
-    }
-
-    function playFinalImpact() {
-        var ctx = getAudioContext();
-        var master = getMasterGain();
-
-        // Heavy sub drop
-        var sub = ctx.createOscillator();
-        sub.type = 'sine';
-        sub.frequency.setValueAtTime(120, ctx.currentTime);
-        sub.frequency.exponentialRampToValueAtTime(35, ctx.currentTime + 1.5);
-        var subGain = ctx.createGain();
-        subGain.gain.setValueAtTime(0.15, ctx.currentTime);
-        subGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2);
-        sub.connect(subGain);
-        subGain.connect(master);
-        sub.start();
-        sub.stop(ctx.currentTime + 2);
-
-        // Industrial noise hit
-        playNoise(0.4, 0.07);
-
-        // Distorted saw stab
-        var stab = ctx.createOscillator();
-        stab.type = 'sawtooth';
-        stab.frequency.value = 65;
-        var stabGain = ctx.createGain();
-        stabGain.gain.setValueAtTime(0.08, ctx.currentTime);
-        stabGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
-        var distFilter = ctx.createBiquadFilter();
-        distFilter.type = 'lowpass';
-        distFilter.frequency.value = 400;
-        distFilter.Q.value = 8;
-        stab.connect(distFilter);
-        distFilter.connect(stabGain);
-        stabGain.connect(master);
-        stab.start();
-        stab.stop(ctx.currentTime + 1.5);
-    }
+       If sound is ever wanted again, it belongs behind an off-by-default
+       control, not on a gate tap. */
 
     // ========== GATE ==========
     var gate = document.getElementById('gate');
@@ -246,9 +41,6 @@
     }
 
     gateBtn.addEventListener('click', function () {
-        getAudioContext();
-        playBootUp();
-        startDrone();
         gate.classList.add('hidden');
         startTerminalBoot();
     });
@@ -291,7 +83,6 @@
         function typeNext() {
             if (charIndex < text.length) {
                 lineEl.textContent = text.substring(0, charIndex + 1);
-                if (charIndex % 3 === 0) playTypeBlip();
                 charIndex++;
                 setTimeout(typeNext, line.speed);
             } else if (line.progress) {
@@ -316,7 +107,6 @@
         tag.className = 'terminal-status';
         tag.textContent = ' [' + status + ']';
         lineEl.appendChild(tag);
-        playProgressTick();
     }
 
     function animateProgress(lineEl, prefix, callback) {
@@ -329,7 +119,6 @@
             var filled = Math.round((progress / 100) * barWidth);
             var bar = ' [' + '█'.repeat(filled) + '·'.repeat(barWidth - filled) + '] ' + Math.round(progress) + '%';
             lineEl.textContent = prefix + bar;
-            playProgressTick();
             if (progress < 100) {
                 setTimeout(tick, 14 + Math.random() * 10);
             } else {
@@ -360,7 +149,6 @@
         setTimeout(function () {
             logoReveal.classList.remove('phase-glitch');
             logoReveal.classList.add('phase-resolving');
-            playResolveChime();
 
             // Phase 2: Resolving, slower spin, clearing
             setTimeout(function () {
@@ -369,9 +157,8 @@
 
                 logoRevealText.classList.add('visible');
                 logoRevealSub.classList.add('visible');
-                stopDrone();
 
-                // Auto-enter after a short beat of music on the logo screen
+                // Auto-enter after a beat on the logo screen
                 setTimeout(finishIntro, 1800);
             }, 900);
         }, 700);
@@ -400,7 +187,6 @@
 
     // ========== FINISH INTRO ==========
     function finishIntro() {
-        playFinalImpact();
 
         // Prepare main site BEFORE fading logo out
         window.scrollTo(0, 0);

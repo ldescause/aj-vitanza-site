@@ -1345,7 +1345,9 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
    MERCH — editorial
    ============================================ */
 .merch {
-    padding: clamp(80px, 9vw, 110px) 0 clamp(80px, 9vw, 110px);
+    /* Deliberately tighter on top than the other sections: this one is an
+       anchor target, and every pixel here pushes the product below the fold. */
+    padding: clamp(44px, 5vw, 68px) 0 clamp(70px, 8vw, 96px);
     position: relative;
     overflow: hidden;
     background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg) 50%, var(--bg-deep) 100%);
@@ -1373,7 +1375,7 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
     flex-wrap: wrap;
     align-items: baseline;
     gap: 12px 20px;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
 }
 .merch-title {
     font-size: clamp(1.5rem, 2.6vw, 2.1rem);
@@ -1413,7 +1415,7 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
     line-height: 1.6;
     color: var(--text-dim);
     max-width: 60ch;
-    margin-bottom: clamp(24px, 3vw, 32px);
+    margin-bottom: clamp(14px, 1.8vw, 20px);
     text-wrap: pretty;
 }
 
@@ -1423,7 +1425,7 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
     flex-wrap: wrap;
     align-items: flex-end;
     gap: 22px clamp(28px, 4vw, 52px);
-    padding: 16px 0 18px;
+    padding: 10px 0 12px;
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
     margin-bottom: clamp(28px, 3.5vw, 40px);
@@ -1557,7 +1559,10 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    /* contain, not cover: the renders are on pure black and so is the well,
+       so letterboxing is invisible — whereas cover clips the sleeves and hem
+       whenever the well's ratio differs from the image's 4:5. */
+    object-fit: contain;
     transition: opacity 0.6s var(--ease-out-expo), transform 0.9s var(--ease-out-expo);
 }
 .merch-card:hover .merch-card-img { transform: scale(1.05); }
@@ -1567,7 +1572,7 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
 .merch-card-media { background: #000; }
 .merch-slide { opacity: 0; pointer-events: none; }
 .merch-slide.is-active { opacity: 1; pointer-events: auto; }
-.merch-card-video { object-fit: cover; background: #000; }
+.merch-card-video { object-fit: contain; background: #000; }
 .merch-card.is-soldout .merch-card-img { filter: grayscale(1); }
 
 /* ---------- Gallery thumbnails ---------- */
@@ -1795,6 +1800,12 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
 .merch-card--feature .merch-card-media {
     aspect-ratio: 1 / 1;
     margin-bottom: 0;
+    /* On a wide screen the square well grows with the column and pushes the
+       buy button off the bottom of the viewport. Cap it against screen
+       height so the whole card stays reachable without scrolling. The
+       letterboxing this creates is invisible — slides are contain-fit on
+       the same black as the well. */
+    max-height: min(58vh, 540px);
 }
 .merch-card--feature:hover .merch-card-media {
     border-color: rgba(120, 160, 210, 0.26);

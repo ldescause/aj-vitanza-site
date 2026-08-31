@@ -40,6 +40,12 @@ https://aj-vitanza-site-git-merch-drop-desca.vercel.app
 
 Every individual commit also gets its own permanent URL, so you can always go back and look at an earlier state.
 
+> ⚠️ **A successful push is not a successful deploy.** If a build fails, Vercel keeps serving the **previous** deployment at the same URL — so the site looks fine, just stale, and nothing tells you. We lost time to exactly this: a push landed, the build failed on an invalid `vercel.json`, and staging quietly kept showing the older build while it looked like the push hadn't happened.
+>
+> After pushing, check **Vercel → Deployments** and confirm the newest one says **Ready**, not **Error**. If it says Error, open it — the message names the problem.
+>
+> **`vercel.json` cannot contain comments.** It's strict JSON with a strict schema: any key it doesn't recognise (a `_comment`, a note to yourself) fails the whole build. Explain things in this file instead.
+
 > ⚠️ **Do not delete the Netlify account or the `ajvitanza.com` DNS zone.**
 > Hosting moved to Vercel, but **Netlify is still the authoritative nameserver** for the domain — the registrar points at `dns1–4.p03.nsone.net`. The two DNS records inside that zone now point at Vercel. Delete the zone and the domain stops resolving entirely.
 >
