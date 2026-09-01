@@ -83,7 +83,10 @@ var MERCH_CONFIG = {
            marketing display — keep it roughly honest against the sum of
            the per-size `presale` values below, or the console will nag. */
         totalUnits: 50,
-        unitsRemaining: 50,
+        /* 23 sold in the first hour. This number is typed by hand, so it is
+           wrong the moment it isn't updated — check Stripe and bump it, or
+           set showCounter: false and stop making a claim you can't keep. */
+        unitsRemaining: 27,
 
         /* At or below this many units, the counter turns warm amber and the
            label sharpens. Set to 0 to never escalate. */
