@@ -87,16 +87,23 @@ var MERCH_CONFIG = {
            is (cap − payments taken). Read "Limited use: X of 50 used" on the
            payment link in Stripe and put 50 − X here.
 
-           43 of 50 used overnight -> 7.
+           The Stripe cap is now 53, NOT 50 — raised to absorb three refunds
+           (refunds don't return a slot, Stripe counts payments). So:
 
-           Note refunds do NOT return a slot: Stripe counts payments, so two
-           refunds mean the presale closes at 50 payments but 48 shirts. Raise
-           the cap in Stripe if you want a true 50 out the door.
+             payments taken   43 of 53
+             refunded          3
+             shirts shipped   40
+             shirts still available -> 10   <- this number
+
+           totalUnits stays 50 because 50 shirts is the promise; 53 is just
+           the mechanism. Cap minus taken equals shirts left only while the
+           refund count and the cap uplift stay in step — if you refund
+           another, raise the cap again or this drifts.
 
            Typed by hand, so it is wrong the moment it isn't updated — bump it
            when you check Stripe, or set showCounter: false and stop making a
            claim you can't keep. */
-        unitsRemaining: 7,
+        unitsRemaining: 10,
 
         /* At or below this many units, the counter turns warm amber and the
            label sharpens. Set to 0 to never escalate. */
