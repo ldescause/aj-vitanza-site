@@ -83,10 +83,20 @@ var MERCH_CONFIG = {
            marketing display — keep it roughly honest against the sum of
            the per-size `presale` values below, or the console will nag. */
         totalUnits: 50,
-        /* 23 sold in the first hour. This number is typed by hand, so it is
-           wrong the moment it isn't updated — check Stripe and bump it, or
-           set showCounter: false and stop making a claim you can't keep. */
-        unitsRemaining: 27,
+        /* REMAINING, not sold. The card renders it as "N / 50 left", so this
+           is (cap − payments taken). Read "Limited use: X of 50 used" on the
+           payment link in Stripe and put 50 − X here.
+
+           26 of 50 used as of the first evening -> 24.
+
+           Note refunds do NOT return a slot: Stripe counts payments, so two
+           refunds mean the presale closes at 50 payments but 48 shirts. Raise
+           the cap in Stripe if you want a true 50 out the door.
+
+           Typed by hand, so it is wrong the moment it isn't updated — bump it
+           when you check Stripe, or set showCounter: false and stop making a
+           claim you can't keep. */
+        unitsRemaining: 24,
 
         /* At or below this many units, the counter turns warm amber and the
            label sharpens. Set to 0 to never escalate. */
