@@ -87,7 +87,7 @@ var MERCH_CONFIG = {
            is (cap − payments taken). Read "Limited use: X of 50 used" on the
            payment link in Stripe and put 50 − X here.
 
-           26 of 50 used as of the first evening -> 24.
+           43 of 50 used overnight -> 7.
 
            Note refunds do NOT return a slot: Stripe counts payments, so two
            refunds mean the presale closes at 50 payments but 48 shirts. Raise
@@ -96,7 +96,7 @@ var MERCH_CONFIG = {
            Typed by hand, so it is wrong the moment it isn't updated — bump it
            when you check Stripe, or set showCounter: false and stop making a
            claim you can't keep. */
-        unitsRemaining: 24,
+        unitsRemaining: 7,
 
         /* At or below this many units, the counter turns warm amber and the
            label sharpens. Set to 0 to never escalate. */
