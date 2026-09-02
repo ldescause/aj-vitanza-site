@@ -23,7 +23,7 @@ var MERCH_CONFIG = {
        On the staging URL you can preview any phase without editing this
        file by adding ?phase=presale to the address. That override is
        ignored on the real domain. */
-    phase: 'presale',
+    phase: 'soldout',
 
     /* ---------- WHICH DOMAINS ARE "REAL" ----------
        Anywhere NOT in this list is treated as staging: Stripe TEST links
@@ -49,8 +49,8 @@ var MERCH_CONFIG = {
             blurb: 'Official AJ Vitanza merch. Ships worldwide.'
         },
         soldout: {
-            eyebrow: 'Presale Sold Out',
-            blurb: 'All 50 presale shirts are gone. The rest of the run is available in person at the show — first come, first served. (The signed card was presale only.)'
+            eyebrow: 'Presale Closed',
+            blurb: 'The presale is closed — every order is being packed now and ships with a graphic card signed by AJ. The rest of the run is at the merch table tonight, first come, first served.'
         }
     },
 
@@ -66,7 +66,7 @@ var MERCH_CONFIG = {
         teaser:  { eyebrow: 'Merch — Dropping Soon',     sub: 'AJ VITANZA DEBUT TEE', cta: 'See The Tee' },
         presale: { eyebrow: 'Presale Open — 50 Units',   sub: 'AJ VITANZA DEBUT TEE', cta: 'Shop The Tee' },
         live:    { eyebrow: 'Merch — Available Now',     sub: 'AJ VITANZA DEBUT TEE', cta: 'Shop The Tee' },
-        soldout: { eyebrow: 'Presale Sold Out',          sub: 'AJ VITANZA DEBUT TEE', cta: 'See The Merch' }
+        soldout: { eyebrow: 'Presale Closed — See You At The Show', sub: 'AJ VITANZA DEBUT TEE', cta: 'See The Merch' }
     },
 
     /* ---------- PRESALE COUNTER ----------
