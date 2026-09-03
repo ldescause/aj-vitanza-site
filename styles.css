@@ -1859,8 +1859,13 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
 .merch-card:hover .merch-size {
     border-color: rgba(120, 160, 210, 0.28);
     color: var(--text);
-}/* ---- Selectable sizes ----
-   Each size is its own Stripe link, so these chips are real controls {
+}
+
+/* ---- Selectable sizes ----
+   Each size is its own capped Stripe link, so these chips are real controls
+   rather than labels. A sold-out size is rendered as a <span> by merch.js,
+   so it never matches this rule and can never be focused or clicked. */
+.merch-size--pick {
     cursor: pointer;
     background: transparent;
     -webkit-appearance: none;
@@ -1872,6 +1877,14 @@ button { border: none; background: none; cursor: pointer; font: inherit; color: 
     justify-content: center;
 }
 
+.merch-size--pick:hover {
+    border-color: rgba(120, 160, 210, 0.5);
+    color: var(--text-bright);
+}
+.merch-size--pick:focus-visible {
+    outline: 2px solid rgba(120, 160, 210, 0.85);
+    outline-offset: 2px;
+}
 .merch-size.is-selected,
 .merch-card:hover .merch-size.is-selected {
     border-color: var(--text);

@@ -23,7 +23,7 @@ var MERCH_CONFIG = {
        On the staging URL you can preview any phase without editing this
        file by adding ?phase=presale to the address. That override is
        ignored on the real domain. */
-    phase: 'soldout',
+    phase: 'live',
 
     /* ---------- WHICH DOMAINS ARE "REAL" ----------
        Anywhere NOT in this list is treated as staging: Stripe TEST links
@@ -46,11 +46,11 @@ var MERCH_CONFIG = {
         },
         live: {
             eyebrow: 'Available Now',
-            blurb: 'Official AJ Vitanza merch. Ships worldwide.'
+            blurb: 'The AJ Vitanza debut tee — heavyweight cotton, white. Ships worldwide. Limited stock, and when a size is gone it\u2019s gone.'
         },
         soldout: {
             eyebrow: 'Presale Closed',
-            blurb: 'The presale is closed — every order is being packed now and ships with a graphic card signed by AJ. The rest of the run is at the merch table tonight, first come, first served.'
+            blurb: 'The 50-unit presale is closed and every order is being packed now. The full run drops here soon — sign up below and you\u2019ll hear first.'
         }
     },
 
@@ -66,7 +66,7 @@ var MERCH_CONFIG = {
         teaser:  { eyebrow: 'Merch — Dropping Soon',     sub: 'AJ VITANZA DEBUT TEE', cta: 'See The Tee' },
         presale: { eyebrow: 'Presale Open — 50 Units',   sub: 'AJ VITANZA DEBUT TEE', cta: 'Shop The Tee' },
         live:    { eyebrow: 'Merch — Available Now',     sub: 'AJ VITANZA DEBUT TEE', cta: 'Shop The Tee' },
-        soldout: { eyebrow: 'Presale Closed — See You At The Show', sub: 'AJ VITANZA DEBUT TEE', cta: 'See The Merch' }
+        soldout: { eyebrow: 'Presale Closed — Full Drop Coming Soon', sub: 'AJ VITANZA DEBUT TEE', cta: 'See The Tee' }
     },
 
     /* ---------- PRESALE COUNTER ----------
@@ -111,10 +111,9 @@ var MERCH_CONFIG = {
 
         /* The presale-only sweetener. Rendered as a callout on the product.
            Set to null to remove it. */
-        bonus: {
-            title: 'Signed graphic card included',
-            text: 'Every presale order ships with a graphic card hand-signed by AJ. Presale only — not available at the merch table.'
-        }
+        /* The signed card was a presale-only sweetener. It is gone, so this
+           is null — leaving it on would promise something no longer shipped. */
+        bonus: null
     },
 
     /* ---------- COUNTDOWN ----------
@@ -197,27 +196,29 @@ var MERCH_CONFIG = {
        status : null | 'soldout' | 'lowstock'
        badge  : optional tag, e.g. 'Presale Exclusive'
     */
+    /* ---------- PRODUCTS ----------
+       ONE CAPPED STRIPE LINK PER SIZE. This is the only arrangement that can
+       actually stop a sold-out size being bought: a payment link caps
+       PAYMENTS, so a single link with a size dropdown can never protect an
+       individual size. Each link below is capped at that size's real stock,
+       so Stripe deactivates it the moment the size runs out and checkout
+       becomes impossible on its own — not merely greyed out here.
+
+       stock   : units left when the drop opened. Reference only; Stripe's cap
+                 is the thing that actually enforces it.
+       link    : LIVE buy.stripe.com URL for that size, capped in Stripe.
+       soldout : set true to grey it out on the site. Stripe has already
+                 stopped it; this just tells the visitor before they click.
+
+       There are deliberately NO test-mode links: staging therefore shows
+       "Dropping Soon" rather than risking a real charge from a test page. */
     products: [
         {
             id: 'tee',
             name: 'AJ Vitanza Debut T-Shirt',
-            /* NOTE: every render supplied shows a WHITE / off-white shirt.
-               This previously read "Black", which would have been the first
-               thing a buyer noticed was wrong. Confirm the real colourway. */
             subtitle: 'Heavyweight cotton — White',
             price: 50,
 
-            /* ---- media ----
-               `media` is the gallery, shown in order. Types:
-                 video — loops silently, pauses when scrolled out of view
-                 image — a still
-               The first entry is what loads first, so keep the video there
-               only while it stays small; it is 170KB today.
-
-               All three assets are the same render on the same black
-               backdrop (the stills are frames 0 and 75 of the video), which
-               is why switching between them doesn't jump. If you replace one,
-               replace all three or the set stops matching. */
             media: [
                 {
                     type: 'video',
@@ -240,23 +241,18 @@ var MERCH_CONFIG = {
                 }
             ],
 
-            /* Kept so an older cached merch.js still renders something, and
-               so the structured data has a stable image. */
             image: 'images/merch/tee-front.jpg',
             imageAlt: 'images/merch/tee-back.jpg',
-            /* The one capped link. Size is a required dropdown inside it. */
-            link:     'https://buy.stripe.com/00wfZjc2e6bO4BSagudfG05',
-            linkTest: 'https://buy.stripe.com/test_00wfZjc2e6bO4BSagudfG05',
 
             sizes: [
-                { label: 'XS', stock: 10, soldout: false },
-                { label: 'S',  stock: 65, soldout: false },
-                { label: 'M',  stock: 62, soldout: false },
-                { label: 'L',  stock: 43, soldout: false },
-                { label: 'XL', stock: 14, soldout: false }
+                { label: 'XS', stock:  8, soldout: false, link: 'https://buy.stripe.com/fZu5kF5DQ9o0c4kewKdfG06' },
+                { label: 'S',  stock: 46, soldout: false, link: 'https://buy.stripe.com/14AaEZeameIkfgw88mdfG07' },
+                { label: 'M',  stock: 44, soldout: false, link: 'https://buy.stripe.com/4gM3cx3vIcAc2tK74idfG08' },
+                { label: 'L',  stock: 33, soldout: false, link: 'https://buy.stripe.com/9B6dRb0jw2ZC2tK0FUdfG09' },
+                { label: 'XL', stock:  8, soldout: false, link: 'https://buy.stripe.com/00w00l7LY7fS5FWgESdfG0a' }
             ],
             status: null,
-            badge: 'Presale Exclusive'
+            badge: null
         }
     ],
 
@@ -347,49 +343,44 @@ var MERCH_CONFIG = {
        --------------------------------------------------------- */
     /* Resolves the product's checkout URL for the current environment.
        Returns null when it can't be bought right now. */
-    function linkFor(p) {
-        if (!isProd) return p.linkTest || null;
+    function linkFor(sz) {
+        if (!sz || sz.soldout || !sz.link) return null;
+        /* Staging never gets a live link. There are no per-size test links, so
+           staging shows a dead button rather than risking a real charge. */
+        if (!isProd) return null;
+        /* Hard guard: never send a real customer to a test-mode checkout. */
+        if (/\/test_/.test(sz.link)) return null;
+        return sz.link;
+    }
 
-        /* Hard guard: never send a real customer to a test-mode checkout.
-           If a test link ends up in the live slot, the button goes dead
-           rather than silently taking fake orders. */
-        if (p.link && /\/test_/.test(p.link)) return null;
-        return p.link || null;
+    /* A product is buyable if ANY of its sizes still is. */
+    function anyBuyable(p) {
+        return (p.sizes || []).some(function (sz) { return !!linkFor(sz); });
     }
 
     var warnings = [];
     var expectsLinks = phase !== 'teaser' && phase !== 'soldout';
     cfg.products.forEach(function (p) {
-        if (isProd) {
-            if (p.link && /\/test_/.test(p.link)) {
-                warnings.push(p.id + ': link is a TEST link — BLOCKED on production. ' +
-                    'Replace it with the live-mode link.');
+        (p.sizes || []).forEach(function (sz) {
+            if (sz.soldout) return;
+            if (!sz.link && expectsLinks) {
+                warnings.push(p.id + ' ' + sz.label + ': no link — that size cannot be bought.');
             }
-            if (!p.link && expectsLinks) {
-                warnings.push(p.id + ': no live link — the button will say "Dropping Soon".');
+            if (isProd && sz.link && /\/test_/.test(sz.link)) {
+                warnings.push(p.id + ' ' + sz.label + ': TEST link in the live slot — BLOCKED.');
             }
-        } else if (!p.linkTest && expectsLinks) {
-            warnings.push(p.id + ': no linkTest — cannot test checkout on staging.');
-        }
-
-        /* The presale is capped in Stripe at one number. If the counter on
-           the site claims something different, one of them is lying to the
-           buyer — and it's usually this file, edited and forgotten. */
-        if (phase === 'presale' && cfg.presale.showCounter &&
-            cfg.presale.unitsRemaining > cfg.presale.totalUnits) {
-            warnings.push('presale.unitsRemaining (' + cfg.presale.unitsRemaining +
-                ') is greater than totalUnits (' + cfg.presale.totalUnits + ').');
-        }
-
-        /* Sizes are informational now — selection happens in Stripe. Marking
-           one sold out here does NOT remove it from the Stripe dropdown. */
-        var gone = (p.sizes || []).filter(function (s) { return s.soldout; });
-        if (gone.length && expectsLinks) {
-            warnings.push(p.id + ': ' + gone.map(function (s) { return s.label; }).join(', ') +
-                ' marked sold out on the site, but the Stripe dropdown still offers ' +
-                'every size. Remove the option in Stripe too, or you will take orders ' +
-                'you cannot fill.');
-        }
+        });
+        /* Two sizes sharing a link means one eats the other's cap and both
+           buyers get the wrong shirt. Cheap to check, expensive to miss. */
+        var seen = {};
+        (p.sizes || []).forEach(function (sz) {
+            if (!sz.link) return;
+            if (seen[sz.link]) {
+                warnings.push(p.id + ': ' + seen[sz.link] + ' and ' + sz.label +
+                    ' share the same Stripe link — one will eat the other\u2019s stock.');
+            }
+            seen[sz.link] = sz.label;
+        });
     });
     if (warnings.length && window.console) {
         console.warn('[merch] ' + (isProd ? 'PRODUCTION' : 'STAGING') + ' warnings:\n  • ' +
@@ -652,8 +643,7 @@ var MERCH_CONFIG = {
 
         var soldOut = p.status === 'soldout' || phase === 'soldout' ||
             (everySizeGone && phase !== 'teaser');
-        var link = linkFor(p);
-        var buyable = phase !== 'teaser' && !soldOut && !!link;
+        var buyable = phase !== 'teaser' && !soldOut && anyBuyable(p);
 
         var card = el('article', 'merch-card' + (isFeature ? ' merch-card--feature' : ''));
         card.setAttribute('data-reveal', isFeature ? '' : 'scale');
@@ -717,8 +707,11 @@ var MERCH_CONFIG = {
 
         /* SIZES — informational only. The real choice is a required
            dropdown inside Stripe, so these are chips, not controls. */
+        var action = buildAction(p, buyable, soldOut);
         if (p.sizes && p.sizes.length) {
-            body.appendChild(buildSizeList(p, buyable));
+            body.appendChild(buildSizeList(p, buyable, function (sz) {
+                if (action.__pick) action.__pick(sz);
+            }));
         }
 
         /* Presale-only bonus callout */
@@ -734,7 +727,7 @@ var MERCH_CONFIG = {
             body.appendChild(bx);
         }
 
-        body.appendChild(buildAction(p, link, buyable, soldOut));
+        body.appendChild(action);
         card.appendChild(body);
         return card;
     }
@@ -744,20 +737,43 @@ var MERCH_CONFIG = {
        dropdown, so these chips only tell the buyer what exists. A size
        flagged soldout is struck through here — but see the console warning:
        that does NOT remove it from the Stripe dropdown.               */
-    function buildSizeList(p, buyable) {
+    function buildSizeList(p, buyable, onPick) {
         var wrap = el('div', 'merch-card-sizewrap');
         var label = el('span', 'merch-size-label');
-        label.textContent = buyable ? 'Sizes — choose yours at checkout' : 'Sizes';
+        label.textContent = buyable ? 'Choose your size' : 'Sizes';
         var row = el('div', 'merch-card-sizes');
+        row.setAttribute('role', 'radiogroup');
+        row.setAttribute('aria-label', 'Size');
 
+        var chips = [];
         p.sizes.forEach(function (sz) {
-            var chip = el('span', 'merch-size');
-            if (sz.soldout) {
-                chip.classList.add('is-unavailable');
-                chip.title = 'Sold out';
-                chip.setAttribute('aria-label', sz.label + ' — sold out');
-            }
+            var live = !!linkFor(sz);
+            /* A sold-out size is a SPAN, not a button: there is nothing to
+               press, nothing focusable, and no way to reach a checkout. */
+            var chip = el(live ? 'button' : 'span', 'merch-size');
             chip.textContent = sz.label;
+
+            if (!live) {
+                chip.classList.add('is-unavailable');
+                chip.title = sz.soldout ? 'Sold out' : 'Not available';
+                chip.setAttribute('aria-label', sz.label + ' — sold out');
+                chip.setAttribute('aria-disabled', 'true');
+            } else {
+                chip.type = 'button';
+                chip.classList.add('merch-size--pick');
+                chip.setAttribute('role', 'radio');
+                chip.setAttribute('aria-checked', 'false');
+                chip.addEventListener('click', function () {
+                    chips.forEach(function (c) {
+                        c.classList.remove('is-selected');
+                        c.setAttribute('aria-checked', 'false');
+                    });
+                    chip.classList.add('is-selected');
+                    chip.setAttribute('aria-checked', 'true');
+                    onPick(sz);
+                });
+                chips.push(chip);
+            }
             row.appendChild(chip);
         });
 
@@ -767,11 +783,20 @@ var MERCH_CONFIG = {
     }
 
     /* ---- buy button --------------------------------------------------
-       One link, capped at 50 in Stripe. When the cap is hit Stripe
-       deactivates the link on its own and shows its own "no longer
-       available" page — so an unlucky 51st buyer gets a clear message
-       rather than a broken checkout.                                   */
-    function buildAction(p, link, buyable, soldOut) {
+       Starts inert and only becomes a real link once a size is chosen, so
+       there is no path to checkout without one. Each size carries its own
+       capped Stripe link; when that size sells out Stripe deactivates the
+       link and the chip here goes grey and unclickable.                  */
+    function buildAction(p, buyable, soldOut) {
+        var a = document.createElement('a');
+        a.className = 'btn btn--primary merch-btn is-disabled';
+        a.setAttribute('role', 'button');
+        a.setAttribute('aria-disabled', 'true');
+        a.setAttribute('data-magnetic', '');
+        a.setAttribute('data-ripple', '');
+
+        function setLabel(t) { a.innerHTML = '<span>' + t + '</span>'; }
+
         if (!buyable) {
             var btn = document.createElement('button');
             btn.type = 'button';
@@ -781,29 +806,33 @@ var MERCH_CONFIG = {
             return btn;
         }
 
-        var a = document.createElement('a');
-        a.href = link;
-        a.target = '_blank';
-        a.rel = 'noopener';
-        a.className = 'btn btn--primary merch-btn';
-        a.setAttribute('data-magnetic', '');
-        a.setAttribute('data-ripple', '');
-        a.innerHTML = '<span>' +
-            (phase === 'presale' ? 'Reserve Yours' : 'Buy Now') + '</span>' +
-            (isProd ? '' : '<span class="merch-btn-test">test</span>');
+        setLabel('Select a size');
 
-        a.addEventListener('click', function () {
-            /* Only report real purchases to analytics. */
+        a.addEventListener('click', function (e) {
+            if (a.getAttribute('aria-disabled') === 'true') { e.preventDefault(); return; }
             if (isProd && typeof window.gtag === 'function') {
                 window.gtag('event', 'begin_checkout', {
-                    currency: cfg.currency,
-                    value: p.price,
-                    items: [{ item_id: p.id, item_name: p.name, price: p.price }]
+                    currency: cfg.currency, value: p.price,
+                    items: [{ item_id: p.id + '-' + (a.dataset.size || ''),
+                              item_name: p.name, price: p.price }]
                 });
             }
         });
+
+        a.__pick = function (sz) {
+            var link = linkFor(sz);
+            if (!link) return;
+            a.href = link;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.dataset.size = sz.label;
+            a.removeAttribute('aria-disabled');
+            a.classList.remove('is-disabled');
+            setLabel('Buy ' + sz.label + ' — ' + cfg.currencySymbol + formatPrice(p.price));
+        };
         return a;
     }
+
     /* ---------------- helpers ---------------- */
 
     /* setAttribute rather than the property, so the hint is present in the
