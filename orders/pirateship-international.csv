@@ -1,9 +1,11 @@
-Name,Address 1,Address 2,City,State,Zip,Country,Email,Phone,Weight (oz),Order ID,Size,Note,Customs Description,Customs Value (USD),Customs Qty,Customs Origin Country
-Alissa Johansson,"7 Hyett Court, 1 Derny Avenue",,London,,E20 1HL,GB,alissajo09@gmail.com,,10,ch_3UAdbPPm4xIdAJHV0XHHlPMo,XS,Tee XS + signed card,Cotton t-shirt,50,1,US
-Elena Merk,Im Steigert 2,,Böhl-Iggelheim,,67459,DE,elenamerk2002@gmail.com,,10,ch_3UAqo0Pm4xIdAJHV1aNeKZBe,XS,Tee XS + signed card,Cotton t-shirt,50,1,US
-Louis D'Andrea,11 Bonanza Road,,DALYELLUP,WA,6230,AU,dandrealouis90@gmail.com,,10,ch_3UAjp5Pm4xIdAJHV1TiDVIMW,S,Tee S + signed card,Cotton t-shirt,50,1,US
-Xenia Shakirova,Tuchmacherstraße 16,,Greven,,48268,DE,xesia2005@gmail.com,,10,ch_3UAjKLPm4xIdAJHV0uM3gLKs,S,Tee S + signed card,Cotton t-shirt,50,1,US
-Alexandr Kesel,"96 Lexington Road, Chaddesden",,Derby,,DE216UZ,GB,alexandrkesel2005@gmail.com,,10,ch_3UAkvTPm4xIdAJHV14hA9H3b,M,Tee M + signed card,Cotton t-shirt,50,1,US
-Sanuli Bandusena,7 Oaktree Rise,,Lysterfield,VIC,3156,AU,saniligb@gmail.com,,10,py_3UAhrJPm4xIdAJHV103aXAhi,M,Tee M + signed card,Cotton t-shirt,50,1,US
-Émilie Deshaies,1062 Avenue du Parc,,Laval,QC,H7E 4Y7,CA,edeshaies.27@gmail.com,,10,ch_3UAdcLPm4xIdAJHV0XNAYDl6,M,Tee M + signed card,Cotton t-shirt,50,1,US
-Louisa Boilledieu,8 Rue Fernand Léger,,Naintré,,86530,FR,louisaboilledieu@gmail.com,,10,ch_3UAeIvPm4xIdAJHV0emXwMZW,XL,Tee XL + signed card,Cotton t-shirt,50,1,US
+Name,Company,Address 1,Address 2,City,State,Zip,Country,Phone,Email,Weight (lb),Weight (oz),Length,Width,Height,Order Number,Item Description,Item Quantity,Item Value,Customs Description,Customs Quantity,Customs Value,Customs Weight (oz),Customs Origin Country,Customs HS Tariff Number
+Alissa Johansson,,7 Hyett Court,1 Derny Avenue,London,,E20 1HL,GB,,alissajo09@gmail.com,0,8,10,7,1,AJV-GB-E201HL-XS,AJ Vitanza tee (white) — XS,1,50,Cotton T-shirt,1,50,8,US,6109.10.00
+Elena Merk,,Im Steigert 2,,Böhl-Iggelheim,,67459,DE,,elenamerk2002@gmail.com,0,8,10,7,1,AJV-DE-67459-XS,AJ Vitanza tee (white) — XS,1,50,Cotton T-shirt,1,50,8,US,6109.10.00
+Dakota Blackwell,,1728 Sandusk Road,,Haldimand,ON,N0A 1J0,CA,,dakota.blackwell135@gmail.com,0,8,10,7,1,AJV-CA-N0A1J0-S,AJ Vitanza tee (white) — S,1,50,Cotton T-shirt,1,50,8,US,6109.10.00
+Louis D'Andrea,,11 Bonanza Road,,DALYELLUP,WA,6230,AU,,dandrealouis90@gmail.com,0,8,10,7,1,AJV-AU-6230-S,AJ Vitanza tee (white) — S,1,50,Cotton T-shirt,1,50,8,US,6109.10.00
+Xenia Shakirova,,Tuchmacherstraße 16,,Greven,,48268,DE,,xesia2005@gmail.com,0,8,10,7,1,AJV-DE-48268-S,AJ Vitanza tee (white) — S,1,50,Cotton T-shirt,1,50,8,US,6109.10.00
+Alexandr Kesel,,96 Lexington Road,Chaddesden,Derby,,DE216UZ,GB,,alexandrkesel2005@gmail.com,0,8,10,7,1,AJV-GB-DE216UZ-M,AJ Vitanza tee (white) — M,1,50,Cotton T-shirt,1,50,8,US,6109.10.00
+Sanuli Bandusena,,7 Oaktree Rise,,Lysterfield,VIC,3156,AU,,saniligb@gmail.com,0,8,10,7,1,AJV-AU-3156-M,AJ Vitanza tee (white) — M,1,50,Cotton T-shirt,1,50,8,US,6109.10.00
+Émilie Deshaies,,1062 Avenue du Parc,,Laval,QC,H7E 4Y7,CA,,edeshaies.27@gmail.com,0,8,10,7,1,AJV-CA-H7E4Y7-M,AJ Vitanza tee (white) — M,1,50,Cotton T-shirt,1,50,8,US,6109.10.00
+Louisa Boilledieu,,8 Rue Fernand Léger,,Naintré,,86530,FR,,louisaboilledieu@gmail.com,0,8,10,7,1,AJV-FR-86530-XL,AJ Vitanza tee (white) — XL,1,50,Cotton T-shirt,1,50,8,US,6109.10.00
+Amy,,65 Ordnance Road,,Enfield,,EN3 6AQ,GB,,Amylewington68@gmail.com,0,8,10,7,1,AJV-GB-EN36AQ-XS,AJ Vitanza tee (white) — XS,1,50,Cotton T-shirt,1,50,8,US,6109.10.00
