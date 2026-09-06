@@ -6,21 +6,22 @@
 :root{
   --ink:#17191D; --ink-2:#4A4E57; --ink-3:#7C818C;
   --ground:#F6F4EF; --card:#FFFFFF; --rule:#E2DFD7;
-  --lab:#8A5A00; --packed:#1E6F4A; --packed-bg:#E7F1EA;
+  --lab:#8A5A00; --lab-bg:#F6ECD8; --packed:#1E6F4A; --packed-bg:#E7F1EA;
+  --ship:#1D4E8F; --ship-bg:#E4ECF7;
   --flag:#9A4A1B; --flag-bg:#F7EBE2;
   --shadow:0 1px 0 rgba(23,25,29,.04);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --ink:#EFEDE7; --ink-2:#B3B0A8; --ink-3:#7E8189;
   --ground:#131417; --card:#1B1D21; --rule:#2C2F35;
-  --lab:#E5B65C; --packed:#5FC191; --packed-bg:#172C22;
+  --lab:#E5B65C; --lab-bg:#3A2E14; --ship:#7FB0EE; --ship-bg:#152436; --packed:#5FC191; --packed-bg:#172C22;
   --flag:#E0A277; --flag-bg:#2E211A;
   --shadow:none;
 }}
 :root[data-theme="dark"]{
   --ink:#EFEDE7; --ink-2:#B3B0A8; --ink-3:#7E8189;
   --ground:#131417; --card:#1B1D21; --rule:#2C2F35;
-  --lab:#E5B65C; --packed:#5FC191; --packed-bg:#172C22;
+  --lab:#E5B65C; --lab-bg:#3A2E14; --ship:#7FB0EE; --ship-bg:#152436; --packed:#5FC191; --packed-bg:#172C22;
   --flag:#E0A277; --flag-bg:#2E211A;
   --shadow:none;
 }
@@ -70,10 +71,19 @@ input[type=search]:focus-visible{outline:2px solid var(--packed);outline-offset:
 .row[data-stage="packed"] .box svg{opacity:1}
 .row[data-stage="packed"] .nm{text-decoration:line-through;color:var(--ink-3)}
 .row[data-stage="packed"] .ad{opacity:.5}
+.row[data-stage="shipped"]{background:var(--ship-bg);border-color:transparent}
+.row[data-stage="shipped"] .box{background:var(--ship);border-color:var(--ship)}
+.row[data-stage="shipped"] .box svg{opacity:1}
+.row[data-stage="shipped"] .nm{text-decoration:line-through;color:var(--ink-3)}
+.row[data-stage="shipped"] .ad{opacity:.5}
 .stg{font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:600;letter-spacing:.1em;
   text-transform:uppercase;padding:2px 6px;border-radius:4px;margin-top:5px;display:inline-block}
+.stg + .stg{margin-left:5px}
+.stg.todo{background:var(--rule);color:var(--ink-2)}
 .stg.label{background:var(--lab-bg);color:var(--lab)}
 .stg.packed{background:var(--packed-bg);color:var(--packed)}
+.stg.shipped{background:var(--ship-bg);color:var(--ship)}
+.stg.combo{background:var(--flag-bg);color:var(--flag);text-transform:none;letter-spacing:.04em}
 .trk{font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--ink-3);margin-top:3px;
   word-break:break-all}
 .bulk{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
@@ -101,32 +111,44 @@ input[type=search]:focus-visible{outline:2px solid var(--packed);outline-offset:
 </style>
 <div class="wrap">
   <h1>Debut tee &mdash; packing station</h1>
-  <p class="sub">Grouped by size. Tap a row to move it on: <b>to&nbsp;do &rarr; label bought &rarr; packed</b>. Tap a packed row to reset it.</p>
+  <p class="sub">Grouped by size. Tap a row to move it on: <b>not&nbsp;packed &rarr; label&nbsp;bought &rarr; packed &rarr; shipped</b>. Tap a shipped row to start it over.</p>
 
   <div class="bar">
-    <div class="count"><b id="n">0</b><span id="of">of 40 packed</span></div>
+    <div class="count"><b id="n">0</b><span id="of">counting&hellip;</span></div>
     <div class="track"><div class="fill" id="fill"></div></div>
     <div class="chips" id="chips"></div>
     <div class="chips" id="dchips"></div>
+    <div class="chips" id="schips"></div>
     <div class="bulk" id="bulk"></div>
     <div class="legend">
+      <span><i style="background:var(--rule)"></i>Not packed</span>
       <span><i style="background:var(--lab)"></i>Label bought</span>
       <span><i style="background:var(--packed)"></i>Packed &amp; sealed</span>
+      <span><i style="background:var(--ship)"></i>Shipped</span>
+      <span><i style="background:var(--flag)"></i>Multi-shirt &mdash; one mailer</span>
     </div>
     <input type="search" id="q" placeholder="Find a name, city or postcode" aria-label="Search orders">
   </div>
 
   <div id="list"></div>
-  <div class="done" id="done">All 40 packed. Every shirt has a signed card.</div>
+  <div class="done" id="done">All packed.</div>
   <div class="sync"><span class="dot" id="dot"></span><span id="syncmsg">Connecting&hellip;</span></div>
 </div>
 
 <script>
-const ORDERS = [{"id":"ch_3UAdbPPm4xIdAJHV0XHHlPMo","size":"XS","name":"Alissa Johansson","addr":"7 Hyett Court, 1 Derny Avenue","city":"London","region":"","zip":"E20 1HL","country":"GB","email":"alissajo09@gmail.com","paid":"85.00"},{"id":"ch_3UAqo0Pm4xIdAJHV1aNeKZBe","size":"XS","name":"Elena Merk","addr":"Im Steigert 2","city":"B\u00f6hl-Iggelheim","region":"","zip":"67459","country":"DE","email":"elenamerk2002@gmail.com","paid":"85.00"},{"id":"py_3UAtmsPm4xIdAJHV16CtBXv7","size":"S","name":"Augusto iallonardi","addr":"612 Rockaway Street","city":"Staten Island","region":"NY","zip":"10307","country":"US","email":"iallonardi2@aol.com","paid":"56.00"},{"id":"ch_3UAef6Pm4xIdAJHV0tQEAMZx","size":"S","name":"Avika Rathi","addr":"4916 Canary Drive","city":"Pleasanton","region":"CA","zip":"94566","country":"US","email":"avikar2026@gmail.com","paid":"56.00"},{"id":"ch_3UAhiYPm4xIdAJHV0PGRLqqr","size":"S","name":"Cosette Marais","addr":"2201 Blaisdell Avenue, Minneapolis Urban League - Street Academy","city":"Minneapolis","region":"MN","zip":"55404","country":"US","email":"cosette.marais@outlook.com","paid":"56.00"},{"id":"ch_3UAeuuPm4xIdAJHV1J9qY69p","size":"S","name":"Dhaara Reddy Ponnapati","addr":"984 Bentley Park Circle","city":"O'Fallon","region":"MO","zip":"63368","country":"US","email":"drponnapati@gmail.com","paid":"56.00"},{"id":"py_3UAjJXPm4xIdAJHV1oHBTlOI","size":"S","name":"Emma Kelly","addr":"8644 Sawyer Brown Rd","city":"Nashville","region":"TN","zip":"37221","country":"US","email":"emma.s.kelly2005@gmail.com","paid":"56.00"},{"id":"py_3UAdajPm4xIdAJHV10KOpSIB","size":"S","name":"Laura J Vitanza","addr":"157 Penny Lane","city":"Buffalo","region":"NY","zip":"14228","country":"US","email":"ljvitanza@gmail.com","paid":"56.00"},{"id":"ch_3UAjp5Pm4xIdAJHV1TiDVIMW","size":"S","name":"Louis D'Andrea","addr":"11 Bonanza Road","city":"DALYELLUP","region":"WA","zip":"6230","country":"AU","email":"dandrealouis90@gmail.com","paid":"85.00"},{"id":"ch_3UAdaDPm4xIdAJHV13AmVUVb","size":"S","name":"Megan Diller","addr":"2020 Lawrence Street, unit 919","city":"Denver","region":"CO","zip":"80205","country":"US","email":"megansoyoungdiller@gmail.com","paid":"56.00"},{"id":"ch_3UAjKLPm4xIdAJHV0uM3gLKs","size":"S","name":"Xenia Shakirova","addr":"Tuchmacherstra\u00dfe 16","city":"Greven","region":"","zip":"48268","country":"DE","email":"xesia2005@gmail.com","paid":"85.00"},{"id":"ch_3UAlX2Pm4xIdAJHV0i9QWRbZ","size":"S","name":"Zachary","addr":"470 Los Palmos Drive","city":"San Francisco","region":"CA","zip":"94127","country":"US","email":"nguyzachary0322@gmail.com","paid":"56.00"},{"id":"ch_3UAkvTPm4xIdAJHV14hA9H3b","size":"M","name":"Alexandr Kesel","addr":"96 Lexington Road, Chaddesden","city":"Derby","region":"","zip":"DE216UZ","country":"GB","email":"alexandrkesel2005@gmail.com","paid":"85.00"},{"id":"ch_3UAjoKPm4xIdAJHV1euNXAiF","size":"M","name":"Angelina Jenkins","addr":"31645 Northwest Wascoe Street","city":"North Plains","region":"OR","zip":"97133","country":"US","email":"angelina.b.jenkins@gmail.com","paid":"56.00"},{"id":"ch_3UAjHdPm4xIdAJHV1FRLm87U","size":"M","name":"Elise Ackermann","addr":"521 Ballas Park Dr.","city":"Des Peres","region":"MO","zip":"63122","country":"US","email":"eeackermann@yahoo.com","paid":"56.00"},{"id":"ch_3UAjGFPm4xIdAJHV1NL0pOkU","size":"M","name":"George Tsakopoulos","addr":"7380 Nob Hill Drive","city":"Carmichael","region":"CA","zip":"95608","country":"US","email":"gtsak32@gmail.com","paid":"56.00"},{"id":"ch_3UApUpPm4xIdAJHV1VydhRAJ","size":"M","name":"Joe Smith","addr":"1939 Pagel Ave","city":"Lincoln Park","region":"MI","zip":"48146","country":"US","email":"joscarsmi2014@gmail.com","paid":"56.00"},{"id":"py_3UAjHePm4xIdAJHV0leqNuTX","size":"M","name":"John Luck Jr","addr":"88 E State St","city":"Coldwater","region":"MI","zip":"49036","country":"US","email":"lucktrenton@gmail.com","paid":"56.00"},{"id":"ch_3UAe9HPm4xIdAJHV1tJAVaRN","size":"M","name":"Kevin Wang","addr":"16 Horizons Road","city":"Sharon","region":"MA","zip":"02067","country":"US","email":"kevinyfwang5858@gmail.com","paid":"56.00"},{"id":"py_3UAdbbPm4xIdAJHV0vuJh6NN","size":"M","name":"Laura J Vitanza","addr":"157 Penny Lane","city":"Buffalo","region":"NY","zip":"14228","country":"US","email":"ljvitanza@gmail.com","paid":"56.00"},{"id":"py_3UAdL2Pm4xIdAJHV0a9keUtO","size":"M","name":"Louis Descause","addr":"1312 North Fairfax Avenue","city":"West Hollywood","region":"CA","zip":"90046","country":"US","email":"ldescause@gmail.com","paid":"56.00"},{"id":"py_3UAlnzPm4xIdAJHV0POKb8nb","size":"M","name":"Nick Barr","addr":"2725 Otterham Drive","city":"Thompson's Station","region":"TN","zip":"37179","country":"US","email":"nickbarrbusiness@gmail.com","paid":"56.00"},{"id":"py_3UAhrJPm4xIdAJHV103aXAhi","size":"M","name":"Sanuli Bandusena","addr":"7 Oaktree Rise","city":"Lysterfield","region":"VIC","zip":"3156","country":"AU","email":"saniligb@gmail.com","paid":"85.00"},{"id":"py_3UAeDSPm4xIdAJHV0TCgPtFR","size":"M","name":"Todd Mitchell","addr":"3419 Rome Corners Rd","city":"Galena","region":"OH","zip":"43021","country":"US","email":"mitchellts@mac.com","paid":"56.00"},{"id":"ch_3UAdbVPm4xIdAJHV0Zl5mxCc","size":"M","name":"Zoe Latsonas","addr":"5711, sherman ave","city":"downers grove","region":"IL","zip":"60516","country":"US","email":"zlatsonas@gmail.com","paid":"56.00"},{"id":"ch_3UAdcLPm4xIdAJHV0XNAYDl6","size":"M","name":"\u00c9milie Deshaies","addr":"1062 Avenue du Parc","city":"Laval","region":"QC","zip":"H7E 4Y7","country":"CA","email":"edeshaies.27@gmail.com","paid":"72.00"},{"id":"ch_3UAdYJPm4xIdAJHV1UzbsfDD","size":"L","name":"Arvin Liu","addr":"160-28 78th ave","city":"Fresh Meadows","region":"NY","zip":"11366","country":"US","email":"arvinl0710@gmail.com","paid":"56.00"},{"id":"ch_3UAjmMPm4xIdAJHV1aRRrALO","size":"L","name":"Buack Reynolds","addr":"192 Concord Dr Rogersville MO","city":"Rogersville","region":"MO","zip":"65742","country":"US","email":"coolbuack@gmail.com","paid":"56.00"},{"id":"py_3UAg5kPm4xIdAJHV0AG37lMq","size":"L","name":"Crystal Jamerson","addr":"3191 Dixie Hill Road","city":"Buckingham","region":"VA","zip":"23921","country":"US","email":"jamersonz@aol.com","paid":"56.00"},{"id":"ch_3UAdZkPm4xIdAJHV1iI7QEhP","size":"L","name":"Hai Tran","addr":"10607 William Pass Lane","city":"Cypress","region":"TX","zip":"77433","country":"US","email":"haitran24109@gmail.com","paid":"56.00"},{"id":"py_3UAeEPPm4xIdAJHV0xQxQkmO","size":"L","name":"Kayla Hayes","addr":"150 South Rock Drive","city":"Slippery Rock","region":"PA","zip":"16057","country":"US","email":"kaylahayes07@icloud.com","paid":"56.00"},{"id":"ch_3UAe1JPm4xIdAJHV1MLYKtjk","size":"L","name":"Landen DonGilli","addr":"900 Maple Street #2852","city":"Indiana","region":"PA","zip":"15701","country":"US","email":"dongillilanden@gmail.com","paid":"56.00"},{"id":"py_3UAjKhPm4xIdAJHV1LXckUId","size":"L","name":"Lucas wood","addr":"Victoria Station Dr","city":"Sterling","region":"VA","zip":"20166","country":"US","email":"lucaswood05.08@gmail.com","paid":"56.00"},{"id":"ch_3UAq8qPm4xIdAJHV1k2Lrk5u","size":"L","name":"Olivia Stenson","addr":"16215 Fairlane Drive","city":"Livonia","region":"MI","zip":"48154","country":"US","email":"ogstenson@gmail.com","paid":"56.00"},{"id":"py_3UAdv5Pm4xIdAJHV0vUbDRPb","size":"L","name":"Owen McGrath","addr":"173 Larchmont Lane","city":"Bloomingdale","region":"IL","zip":"60108","country":"US","email":"mcgrath.owen05@gmail.com","paid":"56.00"},{"id":"ch_3UAtT7Pm4xIdAJHV1W7FzrqO","size":"XL","name":"David Cebulski","addr":"1012 Fremont Street, Apt 2","city":"Manhattan","region":"KS","zip":"66502","country":"US","email":"davidrc123@yahoo.com","paid":"56.00"},{"id":"py_3UAdXvPm4xIdAJHV1l9BWFWF","size":"XL","name":"Devon Sutton","addr":"538 Tradewinds Road","city":"Nocona","region":"TX","zip":"76255","country":"US","email":"devonaters@gmail.com","paid":"56.00"},{"id":"ch_3UAiYgPm4xIdAJHV1WgB8GCH","size":"XL","name":"Kelsey Lubliner","addr":"14868 Dufief Dr","city":"North Potomac","region":"MD","zip":"20878","country":"US","email":"kelseylubliner2004@gmail.com","paid":"56.00"},{"id":"ch_3UAeIvPm4xIdAJHV0emXwMZW","size":"XL","name":"Louisa Boilledieu","addr":"8 Rue Fernand L\u00e9ger","city":"Naintr\u00e9","region":"","zip":"86530","country":"FR","email":"louisaboilledieu@gmail.com","paid":"85.00"},{"id":"ch_3UAdbdPm4xIdAJHV07Gbsg56","size":"XL","name":"nicolas vitanza","addr":"157 Penny Lane","city":"Buffalo","region":"NY","zip":"14228","country":"US","email":"vitanzanick@gmail.com","paid":"56.00"}];
+const ORDERS = [{"id": "ch_3UAdbPPm4xIdAJHV0XHHlPMo", "size": "XS", "name": "Alissa Johansson", "addr": "7 Hyett Court, 1 Derny Avenue", "city": "London", "region": "", "zip": "E20 1HL", "country": "GB", "email": "alissajo09@gmail.com", "paid": "85.00"}, {"id": "pi_3UBlR0Pm4xIdAJHV1fYr6Q8b", "size": "XS", "name": "Amy", "addr": "65 Ordnance Road", "city": "Enfield", "region": "", "zip": "EN3 6AQ", "country": "GB", "email": "Amylewington68@gmail.com", "paid": "85.00"}, {"id": "ch_3UAqo0Pm4xIdAJHV1aNeKZBe", "size": "XS", "name": "Elena Merk", "addr": "Im Steigert 2", "city": "Böhl-Iggelheim", "region": "", "zip": "67459", "country": "DE", "email": "elenamerk2002@gmail.com", "paid": "85.00"}, {"id": "py_3UAtmsPm4xIdAJHV16CtBXv7", "size": "S", "name": "Augusto iallonardi", "addr": "612 Rockaway Street", "city": "Staten Island", "region": "NY", "zip": "10307", "country": "US", "email": "iallonardi2@aol.com", "paid": "56.00", "tracking": "9300111043900017907331", "packed": true}, {"id": "ch_3UAef6Pm4xIdAJHV0tQEAMZx", "size": "S", "name": "Avika Rathi", "addr": "4916 Canary Drive", "city": "Pleasanton", "region": "CA", "zip": "94566", "country": "US", "email": "avikar2026@gmail.com", "paid": "56.00", "tracking": "9300111043900017907379", "packed": true}, {"id": "pi_3UB1SyPm4xIdAJHV0QvJdGxe", "size": "S", "name": "Christian Redding", "addr": "4912 Big Pine Drive", "city": "Jacksonville", "region": "FL", "zip": "32218", "country": "US", "email": "christianredd03@icloud.com", "paid": "56.00"}, {"id": "ch_3UAhiYPm4xIdAJHV0PGRLqqr", "size": "S", "name": "Cosette Marais", "addr": "2201 Blaisdell Avenue, Minneapolis Urban League - Street Academy", "city": "Minneapolis", "region": "MN", "zip": "55404", "country": "US", "email": "cosette.marais@outlook.com", "paid": "56.00", "tracking": "9300111043900017907409", "packed": true}, {"id": "pi_3UBDbOPm4xIdAJHV0nVAfvU7", "size": "S", "name": "Dakota Blackwell", "addr": "1728 Sandusk Road", "city": "Haldimand", "region": "ON", "zip": "N0A 1J0", "country": "CA", "email": "dakota.blackwell135@gmail.com", "paid": "72.00"}, {"id": "ch_3UAeuuPm4xIdAJHV1J9qY69p", "size": "S", "name": "Dhaara Reddy Ponnapati", "addr": "984 Bentley Park Circle", "city": "O'Fallon", "region": "MO", "zip": "63368", "country": "US", "email": "drponnapati@gmail.com", "paid": "56.00", "tracking": "9300111043900017907485", "packed": true}, {"id": "py_3UAjJXPm4xIdAJHV1oHBTlOI", "size": "S", "name": "Emma Kelly", "addr": "8644 Sawyer Brown Rd", "city": "Nashville", "region": "TN", "zip": "37221", "country": "US", "email": "emma.s.kelly2005@gmail.com", "paid": "56.00", "tracking": "9300111043900017907539", "packed": true}, {"id": "py_3UAdajPm4xIdAJHV10KOpSIB", "size": "S", "name": "Laura J Vitanza", "addr": "157 Penny Lane", "city": "Buffalo", "region": "NY", "zip": "14228", "country": "US", "email": "ljvitanza@gmail.com", "paid": "56.00", "tracking": "9300111043900017907591", "packed": true}, {"id": "ch_3UAjp5Pm4xIdAJHV1TiDVIMW", "size": "S", "name": "Louis D'Andrea", "addr": "11 Bonanza Road", "city": "DALYELLUP", "region": "WA", "zip": "6230", "country": "AU", "email": "dandrealouis90@gmail.com", "paid": "85.00"}, {"id": "ch_3UAdaDPm4xIdAJHV13AmVUVb", "size": "S", "name": "Megan Diller", "addr": "2020 Lawrence Street, unit 919", "city": "Denver", "region": "CO", "zip": "80205", "country": "US", "email": "megansoyoungdiller@gmail.com", "paid": "56.00", "tracking": "9300111043900017907638", "packed": true}, {"id": "pi_3UBF9SPm4xIdAJHV1iS9dBtU", "size": "S", "name": "Rosemarie Koestler", "addr": "64 Fifth Ave", "city": "Lancaster", "region": "NY", "zip": "14085", "country": "US", "email": "roseaturton@gmail.com", "paid": "56.00"}, {"id": "ch_3UAjKLPm4xIdAJHV0uM3gLKs", "size": "S", "name": "Xenia Shakirova", "addr": "Tuchmacherstraße 16", "city": "Greven", "region": "", "zip": "48268", "country": "DE", "email": "xesia2005@gmail.com", "paid": "85.00"}, {"id": "ch_3UAlX2Pm4xIdAJHV0i9QWRbZ", "size": "S", "name": "Zachary", "addr": "470 Los Palmos Drive", "city": "San Francisco", "region": "CA", "zip": "94127", "country": "US", "email": "nguyzachary0322@gmail.com", "paid": "56.00", "tracking": "9300111043900017907676", "packed": true}, {"id": "ch_3UAkvTPm4xIdAJHV14hA9H3b", "size": "M", "name": "Alexandr Kesel", "addr": "96 Lexington Road, Chaddesden", "city": "Derby", "region": "", "zip": "DE216UZ", "country": "GB", "email": "alexandrkesel2005@gmail.com", "paid": "85.00"}, {"id": "ch_3UAjoKPm4xIdAJHV1euNXAiF", "size": "M", "name": "Angelina Jenkins", "addr": "31645 Northwest Wascoe Street", "city": "North Plains", "region": "OR", "zip": "97133", "country": "US", "email": "angelina.b.jenkins@gmail.com", "paid": "56.00", "tracking": "9300111043900017907348", "packed": true}, {"id": "ch_3UAjHdPm4xIdAJHV1FRLm87U", "size": "M", "name": "Elise Ackermann", "addr": "521 Ballas Park Dr.", "city": "Des Peres", "region": "MO", "zip": "63122", "country": "US", "email": "eeackermann@yahoo.com", "paid": "56.00", "tracking": "9300111043900017907386", "packed": true}, {"id": "ch_3UAjGFPm4xIdAJHV1NL0pOkU", "size": "M", "name": "George Tsakopoulos", "addr": "7380 Nob Hill Drive", "city": "Carmichael", "region": "CA", "zip": "95608", "country": "US", "email": "gtsak32@gmail.com", "paid": "56.00", "tracking": "9300111043900017907416", "packed": true}, {"id": "pi_3UAxpEPm4xIdAJHV0fajPjJZ", "size": "M", "name": "hunter", "addr": "35 Apex Truck Trail Rd", "city": "Hancock", "region": "NY", "zip": "13783", "country": "US", "email": "oddohunter3@gmail.com", "paid": "56.00"}, {"id": "ch_3UApUpPm4xIdAJHV1VydhRAJ", "size": "M", "name": "Joe Smith", "addr": "1939 Pagel Ave", "city": "Lincoln Park", "region": "MI", "zip": "48146", "country": "US", "email": "joscarsmi2014@gmail.com", "paid": "56.00", "tracking": "9300111043900017907515", "packed": true}, {"id": "py_3UAjHePm4xIdAJHV0leqNuTX", "size": "M", "name": "John Luck Jr", "addr": "88 E State St", "city": "Coldwater", "region": "MI", "zip": "49036", "country": "US", "email": "lucktrenton@gmail.com", "paid": "56.00", "tracking": "9300111043900017907560", "packed": true}, {"id": "ch_3UAe9HPm4xIdAJHV1tJAVaRN", "size": "M", "name": "Kevin Wang", "addr": "16 Horizons Road", "city": "Sharon", "region": "MA", "zip": "02067", "country": "US", "email": "kevinyfwang5858@gmail.com", "paid": "56.00", "tracking": "9300111043900017907614", "packed": true}, {"id": "py_3UAdbbPm4xIdAJHV0vuJh6NN", "size": "M", "name": "Laura J Vitanza", "addr": "157 Penny Lane", "city": "Buffalo", "region": "NY", "zip": "14228", "country": "US", "email": "ljvitanza@gmail.com", "paid": "56.00", "tracking": "9300111043900017907645", "packed": true}, {"id": "py_3UAdL2Pm4xIdAJHV0a9keUtO", "size": "M", "name": "Louis Descause", "addr": "1312 North Fairfax Avenue", "city": "West Hollywood", "region": "CA", "zip": "90046", "country": "US", "email": "ldescause@gmail.com", "paid": "56.00", "tracking": "9300111043900017907683", "packed": true}, {"id": "pi_3UBJnMPm4xIdAJHV1kuz34Vd", "size": "M", "name": "Megan Lee", "addr": "15516 Orchid Ave", "city": "Tustin", "region": "CA", "zip": "92782", "country": "US", "email": "meganhavilee@gmail.com", "paid": "56.00"}, {"id": "pi_3UBHO1Pm4xIdAJHV1oTnt4cJ", "size": "M", "name": "Nicholas Henry", "addr": "1815 John F Kennedy Boulevard, Apt 814", "city": "Philadelphia", "region": "PA", "zip": "19103", "country": "US", "email": "nickhenry1028@gmail.com", "paid": "56.00"}, {"id": "py_3UAlnzPm4xIdAJHV0POKb8nb", "size": "M", "name": "Nick Barr", "addr": "2725 Otterham Drive", "city": "Thompson's Station", "region": "TN", "zip": "37179", "country": "US", "email": "nickbarrbusiness@gmail.com", "paid": "56.00", "tracking": "9300111043900017907355", "packed": true}, {"id": "py_3UAhrJPm4xIdAJHV103aXAhi", "size": "M", "name": "Sanuli Bandusena", "addr": "7 Oaktree Rise", "city": "Lysterfield", "region": "VIC", "zip": "3156", "country": "AU", "email": "saniligb@gmail.com", "paid": "85.00"}, {"id": "py_3UAeDSPm4xIdAJHV0TCgPtFR", "size": "M", "name": "Todd Mitchell", "addr": "3419 Rome Corners Rd", "city": "Galena", "region": "OH", "zip": "43021", "country": "US", "email": "mitchellts@mac.com", "paid": "56.00", "tracking": "9300111043900017907393", "packed": true}, {"id": "ch_3UAdbVPm4xIdAJHV0Zl5mxCc", "size": "M", "name": "Zoe Latsonas", "addr": "5711, sherman ave", "city": "downers grove", "region": "IL", "zip": "60516", "country": "US", "email": "zlatsonas@gmail.com", "paid": "56.00", "tracking": "9300111043900017907430", "packed": true}, {"id": "ch_3UAdcLPm4xIdAJHV0XNAYDl6", "size": "M", "name": "Émilie Deshaies", "addr": "1062 Avenue du Parc", "city": "Laval", "region": "QC", "zip": "H7E 4Y7", "country": "CA", "email": "edeshaies.27@gmail.com", "paid": "72.00"}, {"id": "ch_3UAdYJPm4xIdAJHV1UzbsfDD", "size": "L", "name": "Arvin Liu", "addr": "160-28 78th ave", "city": "Fresh Meadows", "region": "NY", "zip": "11366", "country": "US", "email": "arvinl0710@gmail.com", "paid": "56.00", "tracking": "9300111043900017907522", "packed": true}, {"id": "ch_3UAjmMPm4xIdAJHV1aRRrALO", "size": "L", "name": "Buack Reynolds", "addr": "192 Concord Dr Rogersville MO", "city": "Rogersville", "region": "MO", "zip": "65742", "country": "US", "email": "coolbuack@gmail.com", "paid": "56.00", "tracking": "9300111043900017907553", "packed": true}, {"id": "py_3UAg5kPm4xIdAJHV0AG37lMq", "size": "L", "name": "Crystal Jamerson", "addr": "3191 Dixie Hill Road", "city": "Buckingham", "region": "VA", "zip": "23921", "country": "US", "email": "jamersonz@aol.com", "paid": "56.00", "tracking": "9300111043900017907607", "packed": true}, {"id": "ch_3UAdZkPm4xIdAJHV1iI7QEhP", "size": "L", "name": "Hai Tran", "addr": "10607 William Pass Lane", "city": "Cypress", "region": "TX", "zip": "77433", "country": "US", "email": "haitran24109@gmail.com", "paid": "56.00", "tracking": "9300111043900017907652", "packed": true}, {"id": "py_3UAeEPPm4xIdAJHV0xQxQkmO", "size": "L", "name": "Kayla Hayes", "addr": "150 South Rock Drive", "city": "Slippery Rock", "region": "PA", "zip": "16057", "country": "US", "email": "kaylahayes07@icloud.com", "paid": "56.00", "tracking": "9300111043900017907690", "packed": true}, {"id": "ch_3UAe1JPm4xIdAJHV1MLYKtjk", "size": "L", "name": "Landen DonGilli", "addr": "900 Maple Street #2852", "city": "Indiana", "region": "PA", "zip": "15701", "country": "US", "email": "dongillilanden@gmail.com", "paid": "56.00", "tracking": "9300111043900017907362", "packed": true}, {"id": "py_3UAjKhPm4xIdAJHV1LXckUId", "size": "L", "name": "Lucas wood", "addr": "Victoria Station Dr", "city": "Sterling", "region": "VA", "zip": "20166", "country": "US", "email": "lucaswood05.08@gmail.com", "paid": "56.00", "tracking": "9300111043900017907423", "packed": true}, {"id": "ch_3UAq8qPm4xIdAJHV1k2Lrk5u", "size": "L", "name": "Olivia Stenson", "addr": "16215 Fairlane Drive", "city": "Livonia", "region": "MI", "zip": "48154", "country": "US", "email": "ogstenson@gmail.com", "paid": "56.00", "tracking": "9300111043900017907492", "packed": true}, {"id": "py_3UAdv5Pm4xIdAJHV0vUbDRPb", "size": "L", "name": "Owen McGrath", "addr": "173 Larchmont Lane", "city": "Bloomingdale", "region": "IL", "zip": "60108", "country": "US", "email": "mcgrath.owen05@gmail.com", "paid": "56.00", "tracking": "9300111043900017907546", "packed": true}, {"id": "ch_3UAtT7Pm4xIdAJHV1W7FzrqO", "size": "XL", "name": "David Cebulski", "addr": "1012 Fremont Street, Apt 2", "city": "Manhattan", "region": "KS", "zip": "66502", "country": "US", "email": "davidrc123@yahoo.com", "paid": "56.00", "tracking": "9300111043900017907621", "packed": true}, {"id": "py_3UAdXvPm4xIdAJHV1l9BWFWF", "size": "XL", "name": "Devon Sutton", "addr": "538 Tradewinds Road", "city": "Nocona", "region": "TX", "zip": "76255", "country": "US", "email": "devonaters@gmail.com", "paid": "56.00", "tracking": "9300111043900017907669", "packed": true}, {"id": "ch_3UAiYgPm4xIdAJHV1WgB8GCH", "size": "XL", "name": "Kelsey Lubliner", "addr": "14868 Dufief Dr", "city": "North Potomac", "region": "MD", "zip": "20878", "country": "US", "email": "kelseylubliner2004@gmail.com", "paid": "56.00", "tracking": "9300111043900017907706", "packed": true}, {"id": "ch_3UAeIvPm4xIdAJHV0emXwMZW", "size": "XL", "name": "Louisa Boilledieu", "addr": "8 Rue Fernand Léger", "city": "Naintré", "region": "", "zip": "86530", "country": "FR", "email": "louisaboilledieu@gmail.com", "paid": "85.00"}, {"id": "ch_3UAdbdPm4xIdAJHV07Gbsg56", "size": "XL", "name": "nicolas vitanza", "addr": "157 Penny Lane", "city": "Buffalo", "region": "NY", "zip": "14228", "country": "US", "email": "vitanzanick@gmail.com", "paid": "56.00", "tracking": "9300111043900017907713", "packed": true}, {"id": "pi_3UBFAlPm4xIdAJHV0IrHVRZc", "size": "XL", "name": "Rosemarie Koestler", "addr": "64 Fifth Ave", "city": "Lancaster", "region": "NY", "zip": "14085", "country": "US", "email": "roseaturton@gmail.com", "paid": "56.00"}];
 const SIZES = ['XS','S','M','L','XL'];
-// stage per order id: undefined -> 'label' -> 'packed'
-let stage = {}, tracking = {}, filter = 'ALL', dest = 'ALL', q = '';
-const NEXT = { undefined: 'label', label: 'packed', packed: undefined };
+let stage = {}, tracking = {}, filter = 'ALL', dest = 'ALL', st8 = 'ALL', q = '';
+
+// The four stages an order moves through, in order.
+// 'todo' is an explicit "cleared" marker rather than the absence of one: a packed
+// batch is baked into ORDERS as packed:true, so merely deleting the local override
+// would fall straight back to packed and the row could never be un-ticked.
+const STAGES = ['todo','label','packed','shipped'];
+const STAGE_TEXT = { todo:'not packed', label:'label bought', packed:'packed', shipped:'shipped' };
+const NEXT = { undefined:'label', todo:'label', label:'packed', packed:'shipped', shipped:'todo' };
+// Anything from here on counts as off the packing bench.
+function isDone(s){ return s === 'packed' || s === 'shipped'; }
 
 // Destination buckets mirror the three Stripe shipping rates, which is also
 // how the label batches split: US domestic, Canada, and everywhere else.
@@ -142,9 +164,33 @@ function saveLocal(){ try { localStorage.setItem(LS, JSON.stringify(stage)); } c
 
 function matchesDest(o){ return dest === 'ALL' || bucket(o) === dest; }
 
+// Where an order sits before anyone taps it. Baked into the data so a finished
+// batch survives a cleared browser and shows the same on AJ's device as mine:
+//   packed:true   -> shipped batch, done
+//   tracking only -> label bought, still to pack
+function baseStage(o){ return o.packed ? 'packed' : (o.tracking ? 'label' : undefined); }
+
+// Someone who bought two sizes gets ONE label and ONE mailer, but still shows up
+// under each size so the picking piles stay right. These group them so every row
+// can say "2x - S + XL" and nobody ships the same person two envelopes.
+const comboKey = o => [o.name, o.addr, o.zip].map(s => String(s||'').trim().toLowerCase()).join('|');
+const COMBOS = {};
+ORDERS.forEach(o => { (COMBOS[comboKey(o)] = COMBOS[comboKey(o)] || []).push(o); });
+function mates(o){ return COMBOS[comboKey(o)] || [o]; }
+function comboLabel(o){
+  const m = mates(o);
+  if (m.length < 2) return '';
+  const sizes = SIZES.filter(s => m.some(x => x.size === s))
+                     .map(s => { const n = m.filter(x => x.size === s).length;
+                                 return n > 1 ? n + '× ' + s : s; });
+  return m.length + '× · ' + sizes.join(' + ') + ' · one mailer';
+}
+function stageOf(o){ const s = stage[o.id] || baseStage(o); return s === 'todo' ? undefined : s; }
+
 function matches(o){
   if (filter !== 'ALL' && o.size !== filter) return false;
   if (dest !== 'ALL' && bucket(o) !== dest) return false;
+  if (st8 !== 'ALL' && (stageOf(o) || 'todo') !== st8) return false;
   if (!q) return true;
   const hay = (o.name+' '+o.city+' '+o.zip+' '+o.region+' '+o.country+' '+o.email).toLowerCase();
   return hay.includes(q);
@@ -153,14 +199,17 @@ function matches(o){
 function render(){
   // Progress follows the current filter so "US only" shows US progress.
   const scoped = ORDERS.filter(matchesDest);
-  const done = scoped.filter(o => stage[o.id] === 'packed').length;
-  const lab  = scoped.filter(o => stage[o.id]).length;
+  const done = scoped.filter(o => isDone(stageOf(o))).length;
+  const ship = scoped.filter(o => stageOf(o) === 'shipped').length;
+  const lab  = scoped.filter(o => stageOf(o)).length;
+  const todo = scoped.length - lab;
   el('n').textContent = done;
-  el('of').textContent = 'of ' + scoped.length + ' packed · ' + lab + ' labelled'
+  el('of').textContent = 'of ' + scoped.length + ' packed · ' + ship + ' shipped · '
+    + (todo ? todo + ' still need a label' : 'all labelled')
     + (dest === 'ALL' ? '' : dest === 'US' ? ' — domestic' : dest === 'CA' ? ' — Canada' : ' — rest of world');
   el('fill').style.width = scoped.length ? (100 * done / scoped.length) + '%' : '0';
   el('done').style.display = (scoped.length && done === scoped.length) ? 'block' : 'none';
-  el('done').textContent = 'All ' + scoped.length + ' packed. Every shirt has a signed card.';
+  el('done').textContent = 'All ' + scoped.length + ' packed.';
 
   const list = el('list');
   list.innerHTML = '';
@@ -169,7 +218,7 @@ function render(){
     const items = ORDERS.filter(o => o.size === sz && matches(o));
     if (!items.length) return;
     shown += items.length;
-    const left = items.filter(o => stage[o.id] !== 'packed').length;
+    const left = items.filter(o => !isDone(stageOf(o))).length;
     const g = document.createElement('div');
     g.className = 'grp';
     const scope = dest === 'US' ? ' · US' : dest === 'CA' ? ' · Canada'
@@ -179,18 +228,21 @@ function render(){
       const b = document.createElement('button');
       b.className = 'row';
       b.type = 'button';
-      const st = stage[o.id];
+      const st = stageOf(o);
       b.dataset.stage = st || 'todo';
-      b.setAttribute('aria-label', o.name + ' — ' +
-        (st === 'packed' ? 'packed' : st === 'label' ? 'label bought' : 'not started'));
+      const stTxt = STAGE_TEXT[st || 'todo'];
+      const combo = comboLabel(o);
+      b.setAttribute('aria-label', o.name + ' — ' + o.size + ' — ' + stTxt +
+        (combo ? ' — ' + combo.replace(/·/g, ',') : ''));
       const where = [o.city, o.region, o.zip].filter(Boolean).join(' ');
       b.innerHTML =
         '<span class="box"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>' +
         '<span class="body"><span class="nm">' + esc(o.name) +
         (o.country !== 'US' ? '<span class="intl">' + esc(o.country) + '</span>' : '') +
         '</span><span class="ad">' + esc(o.addr) + '<br>' + esc(where) + '</span>' +
-        (st ? '<span class="stg ' + st + '">' + (st === 'packed' ? 'packed' : 'label bought') + '</span>' : '') +
-        (tracking[o.id] ? '<span class="trk">' + esc(tracking[o.id]) + '</span>' : '') +
+        '<span class="stg ' + (st || 'todo') + '">' + stTxt + '</span>' +
+        (combo ? '<span class="stg combo">' + esc(combo) + '</span>' : '') +
+        ((o.tracking || tracking[o.id]) ? '<span class="trk">' + esc(o.tracking || tracking[o.id]) + '</span>' : '') +
         '</span>' +
         '<span class="sz mono">' + esc(o.size) + '</span>';
       b.addEventListener('click', () => toggle(o.id));
@@ -204,6 +256,7 @@ function render(){
     e.textContent = 'Nothing matches that.';
     list.appendChild(e);
   }
+  refreshChips();
 }
 
 function setStage(id, next){
@@ -218,16 +271,20 @@ function setStage(id, next){
   }
 }
 
-function toggle(id){ setStage(id, NEXT[stage[id]]); }
+function toggle(id){
+  const o = ORDERS.find(x => x.id === id);
+  const cur = o ? stageOf(o) : stage[id];
+  setStage(id, NEXT[cur]);
+}
 
 // Labels get bought in one Pirate Ship batch, so ticking them one at a time is
 // the wrong shape of work. These act on exactly what the filters are showing.
 function bulk(next){
   const shown = ORDERS.filter(matches);
   if (!shown.length) return;
-  const verb = next === 'label' ? 'mark ' + shown.length + ' as label bought'
-             : next === 'packed' ? 'mark ' + shown.length + ' as packed'
-             : 'reset ' + shown.length + ' back to to-do';
+  const verb = next && next !== 'todo'
+             ? 'mark ' + shown.length + ' as ' + STAGE_TEXT[next]
+             : 'reset ' + shown.length + ' back to not packed';
   if (!confirm('This will ' + verb + '. Continue?')) return;
   shown.forEach(function(o){ setStage(o.id, next); });
 }
@@ -247,6 +304,12 @@ function normalize(snap){
 
 el('q').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); render(); });
 
+// A chip's text may be a string or a function, so status counts can recount
+// themselves as rows are ticked. Every chip registers a repaint; render() runs
+// them all at the end, which also keeps aria-pressed honest across the rows.
+const chipRefreshers = [];
+function refreshChips(){ chipRefreshers.forEach(f => f()); }
+
 function buildChips(node, label, opts, get, set){
   const l = document.createElement('span');
   l.className = 'flab';
@@ -256,14 +319,14 @@ function buildChips(node, label, opts, get, set){
     const c = document.createElement('button');
     c.className = 'chip';
     c.type = 'button';
-    c.textContent = text;
-    c.setAttribute('aria-pressed', get() === v ? 'true' : 'false');
-    c.addEventListener('click', () => {
-      set(v);
-      [...node.querySelectorAll('.chip')].forEach(x => x.setAttribute('aria-pressed', 'false'));
-      c.setAttribute('aria-pressed', 'true');
-      render();
-    });
+    const paint = () => {
+      const s = typeof text === 'function' ? text() : text;
+      if (c.textContent !== s) c.textContent = s;
+      c.setAttribute('aria-pressed', get() === v ? 'true' : 'false');
+    };
+    paint();
+    chipRefreshers.push(paint);
+    c.addEventListener('click', () => { set(v); render(); });
     node.appendChild(c);
   });
 }
@@ -283,8 +346,22 @@ buildChips(el('dchips'), 'Ship to', [
   ['INTL', 'Rest of world · ' + nIN]
 ], () => dest, v => { dest = v; });
 
+// Counts here are live, so they follow the size and destination chips and update
+// as rows are ticked -- "Not packed · 6" under the US filter is the pile left today.
+function nStage(s){ return ORDERS.filter(o => filter !== 'ALL' && o.size !== filter ? false
+  : dest !== 'ALL' && bucket(o) !== dest ? false
+  : (stageOf(o) || 'todo') === s).length; }
+buildChips(el('schips'), 'Status', [
+  ['ALL',     'All'],
+  ['todo',    () => 'Not packed · ' + nStage('todo')],
+  ['label',   () => 'Label bought · ' + nStage('label')],
+  ['packed',  () => 'Packed · ' + nStage('packed')],
+  ['shipped', () => 'Shipped · ' + nStage('shipped')]
+], () => st8, v => { st8 = v; });
+
 const bulkBar = el('bulk');
-[['label','Mark shown as labelled'],['packed','Mark shown as packed'],[null,'Reset shown']]
+[['label','Mark shown as labelled'],['packed','Mark shown as packed'],
+ ['shipped','Mark shown as shipped'],['todo','Reset shown']]
   .forEach(([v, text]) => {
     const b = document.createElement('button');
     b.type = 'button'; b.textContent = text;

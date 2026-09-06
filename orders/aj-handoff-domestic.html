@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AJ handoff — domestic packing, Friday 4 September 2026</title>
+<style>
+:root{--ink:#17191D;--ink-2:#4A4E57;--ink-3:#7C818C;--ground:#F6F4EF;--card:#fff;
+  --rule:#E2DFD7;--go:#1E6F4A;--go-bg:#E7F1EA;--warn:#9A4A1B;--warn-bg:#F7EBE2}
+@media (prefers-color-scheme:dark){:root{--ink:#EFEDE7;--ink-2:#B3B0A8;--ink-3:#7E8189;
+  --ground:#131417;--card:#1B1D21;--rule:#2C2F35;--go:#5FC191;--go-bg:#172C22;
+  --warn:#E0A277;--warn-bg:#2E211A}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);line-height:1.5;
+  font-family:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:680px;margin:0 auto;padding:28px 18px 72px}
+h1{font-size:1.5rem;letter-spacing:-.02em;margin:0 0 3px}
+.date{color:var(--ink-3);font-size:.85rem;margin:0 0 22px}
+h2{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+  margin:30px 0 10px;font-weight:600}
+.pick{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:16px 18px}
+.pick ul{list-style:none;margin:0;padding:0;display:flex;gap:20px;flex-wrap:wrap}
+.pick li{display:flex;align-items:center;gap:8px}
+.pick b{font-size:1.5rem;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tot{margin:12px 0 0;font-size:.85rem;color:var(--ink-2)}
+.sz{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;
+  border:1px solid var(--rule);border-radius:5px;padding:3px 8px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.sz.big{font-size:.8rem;padding:4px 10px}
+ol{list-style:none;margin:0;padding:0}
+.card{display:flex;gap:14px;align-items:flex-start;background:var(--card);
+  border:1px solid var(--rule);border-radius:12px;padding:16px;margin-bottom:10px;
+  break-inside:avoid;page-break-inside:avoid}
+.tick{flex:0 0 auto;cursor:pointer;margin-top:2px}
+.tick input{position:absolute;opacity:0;width:0;height:0}
+.box{display:block;width:30px;height:30px;border:2px solid var(--rule);border-radius:8px}
+.tick input:checked + .box{background:var(--go);border-color:var(--go);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-size:20px;background-repeat:no-repeat;background-position:center}
+.tick input:focus-visible + .box{outline:2px solid var(--go);outline-offset:2px}
+.who{flex:1;min-width:0}
+.num{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+  margin:0 0 3px;font-weight:600;font-family:ui-monospace,Menlo,monospace}
+.name{font-weight:700;font-size:1.05rem;margin:0 0 2px;letter-spacing:-.01em}
+address{font-style:normal;color:var(--ink-2);font-size:.9rem}
+.note{background:var(--warn-bg);color:var(--warn);font-size:.78rem;font-weight:600;
+  border-radius:7px;padding:6px 9px;margin:9px 0 0}
+.what{flex:0 0 auto;text-align:right}
+.chips{display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap}
+.oz{font-size:.72rem;color:var(--ink-3);margin:6px 0 0;
+  font-family:ui-monospace,Menlo,monospace}
+.steps{background:var(--card);border:1px solid var(--rule);border-radius:12px;
+  padding:16px 18px 16px 34px;margin:0;font-size:.9rem;color:var(--ink-2)}
+.steps li{margin-bottom:7px}
+.steps li:last-child{margin:0}
+.hold{background:var(--warn-bg);color:var(--warn);border-radius:12px;padding:14px 16px;
+  font-size:.87rem;margin-top:14px}
+.hold b{display:block;margin-bottom:3px}
+@media print{
+  body{background:#fff}
+  .wrap{max-width:none;padding:0}
+  .card,.pick,.steps{border-color:#bbb;box-shadow:none}
+  .noprint{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Packing handoff &mdash; AJ</h1>
+  <p class="date">US orders only &middot; Friday 4 September 2026</p>
+
+  <h2>1. Pull these from the boxes</h2>
+  <div class="pick">
+    <ul><li><span class="sz big">S</span><b>2</b></li><li><span class="sz big">M</span><b>3</b></li><li><span class="sz big">XL</span><b>1</b></li></ul>
+    <p class="tot">6 shirts &rarr; 5 mailers. Everything is the white tee.</p>
+  </div>
+
+  <h2>2. Pack them &mdash; tick as you go</h2>
+  <ol><li class="card">
+  <label class="tick"><input type="checkbox"><span class="box"></span></label>
+  <div class="who">
+    <p class="num">Mailer 1 of 5</p>
+    <p class="name">Christian Redding</p>
+    <address>4912 Big Pine Drive<br>Jacksonville, FL 32218</address>
+    
+  </div>
+  <div class="what"><div class="chips"><span class="sz">S</span></div><p class="oz">8 oz</p></div>
+</li><li class="card">
+  <label class="tick"><input type="checkbox"><span class="box"></span></label>
+  <div class="who">
+    <p class="num">Mailer 2 of 5</p>
+    <p class="name">Rosemarie Koestler</p>
+    <address>64 Fifth Ave<br>Lancaster, NY 14085</address>
+    <p class="note">Both shirts go in <b>this one</b> mailer — one label.</p>
+  </div>
+  <div class="what"><div class="chips"><span class="sz">S</span><span class="sz">XL</span></div><p class="oz">14 oz</p></div>
+</li><li class="card">
+  <label class="tick"><input type="checkbox"><span class="box"></span></label>
+  <div class="who">
+    <p class="num">Mailer 3 of 5</p>
+    <p class="name">hunter</p>
+    <address>35 Apex Truck Trail Rd<br>Hancock, NY 13783</address>
+    
+  </div>
+  <div class="what"><div class="chips"><span class="sz">M</span></div><p class="oz">8 oz</p></div>
+</li><li class="card">
+  <label class="tick"><input type="checkbox"><span class="box"></span></label>
+  <div class="who">
+    <p class="num">Mailer 4 of 5</p>
+    <p class="name">Megan Lee</p>
+    <address>15516 Orchid Ave<br>Tustin, CA 92782</address>
+    
+  </div>
+  <div class="what"><div class="chips"><span class="sz">M</span></div><p class="oz">8 oz</p></div>
+</li><li class="card">
+  <label class="tick"><input type="checkbox"><span class="box"></span></label>
+  <div class="who">
+    <p class="num">Mailer 5 of 5</p>
+    <p class="name">Nicholas Henry</p>
+    <address>1815 John F Kennedy Boulevard, Apt 814<br>Philadelphia, PA 19103</address>
+    
+  </div>
+  <div class="what"><div class="chips"><span class="sz">M</span></div><p class="oz">8 oz</p></div>
+</li></ol>
+
+  <h2>3. Then</h2>
+  <ol class="steps">
+    <li>Labels print from Pirate Ship &mdash; Louis has them. Match the name on the label to the name on the mailer before sealing.</li>
+    <li>Weigh one packed mailer and text Louis the number. The last batch went out marked 5&nbsp;oz and these are marked 8&nbsp;oz &mdash; if that's wrong the customer gets billed postage due.</li>
+    <li>Drop at any USPS counter or blue box. No counter check-in needed.</li>
+  </ol>
+
+  <div class="hold">
+    <b>Not today</b>
+    10 more orders are waiting on labels &mdash; 2 Canada, 8 rest of world. They need customs forms, so leave them boxed. Louis handles those.
+  </div>
+</div>
+</body>
+</html>
