@@ -25,7 +25,36 @@ edit files  →  git commit  →  git push origin main  →  Vercel deploys  →
 Vercel watches `main`. There is no deploy command to run. Pushing IS deploying.
 A push is live in roughly 30–60 seconds.
 
+**You are working directly on `main`. There is no staging step and no second
+pair of eyes.** Every push you make is on the public store within a minute.
+
 Do not add a build step. Do not migrate hosting. Do not add a bundler.
+
+## Confirm before pushing anything that touches money
+
+These four things decide whether a real customer can buy a real garment:
+
+- any `stock` value
+- any `soldout` flag
+- any `link` (Stripe payment URL)
+- `phase`, or `enabled`
+
+Before pushing a change to **any** of them: state the exact before → after
+(e.g. "M: soldout false → true") and **wait for an explicit yes.** Do not
+infer consent from the original instruction — the request and the confirmation
+are two separate messages.
+
+Everything else — copy, blurbs, hero text, docs, `orders/` reconciliation —
+push without asking. The point is speed on the harmless things and a pause on
+the ones that cost money.
+
+Two failure modes this exists to prevent:
+
+1. A voice-to-text message mangling a size letter, so the wrong garment goes
+   sold out — or worse, a sold-out one reopens and oversells.
+2. Acting on a half-formed instruction that was thinking out loud.
+
+If a request is ambiguous about *which* size, ask. Never guess between sizes.
 
 ## The 90% case: changing the drop
 
