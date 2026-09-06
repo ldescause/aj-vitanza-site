@@ -84,6 +84,43 @@ The example above is illustrative and the numbers are fake. The real per-size
 `copy` and `hero` hold the per-phase text so the hero can never contradict
 the section below it.
 
+## Everything that isn't merch
+
+The homepage has five sections: `hero`, `merch`, `live`, `elsewhere`
+(streaming links) and `connect`. Only merch has a config block. Releases,
+tracks, streaming links and show dates are hand-written markup in
+`index.html` — edit them there.
+
+## Visual changes go on a branch, never straight to main
+
+`node --check merch.js` proves the store's JavaScript parses. **Nothing here
+checks whether the site looks right.** Valid HTML renders as a broken layout
+all the time — a collapsed grid, a section that reflows into a column on
+mobile, spacing that dies below 400px. You cannot see the result. Louis can.
+
+So: if a change is judged by *looking* at it, do not push it to `main`.
+Put it on a branch and hand back the Vercel preview URL.
+
+```
+git checkout -b <short-name>    →  edit  →  push the branch
+→  Vercel builds a preview automatically  →  give Louis the URL
+```
+
+Preview URLs are staging: Stripe TEST links, warning banner, noindex. Safe to
+share and impossible to take real money.
+
+**Branch (preview first):** layout, spacing, colour, typography, adding or
+reordering sections, anything responsive, anything called a redesign.
+
+**Straight to main is fine:** a new streaming link, a show date, a price in
+copy, fixing a typo, doc updates. Text where you can tell it worked by reading
+the diff.
+
+The test is: *can I tell whether this worked without seeing it?* If no, branch.
+When unsure, branch — a preview costs nothing and a broken homepage is public.
+
+Merge to `main` only when Louis has seen the preview and says so.
+
 ## Rules
 
 1. **Never invent or edit a Stripe URL.** The links are capped per size in
