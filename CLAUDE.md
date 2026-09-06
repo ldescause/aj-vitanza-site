@@ -39,8 +39,12 @@ and the nav. Currently `'live'`.
 **`sizes`** — the per-size array. Each entry:
 
 ```js
-{ label: 'M', stock: 44, soldout: false, link: 'https://buy.stripe.com/...' }
+{ label: 'M', stock: 99, soldout: false, link: 'https://buy.stripe.com/REPLACE_ME' }
 ```
+
+The example above is illustrative and the numbers are fake. The real per-size
+`stock`, `soldout`, and `link` values live in `MERCH_CONFIG` at the top of
+`merch.js` — that is the only source of truth.
 
 - `soldout: true` → greys the size out and strikes it through
 - `stock` drives the "N remaining" counter and the "Almost gone" urgency state
