@@ -1,5 +1,35 @@
 /* AJ Vitanza — tactile bone / blue-grey world */
 
+/* Shared chips include both selectable buttons and unavailable spans. */
+.merch-size {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 48px;
+    min-height: 48px;
+    padding: 0;
+    line-height: 1;
+    text-align: center;
+}
+.merch-size.is-unavailable { opacity: .65; background: rgba(255,255,255,.035); }
+.merch-size:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.elsewhere .shade-title {
+    font-size: clamp(2.1rem, 6.7vw, 5.1rem);
+    line-height: 1.05;
+    overflow-wrap: normal;
+    max-width: 100%;
+}
+.shade-film { position: relative; aspect-ratio: 16 / 9; min-height: 200px; margin-top: 32px; background: #101923; }
+.shade-film iframe { display: block; position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.shade-caption { color: var(--muted); font-size: .8rem; margin: 12px 0 0; }
+.shade-caption a { text-decoration: underline; text-underline-offset: 3px; }
+.elsewhere .elsewhere-grid { margin-top: 30px; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); }
+.elsewhere .elsewhere-release { display: block; min-width: 0; }
+@media (max-width: 760px) {
+    .elsewhere .elsewhere-grid { grid-template-columns: minmax(0, 1fr); }
+    .nav-links a:nth-child(2) { display: inline; }
+}
+
 :root {
     --bone: #e7e1d5;
     --mist: #b9c5cc;
@@ -17,13 +47,13 @@
 
 .grain::after { opacity: .42; }
 
-/* Generated art plate moves as a quiet, seamless-like visual loop. */
+/* Neutral interim surface while the Higgsfield motion asset is unavailable. */
 .hero-field {
     inset: -7%;
     background-color: var(--bone);
     background-image:
         linear-gradient(90deg, rgba(231, 225, 213, .88) 0%, rgba(231, 225, 213, .56) 37%, rgba(16, 25, 35, .03) 66%),
-        url("images/art/bone-blue-liquid.png");
+        linear-gradient(125deg, #e7e1d5 12%, #b9c5cc 52%, #7597ad 100%);
     background-size: cover, 116% 116%;
     background-position: center, 48% 49%;
     filter: saturate(.76) contrast(.98);
@@ -108,7 +138,7 @@
     background-color: #1a2732;
     background-image:
         linear-gradient(110deg, rgba(16, 25, 35, .84), rgba(27, 43, 54, .64)),
-        url("images/art/bone-blue-liquid.png");
+        linear-gradient(135deg, #b9c5cc, #7597ad);
     background-size: cover, 125% 125%;
     background-position: center, 52% 60%;
     filter: saturate(.55) contrast(1.05);
@@ -121,7 +151,7 @@
 .elsewhere {
     background:
         linear-gradient(110deg, rgba(18, 29, 40, .96), rgba(35, 53, 66, .86)),
-        url("images/art/bone-blue-liquid.png");
+        linear-gradient(135deg, #b9c5cc, #7597ad);
     background-size: cover, 130% 130%;
     background-position: center, 52% 38%;
 }
@@ -160,6 +190,16 @@
 
 @media (max-width: 760px) {
     .grain { opacity: .11; }
+    /* Keep the complete wordmark inside narrow iPhone screens. */
+    .hero-title { font-size: clamp(2rem, 10.5vw, 5rem); line-height: .95; }
+    .nav { padding-left: max(18px, env(safe-area-inset-left)); padding-right: max(18px, env(safe-area-inset-right)); }
+    .nav-logo, .nav-shop, .nav-links a { min-height: 44px; min-width: 44px; }
+    .nav-links a { display: inline-flex; align-items: center; justify-content: center; }
+    .nav-links a:nth-child(2) { display: inline-flex; }
+    .hero-listen, .elsewhere-more, .shade-caption a { min-height: 44px; display: inline-flex; align-items: center; }
+    .section-inner { width: calc(100% - max(18px, env(safe-area-inset-left)) - max(18px, env(safe-area-inset-right))); }
+    .grain { animation: none; }
+    .merch-bg { animation: none; }
     .hero-portrait { inset: 0; opacity: .48; }
     .hero-portrait::after { background: linear-gradient(180deg, rgba(231, 225, 213, .14), rgba(231, 225, 213, .3) 45%, var(--bone) 100%); }
     .hero-title { color: var(--ink-blue); }

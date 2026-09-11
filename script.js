@@ -232,7 +232,7 @@
             requestAnimationFrame(function () {
                 updateScrollProgress();
                 updateNav();
-                if (!isMobile) updateHeroParallax();
+                if (!isMobile && !prefersReducedMotion) updateHeroParallax();
                 ticking = false;
             });
             ticking = true;
@@ -312,7 +312,7 @@
                     e.preventDefault();
                     var navH = nav ? nav.offsetHeight : 0;
                     var top = target.getBoundingClientRect().top + window.scrollY - navH;
-                    window.scrollTo({ top: top, behavior: 'smooth' });
+                    window.scrollTo({ top: top, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
                 }
             });
         });

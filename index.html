@@ -36,7 +36,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css?v=world-03">
-    <link rel="stylesheet" href="textures.css?v=world-10">
+    <link rel="stylesheet" href="textures.css?v=world-14">
 </head>
 <body>
 
@@ -152,16 +152,16 @@
     <section class="elsewhere" id="elsewhere">
         <div class="section-inner">
             <span class="label" data-reveal>02 — LATEST RELEASE</span>
-            <h2 class="section-title" data-split>Shade of Grey</h2>
+            <h2 class="section-title shade-title">Shade of Grey</h2>
+
+            <div class="shade-film" id="shade-film">
+                <iframe id="shade-player" title="AJ Vitanza — Shade of Grey (Live From LA)" src="https://www.youtube-nocookie.com/embed/dmvv3hv4RWo?enablejsapi=1&amp;playsinline=1&amp;mute=1&amp;rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <p class="shade-caption">Live From LA · Use the player controls to turn sound on. <a href="https://www.youtube.com/watch?v=dmvv3hv4RWo" target="_blank" rel="noopener">Watch on YouTube ↗</a></p>
 
             <div class="elsewhere-grid">
 
                 <div class="elsewhere-release" data-reveal="left">
-                    <div class="release-cover release-cover--sm" data-tilt>
-                        <img src="https://i.ytimg.com/vi/dmvv3hv4RWo/maxresdefault.jpg" alt="AJ Vitanza performing Shade of Grey live in Los Angeles" class="release-cover-img" loading="lazy" decoding="async">
-                        <div class="release-cover-shine"></div>
-                        <div class="release-cover-glow"></div>
-                    </div>
                     <div class="elsewhere-release-info">
                         <span class="elsewhere-eyebrow">Single · Out now</span>
                         <p class="elsewhere-meta">A new shade, a new chapter.</p>
@@ -292,6 +292,7 @@
     <!-- merch.js must load BEFORE script.js so the cards exist
          when the interaction handlers get wired up. -->
     <script src="merch.js?v=world-03"></script>
-    <script src="script.js?v=world-03"></script>
+    <script src="script.js?v=world-14"></script>
+    <script src="release-video.js?v=3" defer></script>
 </body>
 </html>
