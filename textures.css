@@ -1,0 +1,169 @@
+/* AJ Vitanza — organic colour fields and film texture */
+
+.grain {
+    opacity: .14;
+    mix-blend-mode: overlay;
+    background-size: 96px;
+    animation: aj-grain .28s steps(2, end) infinite;
+}
+
+.grain::after { opacity: .55; }
+
+.hero-field {
+    inset: -12%;
+    background-color: #06080d;
+    background-image:
+        radial-gradient(ellipse 68% 54% at 8% 12%, rgba(42, 121, 255, .62) 0%, rgba(42, 121, 255, .33) 27%, transparent 58%),
+        radial-gradient(ellipse 60% 64% at -5% 90%, rgba(135, 62, 255, .55) 0%, rgba(135, 62, 255, .22) 31%, transparent 61%),
+        radial-gradient(ellipse 49% 54% at 49% 108%, rgba(18, 214, 229, .4) 0%, transparent 59%);
+    overflow: hidden;
+}
+
+.hero-field::before,
+.hero-field::after {
+    border: 0;
+    border-radius: 51% 49% 38% 62% / 54% 42% 58% 46%;
+    box-shadow: none;
+    filter: blur(28px);
+    opacity: .82;
+}
+
+.hero-field::before {
+    width: min(78vw, 1100px);
+    height: min(78vw, 980px);
+    right: -23vw;
+    top: -36vw;
+    background:
+        radial-gradient(ellipse at 36% 58%, rgba(69, 168, 255, .58), transparent 0 27%),
+        radial-gradient(ellipse at 72% 27%, rgba(132, 97, 255, .42), transparent 0 34%),
+        radial-gradient(ellipse at 62% 72%, rgba(72, 224, 212, .2), transparent 0 39%);
+    animation: aj-liquid-one 18s ease-in-out infinite alternate;
+}
+
+.hero-field::after {
+    width: min(76vw, 960px);
+    height: min(70vw, 860px);
+    left: -35vw;
+    bottom: -38vw;
+    background:
+        radial-gradient(ellipse at 58% 36%, rgba(57, 91, 210, .46), transparent 0 32%),
+        radial-gradient(ellipse at 33% 67%, rgba(44, 220, 230, .2), transparent 0 38%),
+        radial-gradient(ellipse at 74% 76%, rgba(166, 111, 255, .26), transparent 0 26%);
+    animation: aj-liquid-two 22s ease-in-out infinite alternate;
+}
+
+.hero-portrait {
+    mix-blend-mode: normal;
+    opacity: .98;
+}
+
+.hero-portrait::before {
+    background:
+        radial-gradient(ellipse at 58% 18%, rgba(68, 204, 255, .62), transparent 0 38%),
+        radial-gradient(ellipse at 85% 75%, rgba(161, 93, 255, .52), transparent 0 48%),
+        linear-gradient(115deg, rgba(15, 25, 65, .45), transparent 55%);
+    mix-blend-mode: color;
+    opacity: 1;
+    animation: aj-photo-wash 14s ease-in-out infinite alternate;
+}
+
+.hero-portrait::after {
+    background: linear-gradient(90deg, #06080d 0%, rgba(6, 8, 13, .92) 11%, rgba(6, 8, 13, .14) 54%, rgba(6, 8, 13, .07) 100%);
+}
+
+.hero-swoosh {
+    opacity: .68;
+    filter: drop-shadow(0 0 20px rgba(156, 211, 255, .42));
+}
+
+.merch-bg {
+    background-color: #080d15;
+    background-image:
+        radial-gradient(ellipse 58% 46% at 3% 2%, rgba(41, 126, 235, .26) 0%, transparent 58%),
+        radial-gradient(ellipse 50% 52% at 98% 100%, rgba(115, 73, 224, .19) 0%, transparent 58%);
+    overflow: hidden;
+}
+
+.merch-bg::before,
+.merch-bg::after {
+    content: "";
+    position: absolute;
+    width: min(60vw, 760px);
+    height: min(60vw, 760px);
+    border-radius: 43% 57% 64% 36% / 48% 35% 65% 52%;
+    filter: blur(45px);
+    opacity: .38;
+}
+
+.merch-bg::before {
+    top: -32vw;
+    left: -18vw;
+    background: radial-gradient(circle at 65% 65%, rgba(59, 146, 255, .7), transparent 0 53%);
+    animation: aj-liquid-one 20s ease-in-out infinite alternate-reverse;
+}
+
+.merch-bg::after {
+    right: -24vw;
+    bottom: -33vw;
+    background: radial-gradient(circle at 35% 36%, rgba(116, 87, 255, .48), transparent 0 56%);
+    animation: aj-liquid-two 24s ease-in-out infinite alternate;
+}
+
+.elsewhere {
+    background:
+        radial-gradient(ellipse at 84% 8%, rgba(86, 87, 224, .2), transparent 0 28%),
+        radial-gradient(ellipse at 4% 96%, rgba(44, 171, 227, .14), transparent 0 32%),
+        var(--ink-2);
+}
+
+.connect::after {
+    width: min(72vw, 860px);
+    height: min(62vw, 740px);
+    right: -25vw;
+    bottom: -34vw;
+    border: 0;
+    border-radius: 63% 37% 46% 54% / 42% 63% 37% 58%;
+    background: radial-gradient(ellipse at 38% 35%, rgba(85, 154, 255, .27), transparent 0 58%);
+    filter: blur(36px);
+    animation: aj-liquid-two 19s ease-in-out infinite alternate;
+}
+
+@keyframes aj-grain {
+    0% { background-position: 0 0; }
+    25% { background-position: 22% -14%; }
+    50% { background-position: -17% 12%; }
+    75% { background-position: 15% 18%; }
+    100% { background-position: -12% -18%; }
+}
+
+@keyframes aj-liquid-one {
+    0% { transform: translate3d(0, 0, 0) rotate(-9deg) scale(1); border-radius: 51% 49% 38% 62% / 54% 42% 58% 46%; }
+    100% { transform: translate3d(-5%, 7%, 0) rotate(12deg) scale(1.15); border-radius: 38% 62% 55% 45% / 46% 57% 43% 54%; }
+}
+
+@keyframes aj-liquid-two {
+    0% { transform: translate3d(0, 0, 0) rotate(8deg) scale(1); border-radius: 43% 57% 64% 36% / 48% 35% 65% 52%; }
+    100% { transform: translate3d(8%, -5%, 0) rotate(-11deg) scale(1.18); border-radius: 62% 38% 43% 57% / 58% 48% 52% 42%; }
+}
+
+@keyframes aj-photo-wash {
+    0% { transform: scale(1) translate3d(0, 0, 0); filter: hue-rotate(0deg); }
+    100% { transform: scale(1.08) translate3d(-2%, 1%, 0); filter: hue-rotate(20deg); }
+}
+
+@media (max-width: 760px) {
+    .grain { opacity: .11; }
+    .hero-field::before { width: 125vw; height: 125vw; right: -42vw; top: -42vw; }
+    .hero-field::after { width: 130vw; height: 115vw; left: -58vw; bottom: -45vw; }
+    .hero-portrait::after { background: linear-gradient(180deg, rgba(6, 8, 13, .15), rgba(6, 8, 13, .34) 42%, #06080d 100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .grain,
+    .hero-field::before,
+    .hero-field::after,
+    .hero-portrait::before,
+    .merch-bg::before,
+    .merch-bg::after,
+    .connect::after { animation: none !important; }
+}
