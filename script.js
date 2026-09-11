@@ -13,188 +13,15 @@
        If sound is ever wanted again, it belongs behind an off-by-default
        control, not on a gate tap. */
 
-    // ========== GATE ==========
-    var gate = document.getElementById('gate');
-    var gateBtn = document.getElementById('gateBtn');
-
-    /* The old terminal/gate was removed. A visitor should reach AJ's work,
-       not pass an interface test. Keep this small boot helper because the
-       standalone merch page shares this script. */
     function startSite() {
         initSplitText();
         initSiteInteractions();
     }
 
-    if (!gate || !gateBtn || prefersReducedMotion || /[?&]skipintro/i.test(window.location.search)) {
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', startSite, { once: true });
-        } else {
-            startSite();
-        }
-        return;
-    }
-
-    document.body.style.overflow = 'hidden';
-
-    gateBtn.addEventListener('click', function () {
-        gate.classList.add('hidden');
-        startTerminalBoot();
-    });
-
-    // ========== TERMINAL BOOT ==========
-    var terminalBoot = document.getElementById('terminalBoot');
-    var terminalContent = document.getElementById('terminalContent');
-    var BOOT_LINES = [
-        { text: 'BIOS v4.2.1 — AJ VITANZA SYSTEMS', speed: 5, pause: 120, status: null },
-        { text: 'Mounting inventory: DEBUT_TEE', speed: 4, pause: 60, status: 'OK', progress: true },
-        { text: 'Presale allocation — 50 UNITS', speed: 4, pause: 60, status: 'READY', progress: true },
-        { text: 'Secure checkout — Stripe', speed: 4, pause: 80, status: 'OK', progress: true },
-        { text: 'All systems nominal', speed: 6, pause: 180, status: null },
-    ];
-
-    function startTerminalBoot() {
-        terminalBoot.classList.add('active');
-        // Print header instantly
-        var header = document.createElement('div');
-        header.className = 'terminal-line terminal-header';
-        header.textContent = '> SYSTEM BOOT';
-        terminalContent.appendChild(header);
-        setTimeout(function () { processBootLine(0); }, 120);
-    }
-
-    function processBootLine(index) {
-        if (index >= BOOT_LINES.length) {
-            startLogoReveal();
-            return;
-        }
-
-        var line = BOOT_LINES[index];
-        var lineEl = document.createElement('div');
-        lineEl.className = 'terminal-line';
-        terminalContent.appendChild(lineEl);
-
-        var charIndex = 0;
-        var text = line.text;
-
-        function typeNext() {
-            if (charIndex < text.length) {
-                lineEl.textContent = text.substring(0, charIndex + 1);
-                charIndex++;
-                setTimeout(typeNext, line.speed);
-            } else if (line.progress) {
-                animateProgress(lineEl, text, function () {
-                    appendStatus(lineEl, line.status);
-                    setTimeout(function () { processBootLine(index + 1); }, 40);
-                });
-            } else {
-                setTimeout(function () {
-                    appendStatus(lineEl, line.status);
-                    setTimeout(function () { processBootLine(index + 1); }, 40);
-                }, line.pause);
-            }
-        }
-
-        typeNext();
-    }
-
-    function appendStatus(lineEl, status) {
-        if (!status) return;
-        var tag = document.createElement('span');
-        tag.className = 'terminal-status';
-        tag.textContent = ' [' + status + ']';
-        lineEl.appendChild(tag);
-    }
-
-    function animateProgress(lineEl, prefix, callback) {
-        var progress = 0;
-        var barWidth = 16;
-
-        function tick() {
-            progress += Math.random() * 30 + 22;
-            if (progress > 100) progress = 100;
-            var filled = Math.round((progress / 100) * barWidth);
-            var bar = ' [' + '█'.repeat(filled) + '·'.repeat(barWidth - filled) + '] ' + Math.round(progress) + '%';
-            lineEl.textContent = prefix + bar;
-            if (progress < 100) {
-                setTimeout(tick, 14 + Math.random() * 10);
-            } else {
-                setTimeout(callback, 60);
-            }
-        }
-        tick();
-    }
-
-    // ========== 3D LOGO REVEAL ==========
-    var logoReveal = document.getElementById('logoReveal');
-    var logoParticles = document.getElementById('logoParticles');
-    var logoRevealText = document.getElementById('logoRevealText');
-    var logoRevealSub = document.getElementById('logoRevealSub');
-
-    function startLogoReveal() {
-        // Activate logo BEHIND terminal first so there's no flash
-        logoReveal.classList.add('active', 'phase-glitch');
-        spawnParticles();
-
-        // Now fade terminal out — logo is already visible behind it
-        terminalBoot.classList.add('fade-out');
-        setTimeout(function () {
-            terminalBoot.classList.remove('active', 'fade-out');
-        }, 400);
-
-        // Phase 1: Glitchy, blurry, fast spin
-        setTimeout(function () {
-            logoReveal.classList.remove('phase-glitch');
-            logoReveal.classList.add('phase-resolving');
-
-            // Phase 2: Resolving, slower spin, clearing
-            setTimeout(function () {
-                logoReveal.classList.remove('phase-resolving');
-                logoReveal.classList.add('phase-clear');
-
-                logoRevealText.classList.add('visible');
-                logoRevealSub.classList.add('visible');
-
-                // Auto-enter after a beat on the logo screen
-                setTimeout(finishIntro, 1800);
-            }, 900);
-        }, 700);
-    }
-
-    function spawnParticles() {
-        if (!logoParticles) return;
-        var count = isMobile ? 20 : 40;
-        for (var i = 0; i < count; i++) {
-            setTimeout(function () {
-                var p = document.createElement('div');
-                p.className = 'logo-particle';
-                var cx = 50 + (Math.random() - 0.5) * 20;
-                var cy = 50 + (Math.random() - 0.5) * 20;
-                p.style.left = cx + '%';
-                p.style.top = cy + '%';
-                p.style.setProperty('--px', (Math.random() - 0.5) * 200 + 'px');
-                p.style.setProperty('--py', (Math.random() - 0.5) * 200 + 'px');
-                p.style.animationDelay = (Math.random() * 0.5) + 's';
-                p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
-                logoParticles.appendChild(p);
-                setTimeout(function () { p.remove(); }, 3500);
-            }, Math.random() * 4000);
-        }
-    }
-
-    // ========== FINISH INTRO ==========
-    function finishIntro() {
-
-        // Prepare main site BEFORE fading logo out
-        window.scrollTo(0, 0);
-        document.body.style.overflow = '';
-        initSplitText();
-        initSiteInteractions();
-
-        // Fade logo out — main site is ready underneath
-        logoReveal.classList.add('fade-out');
-        setTimeout(function () {
-            logoReveal.className = 'logo-reveal';
-        }, 700);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startSite, { once: true });
+    } else {
+        startSite();
     }
 
     // ========== TEXT SPLIT ANIMATION ==========
@@ -256,6 +83,7 @@
         initCarousel();
         initAnchorScroll();
         initHeroGlow();
+        initProductMotion();
 
         updateScrollProgress();
         updateNav();
@@ -370,6 +198,7 @@
 
     // ========== HERO PARALLAX ==========
     var heroImg = document.getElementById('heroImg');
+    var heroField = document.querySelector('.hero-field');
     var heroContent = document.querySelector('.hero-content');
     var heroScroll = document.getElementById('heroScroll');
 
@@ -383,6 +212,9 @@
         if (heroImg) {
             heroImg.style.transform = 'scale(' + (1 + progress * 0.15) + ') translate3d(0, ' + (scrollTop * 0.2) + 'px, 0)';
             heroImg.style.opacity = Math.max(0, 0.55 - progress * 0.55);
+        }
+        if (heroField) {
+            heroField.style.transform = 'scale(' + (1 + progress * 0.06) + ') translate3d(0, ' + (scrollTop * 0.1) + 'px, 0)';
         }
         if (heroContent) {
             heroContent.style.opacity = Math.max(0, 1 - progress * 2);
@@ -492,7 +324,7 @@
         if (!hero || isMobile) return;
 
         var glowEl = document.createElement('div');
-        glowEl.style.cssText = 'position:absolute;inset:0;z-index:1;pointer-events:none;transition:opacity 0.4s;opacity:0;';
+        glowEl.style.cssText = 'position:absolute;inset:0;z-index:0;pointer-events:none;transition:opacity 0.4s;opacity:0;';
         hero.appendChild(glowEl);
         hero.addEventListener('mouseenter', function () { glowEl.style.opacity = '1'; });
         hero.addEventListener('mouseleave', function () { glowEl.style.opacity = '0'; });
@@ -501,6 +333,15 @@
             var x = e.clientX - rect.left;
             var y = e.clientY - rect.top;
             glowEl.style.background = 'radial-gradient(circle 400px at ' + x + 'px ' + y + 'px, rgba(94,143,194,0.12), rgba(40,80,140,0.06) 40%, transparent 70%)';
+        });
+    }
+
+    // ========== PRODUCT MOTION ==========
+    function initProductMotion() {
+        if (prefersReducedMotion) return;
+        document.querySelectorAll('.merch-card-media').forEach(function (media) {
+            media.addEventListener('mouseenter', function () { media.classList.add('is-active-motion'); });
+            media.addEventListener('mouseleave', function () { media.classList.remove('is-active-motion'); });
         });
     }
 

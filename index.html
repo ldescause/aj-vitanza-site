@@ -22,6 +22,7 @@
     <link rel="apple-touch-icon" href="images/swoosh-mark.png">
 
     <link rel="preload" as="image" href="images/swoosh-mark.png" fetchpriority="high">
+    <link rel="preload" as="image" href="images/hero.jpg" fetchpriority="high">
 
     <script defer src="https://www.googletagmanager.com/gtag/js?id=G-R5WDWDH7RJ"></script>
     <script>
@@ -34,7 +35,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=world-01">
+    <link rel="stylesheet" href="styles.css?v=world-02">
 </head>
 <body>
 
@@ -69,6 +70,12 @@
     <!-- ==================== HERO ==================== -->
     <section class="hero" id="hero">
         <div class="hero-field" aria-hidden="true"></div>
+        <div class="hero-portrait" aria-hidden="true">
+            <img src="images/hero.jpg" alt="" class="hero-img" id="heroImg" fetchpriority="high" decoding="async">
+        </div>
+        <div class="hero-swoosh" aria-hidden="true">
+            <img src="images/swoosh-mark.png" alt="" width="400" height="400" decoding="async">
+        </div>
         <div class="hero-content section-inner">
             <p class="hero-kicker" data-reveal>AJ VITANZA <span>—</span> LOS ANGELES</p>
             <h1 class="hero-title" data-split>AJ VITANZA</h1>
@@ -84,6 +91,12 @@
             </div>
         </div>
     </section>
+
+    <div class="world-ticker" aria-label="AJ Vitanza: music, shows, and objects">
+        <div class="world-ticker-track" aria-hidden="true">
+            <span>AJ VITANZA</span><i></i><span>PLASTIC HEART</span><i></i><span>LOS ANGELES</span><i></i><span>THE DEBUT TEE</span><i></i><span>AJ VITANZA</span><i></i><span>PLASTIC HEART</span><i></i><span>LOS ANGELES</span><i></i><span>THE DEBUT TEE</span><i></i>
+        </div>
+    </div>
 
     <!-- ==================== MERCH ====================
          All content is driven by MERCH_CONFIG in merch.js.
@@ -338,7 +351,7 @@
 
     <!-- merch.js must load BEFORE script.js so the cards exist
          when the interaction handlers get wired up. -->
-    <script src="merch.js?v=world-01"></script>
-    <script src="script.js?v=world-01"></script>
+    <script src="merch.js?v=world-02"></script>
+    <script src="script.js?v=world-02"></script>
 </body>
 </html>
