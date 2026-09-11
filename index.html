@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="google-site-verification" content="_y-S_OHViF2MWSQkZCljal-LFWjPdTxh1Q6GTJ5qIeY" />
-    <title>AJ Vitanza — Debut T-Shirt, Limited Presale</title>
-    <meta name="description" content="Official AJ Vitanza merch. The AJ Vitanza debut tee — 50-unit presale, every order includes a graphic card signed by AJ.">
+    <title>AJ Vitanza — Music, Shows &amp; Objects</title>
+    <meta name="description" content="The official world of AJ Vitanza — music, shows, and limited objects.">
 
     <meta property="og:title" content="AJ Vitanza — Debut T-Shirt">
-    <meta property="og:description" content="Limited 50-unit presale. Every order includes a graphic card signed by AJ.">
+    <meta property="og:description" content="Music, shows, and limited objects from AJ Vitanza.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ajvitanza.com">
     <meta property="og:image" content="https://ajvitanza.com/images/merch/tee-front.jpg">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="AJ Vitanza — Debut T-Shirt">
-    <meta name="twitter:description" content="Limited 50-unit presale. Every order includes a graphic card signed by AJ.">
+    <meta name="twitter:description" content="Music, shows, and limited objects from AJ Vitanza.">
     <meta name="twitter:image" content="https://ajvitanza.com/images/merch/tee-front.jpg">
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -34,48 +34,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=world-01">
 </head>
 <body>
-
-    <!-- Gate Screen -->
-    <div class="gate" id="gate">
-        <div class="gate-inner">
-            <div class="gate-logo">
-                <img src="images/swoosh-mark.png" alt="" width="400" height="400" decoding="async" fetchpriority="high">
-            </div>
-            <button class="gate-btn" id="gateBtn">
-                <span class="gate-btn-text">TAP TO ENTER</span>
-                <span class="gate-btn-ring"></span>
-            </button>
-        </div>
-        <!-- The site is silent by design, so there is no "enable sound" hint.
-             This says what's actually behind the gate instead. -->
-        <div class="gate-hint">Debut tee — 50-unit presale</div>
-    </div>
-
-    <!-- Terminal Boot -->
-    <div class="terminal-boot" id="terminalBoot">
-        <div class="terminal-scanlines"></div>
-        <div class="terminal-vignette"></div>
-        <div class="terminal-content" id="terminalContent"></div>
-        <div class="terminal-cursor" id="terminalCursor">█</div>
-    </div>
-
-    <!-- 3D Logo Reveal -->
-    <div class="logo-reveal" id="logoReveal">
-        <div class="logo-reveal-inner">
-            <div class="logo-3d-scene" id="logo3dScene">
-                <div class="logo-3d-object" id="logo3dObject">
-                    <img src="images/swoosh-mark.png" alt="" class="logo-3d-face logo-3d-front" width="400" height="400">
-                    <img src="images/swoosh-mark.png" alt="" class="logo-3d-face logo-3d-back" width="400" height="400">
-                </div>
-            </div>
-            <div class="logo-reveal-text" id="logoRevealText">AJ VITANZA</div>
-            <div class="logo-reveal-sub" id="logoRevealSub">MERCH PRESALE</div>
-        </div>
-        <div class="logo-reveal-particles" id="logoParticles"></div>
-    </div>
 
     <!-- Grain overlay -->
     <div class="grain" aria-hidden="true"></div>
@@ -98,7 +59,6 @@
             <a href="#merch" data-magnetic><span data-text="Merch">Merch</span></a>
             <a href="#live" data-magnetic><span data-text="Live">Live</span></a>
             <a href="#elsewhere" data-magnetic><span data-text="Music">Music</span></a>
-            <a href="#connect" data-magnetic><span data-text="Connect">Connect</span></a>
         </div>
         <a href="/merch" class="nav-shop" data-magnetic data-ripple>
             <span class="nav-shop-dot"></span>
@@ -108,42 +68,20 @@
 
     <!-- ==================== HERO ==================== -->
     <section class="hero" id="hero">
-        <div class="hero-bg">
-            <div class="hero-gradient">
-                <div class="hero-orb hero-orb--1"></div>
-                <div class="hero-orb hero-orb--2"></div>
-                <div class="hero-orb hero-orb--3"></div>
-            </div>
-        </div>
-
-        <div class="hero-content">
-            <div class="hero-eyebrow" data-reveal>
-                <span class="hero-eyebrow-line"></span>
-                <span class="hero-eyebrow-text">Merch Out Now</span>
-                <span class="hero-eyebrow-line"></span>
-            </div>
+        <div class="hero-field" aria-hidden="true"></div>
+        <div class="hero-content section-inner">
+            <p class="hero-kicker" data-reveal>AJ VITANZA <span>—</span> LOS ANGELES</p>
             <h1 class="hero-title" data-split>AJ VITANZA</h1>
-            <p class="hero-sub" data-reveal>AJ VITANZA DEBUT TEE</p>
-            <div class="hero-actions" data-reveal>
-                <!-- Targets the product itself, not the section heading.
-                     Aimed at #merch, the label/title/blurb/counter ate the
-                     viewport and the shirt opened below the fold — you jumped
-                     to the shop and couldn't see what was for sale. -->
-                <a href="#shop" class="btn btn--primary btn--lg" data-magnetic data-ripple>
-                    <span class="hero-cta-text">Shop The Tee</span>
-                </a>
-                <a href="#elsewhere" class="btn btn--ghost" data-magnetic data-ripple>
-                    <span>Listen</span>
-                </a>
+            <div class="hero-bottom" data-reveal>
+                <p class="hero-sub">MUSIC · SHOWS · OBJECTS</p>
+                <div class="hero-actions">
+                    <a href="#shop" class="btn btn--primary" data-magnetic data-ripple>
+                        <span class="hero-cta-text">Explore the drop</span>
+                        <span aria-hidden="true">↗</span>
+                    </a>
+                    <a href="#elsewhere" class="hero-listen" data-magnetic>Listen now <span aria-hidden="true">↗</span></a>
+                </div>
             </div>
-        </div>
-
-        <div class="hero-scroll" id="heroScroll">
-            <div class="hero-scroll-line"></div>
-        </div>
-
-        <div class="hero-swoosh">
-            <img src="images/swoosh-mark.png" alt="" width="400" height="400" decoding="async" loading="lazy">
         </div>
     </section>
 
@@ -155,7 +93,7 @@
             <div class="merch-orb"></div>
         </div>
         <div class="section-inner">
-            <span class="label merch-label" data-reveal>01. — Wear It</span>
+            <span class="label merch-label" data-reveal>01 — THE DROP</span>
 
             <div class="merch-head">
                 <h2 class="merch-title" data-split>Merch</h2>
@@ -197,19 +135,11 @@
         </div>
     </section>
 
-    <!-- ==================== LIVE ====================
-         Sits directly under the merch on purpose: the presale story ends at
-         this show ("the rest of the run is at the merch table"), so the two
-         belong next to each other.
-
-         The Ticketmaster URL is the clean event link. The one shared from
-         Instagram carried fbclid/utm_* tracking parameters — those are click
-         attribution for THAT post and would follow every visitor from here,
-         polluting the analytics for a campaign this page is not part of. -->
+    <!-- ==================== LIVE ==================== -->
     <section class="live" id="live">
         <div class="section-inner">
-            <span class="label" data-reveal>02. — Live</span>
-            <h2 class="section-title" data-split>Live in LA</h2>
+            <span class="label" data-reveal>02 — LIVE</span>
+            <h2 class="section-title" data-split>One night only.</h2>
 
             <div class="show" data-reveal>
                 <div class="show-date" aria-hidden="true">
@@ -235,25 +165,18 @@
                 </div>
             </div>
 
-            <p class="live-footnote" data-reveal>
-                The rest of the run is on the merch table at this show — first come, first served.
-                The venue is cashless, so bring a card.
-            </p>
+            <p class="live-footnote" data-reveal>The remaining shirts are at the merch table — first come, first served.</p>
         </div>
     </section>
 
-    <!-- ==================== ELSEWHERE — MUSIC & VIDEOS ====================
-         Everything musical lives here now, deliberately compact. The drop is
-         the page; this is the footnote that says the artist exists. Links go
-         out to the platforms rather than embedding a heavy Spotify iframe. -->
+    <!-- ==================== ELSEWHERE — MUSIC ==================== -->
     <section class="elsewhere" id="elsewhere">
         <div class="section-inner">
-            <span class="label" data-reveal>03. — Elsewhere</span>
-            <h2 class="section-title" data-split>Music &amp; Videos</h2>
+            <span class="label" data-reveal>03 — MUSIC</span>
+            <h2 class="section-title" data-split>PLASTIC HEART</h2>
 
             <div class="elsewhere-grid">
 
-                <!-- EP + streaming -->
                 <div class="elsewhere-release" data-reveal="left">
                     <div class="release-cover release-cover--sm" data-tilt>
                         <img src="images/cover.jpg" alt="PLASTIC HEART EP cover art" class="release-cover-img" loading="lazy" decoding="async">
@@ -261,9 +184,8 @@
                         <div class="release-cover-glow"></div>
                     </div>
                     <div class="elsewhere-release-info">
-                        <span class="elsewhere-eyebrow">Debut EP</span>
-                        <h3 class="elsewhere-title">PLASTIC HEART</h3>
-                        <p class="elsewhere-meta">9 Tracks — 2025</p>
+                        <span class="elsewhere-eyebrow">Debut EP · 2025</span>
+                        <p class="elsewhere-meta">Nine songs from the first chapter.</p>
                         <div class="dsp-row dsp-row--wrap">
                             <a href="https://open.spotify.com/artist/4cYjXmjtYTr8km9NLjC7xe" target="_blank" rel="noopener" class="dsp dsp--sm" data-magnetic><span>Spotify</span></a>
                             <a href="https://music.apple.com/us/artist/aj-vitanza/1553623922" target="_blank" rel="noopener" class="dsp dsp--sm" data-magnetic><span>Apple Music</span></a>
@@ -272,27 +194,10 @@
                     </div>
                 </div>
 
-                <!-- Videos -->
-                <div class="elsewhere-videos" data-reveal="right">
-                    <span class="elsewhere-eyebrow">Videos</span>
-                    <div class="elsewhere-vidrow">
-                        <a href="https://www.youtube.com/watch?v=oIcYkOr_KFs" target="_blank" rel="noopener" class="mini-vid">
-                            <img src="https://img.youtube.com/vi/oIcYkOr_KFs/hqdefault.jpg" alt="Stranger I Know — official music video" loading="lazy" decoding="async">
-                            <span class="mini-vid-title">Stranger I Know</span>
-                        </a>
-                        <a href="https://www.youtube.com/watch?v=fvKDFVza9EM" target="_blank" rel="noopener" class="mini-vid">
-                            <img src="https://img.youtube.com/vi/fvKDFVza9EM/hqdefault.jpg" alt="Don&#39;t Wanna Know — music video" loading="lazy" decoding="async">
-                            <span class="mini-vid-title">Don&#39;t Wanna Know</span>
-                        </a>
-                        <a href="https://www.youtube.com/watch?v=-xajyFnR0mI" target="_blank" rel="noopener" class="mini-vid">
-                            <img src="https://img.youtube.com/vi/-xajyFnR0mI/hqdefault.jpg" alt="Stranger I Know — lyric video" loading="lazy" decoding="async">
-                            <span class="mini-vid-title">Stranger I Know</span>
-                        </a>
-                    </div>
-                    <a href="https://www.youtube.com/channel/UCZKk2Y6Uu-bgNiOxLEwxOQw" target="_blank" rel="noopener" class="elsewhere-more" data-magnetic>
-                        <span>All videos on YouTube</span>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-                    </a>
+                <div class="elsewhere-note" data-reveal="right">
+                    <span class="elsewhere-eyebrow">The world is still opening.</span>
+                    <p>Follow AJ for the next song, next city, and everything in between.</p>
+                    <a href="https://www.instagram.com/ajvitanza/" target="_blank" rel="noopener" class="elsewhere-more" data-magnetic>Follow on Instagram <span aria-hidden="true">↗</span></a>
                 </div>
 
             </div>
@@ -306,9 +211,9 @@
             <div class="connect-orb connect-orb--2"></div>
         </div>
         <div class="section-inner connect-inner">
-            <span class="label" data-reveal>04. — Stay In Touch</span>
-            <h2 class="connect-heading" data-split>Never Miss a Drop</h2>
-            <p class="connect-sub" data-reveal>New music, shows & exclusives — straight to you.</p>
+            <span class="label" data-reveal>04 — KEEP CLOSE</span>
+            <h2 class="connect-heading" data-split>Stay in the loop.</h2>
+            <p class="connect-sub" data-reveal>New music, new cities, and whatever comes next.</p>
             <div class="connect-cta" data-reveal>
                 <a href="https://drop.cobrand.com/d/AJVitanza/updates" target="_blank" rel="noopener" class="btn btn--primary btn--lg" data-magnetic data-ripple>
                     <span>Sign Up</span>
@@ -433,7 +338,7 @@
 
     <!-- merch.js must load BEFORE script.js so the cards exist
          when the interaction handlers get wired up. -->
-    <script src="merch.js"></script>
-    <script src="script.js"></script>
+    <script src="merch.js?v=world-01"></script>
+    <script src="script.js?v=world-01"></script>
 </body>
 </html>

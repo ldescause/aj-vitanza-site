@@ -33,8 +33,8 @@ var MERCH_CONFIG = {
 
     /* ---------- SECTION COPY ---------- */
     copy: {
-        label: '01. — Wear It',      // homepage section (numbered like its siblings)
-        labelPage: 'Official Store', // standalone /merch page
+        label: '01 — The Drop',      // homepage section (numbered like its siblings)
+        labelPage: 'AJ Vitanza / Merch', // standalone /merch page
         title: 'Merch',
         teaser: {
             eyebrow: 'Coming Soon',
@@ -63,10 +63,10 @@ var MERCH_CONFIG = {
        Set enabled: false to leave the hero markup alone. */
     hero: {
         enabled: true,
-        teaser:  { eyebrow: 'Merch — Dropping Soon',     sub: 'AJ VITANZA DEBUT TEE', cta: 'See The Tee' },
-        presale: { eyebrow: 'Presale Open — 50 Units',   sub: 'AJ VITANZA DEBUT TEE', cta: 'Shop The Tee' },
-        live:    { eyebrow: 'Merch — Available Now',     sub: 'AJ VITANZA DEBUT TEE', cta: 'Shop The Tee' },
-        soldout: { eyebrow: 'Presale Closed — Full Drop Coming Soon', sub: 'AJ VITANZA DEBUT TEE', cta: 'See The Tee' }
+        teaser:  { eyebrow: 'Merch — Dropping Soon',     sub: 'MUSIC · SHOWS · OBJECTS', cta: 'Explore the drop' },
+        presale: { eyebrow: 'Presale Open — 50 Units',   sub: 'MUSIC · SHOWS · OBJECTS', cta: 'Explore the drop' },
+        live:    { eyebrow: 'Merch — Available Now',     sub: 'MUSIC · SHOWS · OBJECTS', cta: 'Explore the drop' },
+        soldout: { eyebrow: 'Presale Closed — Full Drop Coming Soon', sub: 'MUSIC · SHOWS · OBJECTS', cta: 'Explore the drop' }
     },
 
     /* ---------- PRESALE COUNTER ----------

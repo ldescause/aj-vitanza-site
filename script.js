@@ -17,28 +17,24 @@
     var gate = document.getElementById('gate');
     var gateBtn = document.getElementById('gateBtn');
 
-    document.body.style.overflow = 'hidden';
+    /* The old terminal/gate was removed. A visitor should reach AJ's work,
+       not pass an interface test. Keep this small boot helper because the
+       standalone merch page shares this script. */
+    function startSite() {
+        initSplitText();
+        initSiteInteractions();
+    }
 
-    // Add ?skipintro to the URL to jump straight to the site.
-    // Invaluable when you're reloading 50 times to tweak the merch section.
-    //
-    // Pages without the intro markup (merch.html) also take this path — the
-    // gate only exists on the homepage, and without this guard the listener
-    // below would throw on a null element and kill every other script.
-    var skipIntro = prefersReducedMotion ||
-        !gate || !gateBtn ||
-        /[?&]skipintro/i.test(window.location.search);
-
-    if (skipIntro) {
-        // skip everything
-        if (gate) gate.classList.add('hidden');
-        document.body.style.overflow = '';
-        window.addEventListener('load', function () {
-            initSplitText();
-            initSiteInteractions();
-        });
+    if (!gate || !gateBtn || prefersReducedMotion || /[?&]skipintro/i.test(window.location.search)) {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startSite, { once: true });
+        } else {
+            startSite();
+        }
         return;
     }
+
+    document.body.style.overflow = 'hidden';
 
     gateBtn.addEventListener('click', function () {
         gate.classList.add('hidden');
